@@ -14,8 +14,6 @@
             default: "",
         },
     });
-
-    const emit = defineEmits(["update:modelname"]);
 </script>
 
 <template>

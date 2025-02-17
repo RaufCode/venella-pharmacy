@@ -37,11 +37,13 @@
 </script>
 <template>
     <div class="lg:flex lg:h-screen lg:w-screen">
-        <div class="w-10/12 mx-auto md:w-3/5 lg:w-1/2">
+        <div
+            class="w-screen min-h-screen flex justify-center items-center lg:w-1/2"
+        >
             <form
                 @submit.prevent="formValidation"
                 method="post"
-                class="max-w-[370px] mx-auto mt-36 md:mt-48 p-5 shadow"
+                class="max-w-[370px] p-5 shadow w-11/12 mx-auto"
             >
                 <h1 class="form-title">Sign in</h1>
                 <InputField

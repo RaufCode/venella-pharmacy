@@ -1,5 +1,5 @@
 <script setup>
-    import InputField from "@/components/form/InputField.vue";
+    import InputField from "@/components/ui/InputField.vue";
     import btn from "@/components/form/btn.vue";
     import { ref, reactive } from "vue";
 
@@ -10,8 +10,6 @@
         password1: "",
         password2: "",
     });
-    let errorMsg = ref("");
-
     let formValidation = () => {
         const usernameRegex = /^[A-Za-z]{3,}(-[A-Za-z]{3,})*$/;
         const passwordRegex =
