@@ -1,8 +1,9 @@
 <script setup>
-    // import SignIn from "@/components/auth/SignIn.vue";
     import DashBoard from "../components/admin-dashboard/DashBoard.vue";
+    // import SignUp from "../components/auth/SignUp.vue";
 </script>
 
 <template>
     <DashBoard />
+    <!-- <SignUp /> -->
 </template>

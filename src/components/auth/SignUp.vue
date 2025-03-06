@@ -1,6 +1,6 @@
 <script setup>
     import InputField from "@/components/ui/InputField.vue";
-    import btn from "@/components/form/btn.vue";
+    import btn from "@/components/ui/btn.vue";
     import { ref, reactive } from "vue";
 
     const form = reactive({
@@ -44,7 +44,8 @@
                 class="max-w-[370px] p-5 shadow w-11/12 mx-auto"
             >
                 <h1 class="form-title">Sign up</h1>
-                <InputField v-model="form.username" labelname="Username" />
+                <InputField v-model="form.username" labelname="First Name" />
+                <InputField v-model="form.username" labelname="Last Name" />
                 <InputField
                     v-model="form.telephone"
                     labelname="Telephone"

@@ -1,9 +1,10 @@
 <script setup>
     import { ref } from "vue";
-    import HomeHero from "./HomeHero.vue";
+    // import OverView from "./OverView.vue";
+    import MedicationHero from "./MedicationHero.vue";
 </script>
 <template>
-    <div class="md:flex md:justify-between md:items-center">
+    <div class="md:flex md:justify-start md:items-center">
         <div
             class="sticky top-0 md:hidden p-3 text-sm flex items-center justify-between bg-white shadow-md z-40"
         >
@@ -22,7 +23,7 @@
             </button>
         </div>
         <aside
-            class="hidden w-4/5 z-50 -mt-14 h-screen p-2 bg-white sticky top-0 md:mt-0 md:block md:w-1/4 lg:max-2xl:w-1/5 border-r-2 border-gray-200 md:static"
+            class="hidden w-4/5 z-50 -mt-14 h-screen p-2 bg-gray-50 sticky top-0 md:mt-0 md:block md:max-w-[210px] lg:max-w-[220px] border-r-2 border-gray-200"
         >
             <div class="flex justify-end gap-10 items-center pt-2 md:block">
                 <h1
@@ -38,7 +39,7 @@
                 <p>
                     <i class="pi pi-home"></i>
                 </p>
-                Home
+                Overview
             </button>
             <button class="a-dashboard-navs">
                 <p><i class="pi pi-shield"></i></p>
@@ -59,21 +60,19 @@
                 Notifications
             </button>
             <button
-                class="mt-16 py-3 w-full pl-3 rounded text-base flex gap-6 text-gray-800 md:text-base md:pl-5 md:mt-20 hover:bg-gray-100 focus:bg-orange-600 focus:text-white"
+                class="mt-16 py-2 w-full pl-3 rounded font-medium text-sm flex gap-4 text-gray-800 md:pl-5 md:mt-20 hover:bg-gray-100 focus:bg-orange-600 focus:text-white"
             >
                 <router-link to="">
                     <i class="pi pi-sign-out"></i>
                 </router-link>
                 Logout
             </button>
-            <h1
-                class="font-styleScript absolute bottom-2 right-4 text-2xl text-orange-600 md:text-[28px] md:left-3"
-            >
-                Vanella Pharmacy
-            </h1>
         </aside>
-        <div>
-            <HomeHero />
+        <div class="bg-gray-50 w-full">
+            <div class="min-h-screen max-w-[1440px]">
+                <!-- <OverView /> -->
+                <MedicationHero />
+            </div>
         </div>
     </div>
 </template>
