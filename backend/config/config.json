@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "EmamDiin1720",
+    "database": "pharmacy_ecommerce",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "EmamDiin1720",
+    "database": "pharmacy_ecommerce_test",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "EmamDiin1720",
+    "database": "pharmacy_ecommerce_prod",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}
