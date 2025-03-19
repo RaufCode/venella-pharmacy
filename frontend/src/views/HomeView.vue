@@ -1,9 +1,7 @@
 <script setup>
-    import DashBoard from "../components/admin-dashboard/DashBoard.vue";
-    // import SignUp from "../components/auth/SignUp.vue";
+    import HomePage from "@/components/HomePage.vue";
 </script>
 
 <template>
-    <DashBoard />
-    <!-- <SignUp /> -->
+    <HomePage />
 </template>

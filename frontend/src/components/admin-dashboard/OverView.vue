@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="p-3 min-h-screen md:px-5 lg:px-10">
+    <div class="p-3 min-h-screen md:px-5">
         <div class="pt-10 md:pt-5">
             <h1 class="text-3xl font-styleScript text-orange-600">
                 Welcome to Admin Dashboard
@@ -53,7 +53,7 @@
                 >
                     <div>
                         <p class="text-gray-500 font-medium text-sm">
-                            Pending Orders
+                            Pending Ords
                         </p>
                         <p
                             class="text-2xl font-semibold font-poppins text-blue-500"

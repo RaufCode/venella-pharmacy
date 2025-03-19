@@ -1,5 +1,5 @@
 <script setup>
-    import SignIn from "@/components/SignIn.vue";
+    import SignIn from "@/components/auth/SignIn.vue";
 </script>
 
 <template>

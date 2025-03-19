@@ -1,15 +1,18 @@
 <script setup>
     import { ref } from "vue";
-    // import OverView from "./OverView.vue";
+    import OverView from "./OverView.vue";
     import MedicationHero from "./MedicationHero.vue";
+
+    const activeTab = ref("overview");
+    const hamburger = ref(false);
 </script>
 <template>
     <div class="md:flex md:justify-start md:items-center">
         <div
-            class="sticky top-0 md:hidden p-3 text-sm flex items-center justify-between bg-white shadow-md z-40"
+            class="sticky top-0 md:hidden p-3 text-sm flex items-center justify-between bg-white shadow-md z-40 w-full"
         >
             <div class="flex items-center gap-4">
-                <p>
+                <p @click="hamburger = !hamburger">
                     <i class="pi pi-align-left"></i>
                 </p>
                 <h1 class="font-styleScript text-2xl text-orange-600">
@@ -23,7 +26,8 @@
             </button>
         </div>
         <aside
-            class="hidden w-4/5 z-50 -mt-14 h-screen p-2 bg-gray-50 sticky top-0 md:mt-0 md:block md:max-w-[210px] lg:max-w-[220px] border-r-2 border-gray-200"
+            :class="{ block: hamburger, hidden: !hamburger }"
+            class="w-4/5 z-50 h-screen p-2 bg-gray-50 fixed top-0 md:block md:static md:max-w-[210px] lg:max-w-[220px] border-r-2 border-gray-200 text-gray-800"
         >
             <div class="flex justify-end gap-10 items-center pt-2 md:block">
                 <h1
@@ -31,17 +35,31 @@
                 >
                     Dashboard
                 </h1>
-                <p class="pr-2 md:hidden">
+                <p @click="hamburger = !hamburger" class="pr-2 md:hidden">
                     <i class="pi pi-align-right"></i>
                 </p>
             </div>
-            <button class="a-dashboard-navs">
+            <button
+                @click="activeTab = 'overview'"
+                class="a-dashboard-navs"
+                :class="{
+                    'bg-orange-600 text-white hover:bg-orange-500':
+                        activeTab === 'overview',
+                }"
+            >
                 <p>
                     <i class="pi pi-home"></i>
                 </p>
                 Overview
             </button>
-            <button class="a-dashboard-navs">
+            <button
+                @click="activeTab = 'medication'"
+                class="a-dashboard-navs"
+                :class="{
+                    'bg-orange-600 text-white hover:bg-orange-500':
+                        activeTab === 'medication',
+                }"
+            >
                 <p><i class="pi pi-shield"></i></p>
                 Medications
             </button>
@@ -70,8 +88,8 @@
         </aside>
         <div class="bg-gray-50 w-full">
             <div class="min-h-screen max-w-[1440px]">
-                <!-- <OverView /> -->
-                <MedicationHero />
+                <OverView v-if="activeTab === 'overview'" />
+                <MedicationHero v-if="activeTab === 'medication'" />
             </div>
         </div>
     </div>

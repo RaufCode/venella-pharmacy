@@ -5,35 +5,47 @@ This is the backend API for the pharmacy e-commerce platform, built using **Expr
 ## Setup Instructions
 
 ### Prerequisites
+
 Ensure you have the following installed:
-- Node.js (v16+ recommended)
-- MySQL
+
+-   Node.js (v16+ recommended)
+-   MySQL
 
 ### Installation Steps
 
 1. Install dependencies:
-   ```bash
-   npm install
-   ```
 
-2. Run database migrations:
-   ```bash
-   npx sequelize-cli db:migrate
-   ```
+    ```bash
+    npm install
+    ```
 
-3. Start the development server:
-   ```bash
-   node index.js
-   ```
-   The server will run on `http://localhost:3000`.
+2. Create database:
+
+    ```bash
+    npx sequelize-cli db:create
+    ```
+
+3. Run database migrations:
+
+    ```bash
+    npx sequelize-cli db:migrate
+    ```
+
+4. Start the development server:
+    ```bash
+    node index.js
+    ```
+    The server will run on `http://localhost:3000`.
 
 ## Authentication Endpoints
 
 ### Register a new user
+
 ```
 POST /api/auth/register
 ```
-- **Request Body:**
+
+-   **Request Body:**
     ```json
     {
         "first_name": "string",
@@ -43,34 +55,35 @@ POST /api/auth/register
         "role": "string"
     }
     ```
-- **Response:**
+-   **Response:**
     ```json
     {
-        "message": "User registered successfully",
+        "message": "User registered successfully"
     }
     ```
 
 ### Login
+
 ```
 POST /api/auth/login
 ```
-- **Request Body:**
+
+-   **Request Body:**
     ```json
     {
         "email": "string",
         "password": "string"
     }
     ```
-- **Response:**
+-   **Response:**
     ```json
     {
         "token": "JWT token"
     }
     ```
 
-
 ## Notes
-- The backend expects JSON requests for most operations.
-- Authentication requires sending a JWT token in the `Authorization` header (`Bearer <token>`).
-- When making requests, always check the response structure to correctly handle success and error messages.
 
+-   The backend expects JSON requests for most operations.
+-   Authentication requires sending a JWT token in the `Authorization` header (`Bearer <token>`).
+-   When making requests, always check the response structure to correctly handle success and error messages.

@@ -1,6 +1,6 @@
 <script setup>
     import { ref } from "vue";
-    import btn from "@/components/ui/btn.vue";
+    import btn from "@/components/ui/Btn.vue";
     import InputField from "@/components/ui/InputField.vue";
 
     const addModal = ref(false);
