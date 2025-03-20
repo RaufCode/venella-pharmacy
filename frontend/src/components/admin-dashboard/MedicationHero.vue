@@ -9,9 +9,7 @@
 <template>
     <div class="w-full px-3">
         <div class="pt-2 md:pt-5">
-            <h1
-                class="text-2xl font-poppins font-semibold text-blue-600 md:text-3xl"
-            >
+            <h1 class="text-lg font-poppins font-semibold text-blue-600">
                 Medications
             </h1>
             <p class="tracking-widest text-sm mb-3">

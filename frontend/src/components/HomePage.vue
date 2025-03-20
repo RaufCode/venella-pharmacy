@@ -22,7 +22,7 @@
                         Sign up
                     </router-link>
                     <router-link
-                        to="/signin"
+                        to="/dashboard"
                         class="bg-orange-600 block font-medium py-1 px-3 rounded text-white hover:bg-orange-500"
                     >
                         Sign in
@@ -71,7 +71,7 @@
             <h1
                 class="py-3 text-lg font-medium text-orange-600 text-center md:font-semibold"
             >
-                Featured Product
+                Top Picks for You
             </h1>
             <div
                 class="px-4 mb-5 mx-auto grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 md:px-6 md:gap-5 md:mb-8 max-w-[1440px]"
@@ -183,11 +183,16 @@
             <h2 class="text-lg font-semibold text-orange-600 my-2">
                 Fast & Reliable Delivery
             </h2>
-            <p class="text-gray-600">
+            <p class="text-gray-600 mb-3">
                 Get your medicines delivered to your doorstep in no time
             </p>
+            <img
+                src="../../public/delivery.png"
+                alt="a picture of a delivery man"
+                class="rounded-md w-full md:w-[500px] mx-auto"
+            />
             <button
-                class="mt-4 px-4 py-2 bg-orange-600 text-white rounded-md font-semibold hover:bg-orange-700 transition"
+                class="px-4 py-2 bg-orange-600 text-white rounded-md font-semibold hover:bg-orange-700 transition"
             >
                 Order Now
             </button>
@@ -204,19 +209,19 @@
                         Let's Connect
                     </h2>
                     <p
-                        class="text-gray-400 text-sm flex items-center gap-3 pb-2"
+                        class="text-gray-400 text-sm flex items-center gap-3 pb-4"
                     >
                         <i class="pi pi-ethereum block text-white"></i>
                         Market junction, Kumasi, Ghana
                     </p>
                     <p
-                        class="text-gray-400 text-sm flex items-center gap-3 pb-2"
+                        class="text-gray-400 text-sm flex items-center gap-3 pb-4"
                     >
                         <i class="pi pi-phone block text-white"></i> +233 XXX
                         XXX XXX
                     </p>
                     <p
-                        class="text-gray-400 text-sm flex items-center gap-3 pb-2"
+                        class="text-gray-400 text-sm flex items-center gap-3 pb-4"
                     >
                         <i class="pi pi-whatsapp block text-white"></i> +233 XXX
                         XXX XXX
@@ -233,7 +238,7 @@
                         Social Media Links
                     </h2>
                     <div class="flex gap-4 w-max">
-                        <a href="#" class="text-gray-400 hover:text-white">
+                        <a href="" class="text-gray-400 hover:text-white">
                             <i class="pi pi-facebook text-xl"></i>
                         </a>
                         <a href="#" class="text-gray-400 hover:text-white">
@@ -275,7 +280,7 @@
                         <textarea
                             rows="3"
                             placeholder="Your Message"
-                            class="w-full p-2 rounded-md bg-transparent border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+                            class="w-full p-2 rounded-md bg-transparent border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-white resize-none"
                         ></textarea>
                         <Btn btnName="Send Messsage" />
                     </form>
@@ -284,10 +289,8 @@
         </div>
         <!--CopyRightSection-->
 
-        <div
-            class="border-gray-700 py-4 text-center text-gray-400 text-sm bg-gray-800"
-        >
-            <p>&copy; Vanelle Pharmacy. All Rights Reserved.</p>
+        <div class="py-4 text-center text-gray-400 text-sm bg-gray-800">
+            <p>&copy; Vanelle Pharmacy - All Rights Reserved</p>
         </div>
         <div class="bg-gray-800 px-4 md:px-6 lg:px-10 pt-5">
             <div
