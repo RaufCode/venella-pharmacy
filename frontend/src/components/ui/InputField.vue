@@ -1,4 +1,5 @@
 <script setup>
+    defineEmits(["update:modelValue"]);
     defineProps({
         labelname: {
             type: String,
@@ -9,7 +10,7 @@
             type: String,
             default: "text",
         },
-        modelName: {
+        modelValue: {
             type: String,
             default: "",
         },
@@ -21,8 +22,8 @@
         {{ labelname }}
         <input
             :type="type"
-            :value="modelName"
-            @input="$emit('update:modelname', $event.target.value)"
+            :value="modelValue"
+            @input="$emit('update:modelValue', $event.target.value)"
             required
             autocomplete="on"
             class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10 bg-transparent"

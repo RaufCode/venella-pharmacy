@@ -1,12 +1,26 @@
 <script setup>
     import InputField from "@/components/ui/InputField.vue";
-    import btn from "@/components/ui/Btn.vue";
-    import { ref, reactive } from "vue";
+    import Btn from "@/components/ui/Btn.vue"; // Fix casing issue in Btn import
+    import { reactive } from "vue";
+    import { useAuthStore } from "@/stores/auth"; // Import auth store
+    import { useRouter } from "vue-router"; // Import Vue Router
+
+    const authStore = useAuthStore(); // Initialize auth store
+    const router = useRouter(); // Initialize router
 
     const form = reactive({
         email: "",
         password: "",
     });
+
+    const login = async () => {
+        console.log(form); // Log form data
+        try {
+            await authStore.login(form); // Call the store's login action
+        } catch (error) {
+            console.error("Login failed:", error.message);
+        }
+    };
 </script>
 <template>
     <div class="lg:flex lg:h-screen lg:w-screen">
@@ -14,7 +28,7 @@
             class="w-screen min-h-screen flex justify-center items-center lg:w-1/2"
         >
             <form
-                @submit.prevent="formValidation"
+                @submit.prevent="login"
                 method="post"
                 class="max-w-[370px] p-5 shadow w-11/12 mx-auto"
             >
@@ -29,10 +43,10 @@
                     labelname="Password"
                     type="password"
                 />
-                <btn btnName="Sign in" />
+                <Btn btnName="Sign in" />
                 <p class="mt-3 text-sm text-gray-700 text-">
                     Don't have an account?
-                    <router-link to="/signup" class="text-orange-700 text-xs"
+                    <router-link to="/register" class="text-orange-700 text-xs"
                         >Sign up</router-link
                     >
                 </p>

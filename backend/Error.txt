@@ -1,0 +1,27 @@
+Access to XMLHttpRequest at 'http://localhost:3000/api/register' from origin 'http://localhost:5173' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this errorAI
+SignUp.vue?t=1743445679997:54 Registration failed: Registration failed
+validation @ SignUp.vue?t=1743445679997:54
+await in validation
+cache.<computed>.cache.<computed> @ chunk-U3LI7FBV.js?v=ef7746f1:12160
+callWithErrorHandling @ chunk-U3LI7FBV.js?v=ef7746f1:2263
+callWithAsyncErrorHandling @ chunk-U3LI7FBV.js?v=ef7746f1:2270
+invoker @ chunk-U3LI7FBV.js?v=ef7746f1:11202Understand this errorAI
+auth.js?t=1743445496807:38
+
+           POST http://localhost:3000/api/register net::ERR_FAILED
+
+dispatchXhrRequest @ axios.js?v=ef7746f1:1637
+xhr @ axios.js?v=ef7746f1:1517
+dispatchRequest @ axios.js?v=ef7746f1:1992
+\_request @ axios.js?v=ef7746f1:2213
+request @ axios.js?v=ef7746f1:2104
+httpMethod @ axios.js?v=ef7746f1:2242
+wrap @ axios.js?v=ef7746f1:8
+register @ auth.js?t=1743445496807:38
+wrappedAction @ pinia.js?v=ef7746f1:1107
+store.<computed> @ pinia.js?v=ef7746f1:785
+validation @ SignUp.vue?t=1743445679997:52
+cache.<computed>.cache.<computed> @ chunk-U3LI7FBV.js?v=ef7746f1:12160
+callWithErrorHandling @ chunk-U3LI7FBV.js?v=ef7746f1:2263
+callWithAsyncErrorHandling @ chunk-U3LI7FBV.js?v=ef7746f1:2270
+invoker @ chunk-U3LI7FBV.js?v=ef7746f1:11202Understand this errorAI

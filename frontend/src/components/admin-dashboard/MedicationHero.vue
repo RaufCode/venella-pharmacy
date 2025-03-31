@@ -19,7 +19,7 @@
         <div
             class="flex justify-start gap-2 items-center text-sm w-full max-w-[500px] relative"
         >
-            <label class="w-4/5">
+            <!-- <label class="w-4/5">
                 <input
                     type="search"
                     placeholder="Search for medicine"
@@ -30,38 +30,26 @@
                 class="bg-orange-600 h-10 text-white rounded px-2 hover:bg-orange-500 shadow-md transition-all duration-500"
             >
                 Search
-            </button>
+            </button> -->
             <div
                 class="hidden w-full absolute top-11 bg-gray-50 shadow p-2 z-20"
             >
                 <h1>Medication List</h1>
             </div>
         </div>
-        <div
-            class="flex justify-start items-center flex-wrap gap-3 mt-3 md:mt-4 md:gap-5"
-        >
+        <div class="">
             <button
                 @click="addModal = true"
                 class="bg-blue-600 h-10 w-32 block text-white text-sm px-2 hover:bg-blue-500 shadow-md transition-all duration-500 md:w-36"
             >
                 Add Medication
             </button>
-            <button
-                class="bg-green-600 h-10 w-32 block text-white text-sm px-2 hover:bg-green-500 shadow-md transition-all duration-500 md:w-36"
-            >
-                Edit Medication
-            </button>
-            <button
-                class="bg-red-600 h-10 w-32 block text-white text-sm px-2 hover:bg-red-500 shadow-md transition-all duration-500 md:w-36"
-            >
-                Del Medication
-            </button>
         </div>
     </div>
     <!--Add Medication Modal-->
     <div
         v-if="addModal"
-        class="bg-black bg-opacity-50 inset-0 w-full h-screen flex items-center justify-center fixed top-0 left-0 z-50"
+        class="bg-black bg-opacity-50 inset-0 w-full h-screen flex items-center justify-center fixed top-0 left-0 z-50 max-w-[1440px]"
     >
         <form class="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-4">
             <div class="flex justify-between items-center border-b-2 pb-2">

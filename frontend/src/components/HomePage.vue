@@ -16,14 +16,14 @@
                 </h1>
                 <div class="flex gap-2 items-center md:gap-4">
                     <router-link
-                        to="/signup"
-                        class="bg-orange-600 block font-medium py-1 px-3 rounded text-white hover:bg-orange-500"
+                        to="/register"
+                        class="bg-orange-600 block font-medium py-1 px-3 text-white text-base hover:bg-orange-500"
                     >
                         Sign up
                     </router-link>
                     <router-link
-                        to="/dashboard"
-                        class="bg-orange-600 block font-medium py-1 px-3 rounded text-white hover:bg-orange-500"
+                        to="/login"
+                        class="bg-orange-600 block font-medium py-1 px-3 text-white text-base hover:bg-orange-500"
                     >
                         Sign in
                     </router-link>
@@ -74,108 +74,113 @@
                 Top Picks for You
             </h1>
             <div
-                class="px-4 mb-5 mx-auto grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4 md:px-6 md:gap-5 md:mb-8 max-w-[1440px]"
+                class="px-4 mb-5 mx-auto grid grid-cols-2 gap-3 lg:grid-cols-4 md:px-6 md:gap-5 md:mb-8 max-w-[1440px]"
             >
-                <router-link to="/signup"
-                    ><div
-                        class="bg-gray-500 bg-[url('/public/drug1.jpg')] bg-no-repeat bg-cover p-1 rounded-xl"
+                <div
+                    class="bg-[url('/drug1.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                >
+                    <div
+                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
                     >
-                        <div
-                            class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                        >
-                            <h1 class="text-center text-white p-1">
+                        <h1 class="text-center text-white p-1">
+                            <router-link to="/login" class="block">
                                 Pain Relief
-                            </h1>
-                        </div>
+                            </router-link>
+                        </h1>
                     </div>
-                </router-link>
-                <router-link to="/signup"
-                    ><div
-                        class="bg-gray-500 bg-[url('/public/drug2.jpg')] bg-no-repeat bg-cover p-1 rounded-xl"
+                </div>
+                <div
+                    class="bg-gray-500 bg-[url('/drug2.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                >
+                    <div
+                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
                     >
-                        <div
-                            class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                        >
-                            <h1 class="text-center text-white p-1">
+                        <h1 class="text-center text-white p-1">
+                            <router-link to="/login" class="block">
                                 Cold & Flu
-                            </h1>
-                        </div>
+                            </router-link>
+                        </h1>
                     </div>
-                </router-link>
-                <router-link to="/signup"
-                    ><div
-                        class="bg-gray-500 bg-[url('/public/drug3.jpg')] bg-no-repeat bg-cover p-1 rounded-xl"
+                </div>
+                <div
+                    class="bg-gray-500 bg-[url('/drug3.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                >
+                    <div
+                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
                     >
-                        <div
-                            class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                        >
-                            <h1 class="text-center text-white p-1">
+                        <h1 class="text-center text-white p-1">
+                            <router-link to="/login" class="block">
                                 Supplements
-                            </h1>
-                        </div>
+                            </router-link>
+                        </h1>
                     </div>
-                </router-link>
-                <router-link to="/signup"
-                    ><div
-                        class="bg-gray-500 bg-[url('/public/drug4.jpg')] bg-no-repeat bg-cover p-1 rounded-xl"
+                </div>
+                <div
+                    class="bg-gray-500 bg-[url('/drug4.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                >
+                    <div
+                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
                     >
-                        <div
-                            class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                        >
-                            <h1 class="text-center text-white p-1">
+                        <h1 class="text-center text-white p-1">
+                            <router-link to="/login" class="block">
                                 Antibiotics
-                            </h1>
-                        </div>
+                            </router-link>
+                        </h1>
                     </div>
-                </router-link>
-                <router-link to="/signup"
-                    ><div
-                        class="bg-gray-500 bg-[url('/public/syrup1.jpg')] bg-no-repeat bg-cover p-1 rounded-xl"
+                </div>
+
+                <div
+                    class="bg-gray-500 bg-[url('/syrup1.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                >
+                    <div
+                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
                     >
-                        <div
-                            class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                        >
-                            <h1 class="text-center text-white p-1">
-                                Digestive Health
-                            </h1>
-                        </div>
+                        <h1 class="text-center text-white p-1">
+                            <router-link to="/login" class="block">
+                                Gut Flow
+                            </router-link>
+                        </h1>
                     </div>
-                </router-link>
-                <router-link to="/signup"
-                    ><div
-                        class="bg-gray-500 bg-[url('/public/vitamin.jpg')] bg-no-repeat bg-cover p-1 rounded-xl"
+                </div>
+                <div
+                    class="bg-gray-500 bg-[url('/vitamin.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                >
+                    <div
+                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
                     >
-                        <div
-                            class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                        >
-                            <h1 class="text-center text-white p-1">Vitamins</h1>
-                        </div>
+                        <h1 class="text-center text-white p-1">
+                            <router-link to="/login" class="block">
+                                Vitamins
+                            </router-link>
+                        </h1>
                     </div>
-                </router-link>
-                <router-link to="/signup"
-                    ><div
-                        class="bg-gray-500 bg-[url('/public/drug5.jpg')] bg-no-repeat bg-cover p-1 rounded-xl"
+                </div>
+                <div
+                    class="bg-gray-500 bg-[url('/drug5.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                >
+                    <div
+                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
                     >
-                        <div
-                            class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                        >
-                            <h1 class="text-center text-white p-1">Syrup</h1>
-                        </div>
+                        <h1 class="text-center text-white p-1">
+                            <router-link to="/login" class="block">
+                                Syrup
+                            </router-link>
+                        </h1>
                     </div>
-                </router-link>
-                <router-link to="/signup"
-                    ><div
-                        class="bg-gray-500 bg-[url('/public/skincare.jpg')] bg-no-repeat bg-cover p-1 rounded-xl"
+                </div>
+                <div
+                    class="bg-gray-500 bg-[url('/skincare.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                >
+                    <div
+                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
                     >
-                        <div
-                            class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                        >
-                            <h1 class="text-center text-white p-1">
+                        <h1 class="text-center text-white p-1">
+                            <router-link to="/login" class="block">
                                 Skin Care
-                            </h1>
-                        </div>
+                            </router-link>
+                        </h1>
                     </div>
-                </router-link>
+                </div>
             </div>
         </div>
         <!--DeliverySection-->
@@ -187,12 +192,12 @@
                 Get your medicines delivered to your doorstep in no time
             </p>
             <img
-                src="../../public/delivery.png"
+                src="../../delivery.png"
                 alt="a picture of a delivery man"
                 class="rounded-md w-full md:w-[500px] mx-auto"
             />
             <button
-                class="px-4 py-2 bg-orange-600 text-white rounded-md font-semibold hover:bg-orange-700 transition"
+                class="px-4 py-2 bg-orange-600 text-white text-base font-medium hover:bg-orange-700 transition"
             >
                 Order Now
             </button>
@@ -235,7 +240,7 @@
                     <h2
                         class="font-semibold text-sm text-blue-500 py-3 md:py-5"
                     >
-                        Social Media Links
+                        Join us on
                     </h2>
                     <div class="flex gap-4 w-max">
                         <a href="" class="text-gray-400 hover:text-white">

@@ -82,7 +82,7 @@
                 </div>
             </router-link>
         </div>
-        <div>
+        <!-- <div>
             <h1
                 class="text-center my-3 font-styleScript font-medium text-orange-600 md:text-left"
             >
@@ -107,6 +107,6 @@
                     >Manage Orders</router-link
                 >
             </div>
-        </div>
+        </div> -->
     </div>
 </template>

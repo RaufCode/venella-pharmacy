@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.8.4",
     "pinia": "^2.3.0",
     "primeicons": "^7.0.0",
     "venella-pharmacy": "file:",
