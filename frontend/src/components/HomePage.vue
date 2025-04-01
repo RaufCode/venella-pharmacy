@@ -13,6 +13,7 @@
                 </router-link>
                 <h1 class="hidden md:flex text-blue-600 font-medium">
                     <marquee>Venella Pharmacy</marquee>
+                    <!--I know marquee is deprecated though-->
                 </h1>
                 <div class="flex gap-2 items-center md:gap-4">
                     <router-link
