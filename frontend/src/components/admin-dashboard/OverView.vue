@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="p-3 h-screen overflow-y-scroll md:px-5">
+    <div class="p-3 min-h-screen overflow-y-scroll md:px-5">
         <div class="pt-10 md:pt-5">
             <h1 class="text-3xl font-styleScript text-orange-600">
                 Welcome to Admin Dashboard
