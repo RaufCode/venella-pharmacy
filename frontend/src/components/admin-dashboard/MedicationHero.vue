@@ -7,7 +7,7 @@
 </script>
 
 <template>
-    <div class="w-full px-3">
+    <div class="p-3 h-screen overflow-y-scroll md:px-5">
         <div class="pt-2 md:pt-5">
             <h1 class="text-lg font-poppins font-semibold text-blue-600">
                 Medications

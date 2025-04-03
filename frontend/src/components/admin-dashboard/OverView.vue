@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="p-3 min-h-screen md:px-5">
+    <div class="p-3 h-screen overflow-y-scroll md:px-5">
         <div class="pt-10 md:pt-5">
             <h1 class="text-3xl font-styleScript text-orange-600">
                 Welcome to Admin Dashboard
@@ -82,31 +82,5 @@
                 </div>
             </router-link>
         </div>
-        <!-- <div>
-            <h1
-                class="text-center my-3 font-styleScript font-medium text-orange-600 md:text-left"
-            >
-                Quick Actions
-            </h1>
-            <div
-                class="flex flex-col justify-start md:justify-between lg:justify-start md:flex-row gap-4"
-            >
-                <router-link
-                    to=""
-                    class="block py-2 px-4 text-white text-sm text-center tracking-wider bg-blue-500 w-44 mx-auto md:mx-0"
-                    >Add Medications</router-link
-                >
-                <router-link
-                    to=""
-                    class="block py-2 px-4 text-white text-sm text-center tracking-wider bg-red-500 w-44 mx-auto md:mx-0"
-                    >See Notifications</router-link
-                >
-                <router-link
-                    to=""
-                    class="block py-2 px-4 text-white text-sm text-center tracking-wider bg-purple-500 w-44 mx-auto md:mx-0"
-                    >Manage Orders</router-link
-                >
-            </div>
-        </div> -->
     </div>
 </template>

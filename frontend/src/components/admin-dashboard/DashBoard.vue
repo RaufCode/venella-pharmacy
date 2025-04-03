@@ -7,7 +7,7 @@
     const hamburger = ref(false);
 </script>
 <template>
-    <div class="md:flex md:justify-start md:items-center">
+    <div class="md:flex md:justify-start">
         <div
             class="sticky top-0 md:hidden p-3 text-sm flex items-center justify-between bg-white shadow-md z-40 w-full"
         >
@@ -26,8 +26,12 @@
             </button>
         </div>
         <aside
-            :class="{ block: hamburger, hidden: !hamburger }"
-            class="w-4/5 z-50 h-screen p-2 bg-gray-50 fixed top-0 md:block md:static md:max-w-[210px] lg:max-w-[220px] border-r-2 border-gray-200 text-gray-800"
+            :class="{
+                block: hamburger,
+                hidden: !hamburger,
+                'md:block md:static': true,
+            }"
+            class="w-4/5 z-50 h-screen p-2 bg-gray-50 fixed top-0 md:max-w-[210px] lg:max-w-[220px] border-r-2 border-gray-200 text-gray-800"
         >
             <div class="flex justify-end gap-10 items-center pt-2 md:block">
                 <h1
