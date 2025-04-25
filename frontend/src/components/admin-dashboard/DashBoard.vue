@@ -31,7 +31,7 @@
                 hidden: !hamburger,
                 'md:block md:static': true,
             }"
-            class="w-4/5 z-50 h-screen p-2 bg-gray-50 fixed top-0 md:max-w-[210px] lg:max-w-[220px] border-r-2 border-gray-200 text-gray-800"
+            class="w-4/5 z-50 bg-gray-50 fixed top-0 min-h-screen md:min-w-[210px] md:max-w-[210px] lg:min-w-[220px] lg:max-w-[220px] border-r-2 border-gray-200 text-gray-800"
         >
             <div class="flex justify-end gap-10 items-center pt-2 md:block">
                 <h1
@@ -91,7 +91,7 @@
             </button>
         </aside>
         <div class="bg-gray-50 w-full">
-            <div class="min-h-screen max-w-[1440px]">
+            <div class="">
                 <OverView v-if="activeTab === 'overview'" />
                 <MedicationHero v-if="activeTab === 'medication'" />
             </div>

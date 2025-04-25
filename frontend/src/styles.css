@@ -16,5 +16,5 @@
 }
 
 .a-dashboard-navs{
-    @apply w-full flex items-center font-medium  gap-4 text-sm pl-3 py-1 my-1 md:py-2 md:pl-5 rounded hover:bg-gray-200 transition-all duration-700;
+    @apply w-full flex items-center font-medium  gap-5 text-sm pl-3 py-1 my-1 md:py-2 md:pl-5 hover:bg-gray-200 transition-all duration-700;
 }
