@@ -4,16 +4,17 @@
 
 <template>
     <div class="h-screen overflow-y-auto w-full">
-        <div class="p-3 md:px-5 max-w-[1440px] mx-auto">
-            <div class="pt-10 md:pt-5">
-                <h1 class="text-3xl font-styleScript text-orange-600">
-                    Welcome to Admin Dashboard
+        <div class="max-w-[1440px] mx-auto">
+            <div
+                class="w-full sticky top-0 z-40 bg-gray-50 shadow-md flex justify-between items-center p-3"
+            >
+                <h1 class="text-gray-600 text-lg font-semibold md:text-2xl">
+                    Welcome Mr.You
                 </h1>
-                <p class="tracking-widest text-sm mb-3">
-                    Manage your pharmacy operations efficiently and effectively.
-                </p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 p-3 h-screen"
+            >
                 <router-link to="">
                     <div
                         class="flex items-center justify-between rounded-lg shadow hover:shadow-md transition-shadow p-6 bg-white"

@@ -2,6 +2,8 @@
     import { ref } from "vue";
     import OverView from "./OverView.vue";
     import MedicationHero from "./MedicationHero.vue";
+    import SalesHero from "./SalesHero.vue";
+    import StaffHero from "./StaffHero.vue";
 
     const activeTab = ref("overview");
     const hamburger = ref(false);
@@ -9,7 +11,7 @@
 <template>
     <div class="md:flex md:justify-start">
         <div
-            class="sticky top-0 md:hidden p-3 text-sm flex items-center justify-between bg-white shadow-md z-40 w-full"
+            class="sticky top-0 md:hidden p-3 text-sm flex items-center justify-between bg-white shadow-md z-50 w-full"
         >
             <div class="flex items-center gap-4">
                 <p @click="hamburger = !hamburger">
@@ -67,13 +69,27 @@
                 <p><i class="pi pi-shield"></i></p>
                 Medications
             </button>
-            <button class="a-dashboard-navs">
-                <p><i class="pi pi-shopping-cart"></i></p>
-                Orders
-            </button>
-            <button class="a-dashboard-navs">
+            <button
+                @click="activeTab = 'sales'"
+                class="a-dashboard-navs"
+                :class="{
+                    'bg-orange-600 text-white hover:bg-orange-500':
+                        activeTab === 'sales',
+                }"
+            >
                 <p><i class="pi pi-book"></i></p>
                 Sales
+            </button>
+            <button
+                @click="activeTab = 'staff'"
+                class="a-dashboard-navs"
+                :class="{
+                    'bg-orange-600 text-white hover:bg-orange-500':
+                        activeTab === 'staff',
+                }"
+            >
+                <p><i class="pi pi-shopping-cart"></i></p>
+                Staff
             </button>
             <button class="a-dashboard-navs">
                 <p>
@@ -81,19 +97,21 @@
                 </p>
                 Notifications
             </button>
-            <button
-                class="mt-16 py-2 w-full pl-3 rounded font-medium text-sm flex gap-4 text-gray-800 md:pl-5 md:mt-20 hover:bg-gray-100 focus:bg-orange-600 focus:text-white"
-            >
-                <router-link to="">
+            <router-link to="/login">
+                <button
+                    class="mt-16 py-2 w-full pl-3 rounded font-medium text-sm flex items-center gap-4 text-gray-800 md:pl-5 md:mt-20 hover:bg-gray-100 focus:bg-orange-600 focus:text-white"
+                >
                     <i class="pi pi-sign-out"></i>
-                </router-link>
-                Logout
-            </button>
+                    Logout
+                </button>
+            </router-link>
         </aside>
         <div class="bg-gray-50 w-full">
             <div class="">
                 <OverView v-if="activeTab === 'overview'" />
                 <MedicationHero v-if="activeTab === 'medication'" />
+                <SalesHero v-if="activeTab === 'sales'" />
+                <StaffHero v-if="activeTab === 'staff'" />
             </div>
         </div>
     </div>

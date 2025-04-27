@@ -1,0 +1,498 @@
+<script setup>
+    import { ref } from "vue";
+    import Btn from "@/components/ui/Btn.vue";
+    import InputField from "@/components/ui/InputField.vue";
+
+    const addModal = ref(false);
+
+    const medications = [
+        {
+            id: 1,
+            name: "Paracetamol",
+            quantity: 120,
+            category: "Pain Relief",
+            type: "Tablet",
+            expiryDate: "2026-02-15",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 2,
+            name: "Amoxicillin",
+            quantity: 80,
+            category: "Antibiotic",
+            type: "Capsule",
+            expiryDate: "2025-10-01",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 3,
+            name: "Cetirizine",
+            quantity: 200,
+            category: "Allergy",
+            type: "Tablet",
+            expiryDate: "2026-06-30",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 4,
+            name: "Ibuprofen",
+            quantity: 150,
+            category: "Pain Relief",
+            type: "Tablet",
+            expiryDate: "2025-08-20",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 5,
+            name: "Metformin",
+            quantity: 90,
+            category: "Diabetes",
+            type: "Tablet",
+            expiryDate: "2027-01-10",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 6,
+            name: "Salbutamol",
+            quantity: 50,
+            category: "Asthma",
+            type: "Inhaler",
+            expiryDate: "2025-11-05",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 7,
+            name: "Loratadine",
+            quantity: 100,
+            category: "Allergy",
+            type: "Syrup",
+            expiryDate: "2026-03-18",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 8,
+            name: "Omeprazole",
+            quantity: 110,
+            category: "Digestive",
+            type: "Capsule",
+            expiryDate: "2026-09-22",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 9,
+            name: "Dextromethorphan",
+            quantity: 70,
+            category: "Cough & Cold",
+            type: "Syrup",
+            expiryDate: "2025-12-31",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 10,
+            name: "Hydrochlorothiazide",
+            quantity: 60,
+            category: "Hypertension",
+            type: "Tablet",
+            expiryDate: "2026-07-12",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 11,
+            name: "Lisinopril",
+            quantity: 100,
+            category: "Hypertension",
+            type: "Tablet",
+            expiryDate: "2026-09-15",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 12,
+            name: "Metformin",
+            quantity: 200,
+            category: "Diabetes",
+            type: "Tablet",
+            expiryDate: "2027-01-10",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 13,
+            name: "Amoxicillin",
+            quantity: 150,
+            category: "Antibiotic",
+            type: "Capsule",
+            expiryDate: "2026-12-05",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 14,
+            name: "Cetirizine",
+            quantity: 80,
+            category: "Allergy",
+            type: "Tablet",
+            expiryDate: "2026-08-20",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 15,
+            name: "Ibuprofen",
+            quantity: 300,
+            category: "Pain Relief",
+            type: "Tablet",
+            expiryDate: "2027-03-18",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 16,
+            name: "Simvastatin",
+            quantity: 120,
+            category: "Cholesterol",
+            type: "Tablet",
+            expiryDate: "2026-11-01",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 17,
+            name: "Omeprazole",
+            quantity: 90,
+            category: "Acid Reflux",
+            type: "Capsule",
+            expiryDate: "2026-10-25",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 18,
+            name: "Paracetamol",
+            quantity: 500,
+            category: "Pain Relief",
+            type: "Tablet",
+            expiryDate: "2027-02-14",
+            isPrescriptionRequired: false,
+        },
+        {
+            id: 19,
+            name: "Azithromycin",
+            quantity: 60,
+            category: "Antibiotic",
+            type: "Tablet",
+            expiryDate: "2026-06-30",
+            isPrescriptionRequired: true,
+        },
+        {
+            id: 20,
+            name: "Salbutamol",
+            quantity: 40,
+            category: "Asthma",
+            type: "Inhaler",
+            expiryDate: "2026-09-07",
+            isPrescriptionRequired: true,
+        },
+    ];
+</script>
+
+<template>
+    <div
+        class="p-4 h-screen overflow-y-scroll overscroll-contain md:w-[555px] lg:w-auto transition-all duration-300"
+    >
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-black">
+                Medication Inventory
+            </h1>
+            <Btn
+                @click="addModal = true"
+                class="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+                Add Medication
+            </Btn>
+        </div>
+
+        <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-y-scroll"
+        >
+            <div class="overflow-x-auto h-[80svh]">
+                <table
+                    class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
+                >
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                            >
+                                Name
+                            </th>
+                            <th
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                            >
+                                Quantity
+                            </th>
+                            <th
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                            >
+                                Category
+                            </th>
+                            <th
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                            >
+                                Type
+                            </th>
+                            <th
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                            >
+                                Expiry Date
+                            </th>
+                            <th
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                            >
+                                Prescription Required
+                            </th>
+                            <th
+                                scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                            >
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody
+                        class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"
+                    >
+                        <tr
+                            v-for="medication in medications"
+                            :key="medication.id"
+                            class="hover:bg-gray-50 dark:hover:bg-gray-700"
+                        >
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
+                            >
+                                {{ medication.name }}
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300"
+                            >
+                                {{ medication.quantity }}
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300"
+                            >
+                                {{ medication.category }}
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300"
+                            >
+                                {{ medication.type }}
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300"
+                            >
+                                {{ medication.expiryDate }}
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300"
+                            >
+                                <span
+                                    :class="{
+                                        'px-2 inline-flex text-xs leading-5 font-semibold rounded-full': true,
+                                        'bg-green-100 text-green-800':
+                                            !medication.isPrescriptionRequired,
+                                        'bg-red-100 text-red-800':
+                                            medication.isPrescriptionRequired,
+                                    }"
+                                >
+                                    {{
+                                        medication.isPrescriptionRequired
+                                            ? "Yes"
+                                            : "No"
+                                    }}
+                                </span>
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-sm font-medium"
+                            >
+                                <button
+                                    class="text-blue-600 hover:text-blue-900 mr-3"
+                                >
+                                    Edit
+                                </button>
+                                <button class="text-red-600 hover:text-red-900">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur
+            deleniti numquam ipsum expedita molestiae ea assumenda reiciendis id
+            tenetur, laudantium, omnis soluta unde. Temporibus maiores beatae
+            minus consequuntur tempora non voluptatibus cupiditate quo,
+            reiciendis illum error, laboriosam quibusdam rem nostrum, fugiat
+            repellendus modi labore harum! Et reiciendis, corrupti eaque vel
+            ducimus tempora, asperiores doloremque, accusamus optio possimus
+            minus. Ipsam labore nobis amet earum consequuntur sit mollitia ut
+            natus corporis quae, aperiam saepe eum! Aspernatur libero
+            repellendus consequatur at tempora adipisci. Deserunt animi
+            adipisci, error repellendus dolorum natus nam, corporis quisquam
+            deleniti expedita, commodi harum porro eaque quos cum. Fugit harum
+            quia ratione nam. Quas ipsum fugiat cum est quo impedit ad voluptas
+            nesciunt mollitia ullam aliquid temporibus voluptatem dolore nulla
+            expedita quidem quae ex, totam, fugit tempora omnis deleniti amet
+            odio! Perferendis provident iste dolore quos eligendi qui, omnis
+            tempore iure eos? Nobis quis voluptas fugit inventore, voluptates id
+            quidem voluptatum, tempora suscipit quia, repudiandae nihil sunt
+            itaque illum laudantium veritatis aspernatur? Enim velit soluta non
+            veritatis, possimus doloribus hic debitis, ad explicabo quisquam
+            optio! Tenetur pariatur qui, ducimus similique natus nulla expedita
+            hic reprehenderit incidunt ipsa odit eaque voluptate sed, dolorem
+            nihil facere veritatis voluptatem libero soluta ratione odio? Sit
+            rerum nemo laborum ipsa nam maxime, excepturi soluta laboriosam ab
+            impedit odit maiores est aspernatur amet. Delectus iste dignissimos
+            quod ducimus consequuntur facilis ipsum hic consequatur cumque
+            veniam molestiae ratione vel illo sapiente dicta fugiat voluptates,
+            minus praesentium assumenda veritatis nesciunt cupiditate error
+            eveniet! Maxime at eos voluptatibus nobis adipisci consequatur
+            deleniti velit, modi quos totam veniam expedita repellat cupiditate
+            quo possimus eius quia ullam beatae magni quam quas laboriosam cum.
+            Mollitia minima possimus nihil iusto obcaecati itaque iure libero.
+            Maxime velit et, quasi eum, voluptas suscipit, nulla voluptate natus
+            reprehenderit molestiae dolorum fugit repellendus iusto unde
+            provident? Explicabo odit maiores molestias voluptatibus vitae
+            dolorem id suscipit, repellat eos dolor nesciunt natus, soluta rerum
+            reiciendis aliquid distinctio, saepe nulla! Autem laboriosam qui
+            sequi eius rem. Voluptatum natus dicta accusamus blanditiis a
+            distinctio amet reprehenderit provident omnis necessitatibus quas
+            sint incidunt, ea tempore porro eius, voluptatibus molestiae
+            cupiditate. Itaque obcaecati esse expedita quam omnis atque dolor
+            natus eaque ex perferendis? Odio optio minima, harum aperiam
+            repudiandae earum dicta eos ex quaerat illum minus ut inventore
+            saepe dignissimos cumque omnis, magnam, debitis numquam error vero?
+            Eos dolorem ratione saepe obcaecati officia minima repellendus iste
+            commodi. Sit, et omnis! Praesentium aut saepe labore, itaque
+            deleniti quisquam a minima? Facere officiis quos alias quis eligendi
+            mollitia excepturi explicabo quam dicta nostrum, adipisci sint enim
+            hic neque expedita, ad saepe eos. Id vel vitae distinctio.
+            Exercitationem, suscipit odit. Voluptas, ipsa est? Sit excepturi
+            sequi nam tenetur debitis sed quas fuga eaque ipsum voluptate,
+            aspernatur consectetur corrupti facilis harum ad ullam minima.
+            Veniam possimus, commodi sunt placeat totam voluptas nemo at
+            cupiditate nulla reprehenderit earum dicta eaque assumenda sint
+            aperiam, ratione quo modi enim est consequuntur voluptatem dolor
+            quidem dolorem ex. Molestiae accusantium eveniet et veniam, nisi ea
+            hic sit ex iure quaerat id provident.
+        </p>
+
+        <!-- Add Medication Modal -->
+        <div v-if="addModal" class="fixed inset-0 overflow-y-auto z-50">
+            <div
+                class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+            >
+                <div
+                    class="fixed inset-0 transition-opacity"
+                    aria-hidden="true"
+                >
+                    <div
+                        class="absolute inset-0 bg-gray-500 opacity-75"
+                        @click="addModal = false"
+                    ></div>
+                </div>
+                <span
+                    class="hidden sm:inline-block sm:align-middle sm:h-screen"
+                    aria-hidden="true"
+                    >&#8203;</span
+                >
+                <div
+                    class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+                >
+                    <div
+                        class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4"
+                    >
+                        <h3
+                            class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4"
+                        >
+                            Add New Medication
+                        </h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            <InputField
+                                label="Name"
+                                placeholder="Enter medication name"
+                            />
+                            <InputField
+                                label="Quantity"
+                                type="number"
+                                placeholder="Enter quantity"
+                            />
+                            <InputField
+                                label="Category"
+                                placeholder="Enter category"
+                            />
+                            <InputField
+                                label="Type"
+                                placeholder="Enter type (Tablet, Capsule, etc.)"
+                            />
+                            <InputField label="Expiry Date" type="date" />
+                            <div class="flex items-center">
+                                <input
+                                    id="prescription-required"
+                                    type="checkbox"
+                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                />
+                                <label
+                                    for="prescription-required"
+                                    class="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                                >
+                                    Prescription Required
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+                    >
+                        <Btn
+                            type="button"
+                            class="bg-blue-600 hover:bg-blue-700 text-white sm:ml-3 sm:w-auto sm:text-sm"
+                        >
+                            Save
+                        </Btn>
+                        <Btn
+                            type="button"
+                            @click="addModal = false"
+                            class="mt-3 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                        >
+                            Cancel
+                        </Btn>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+        .md\:pl-64 {
+            padding-left: 1rem;
+        }
+    }
+
+    /* Dark mode table styling */
+    .dark .bg-gray-50 {
+        background-color: #374151;
+    }
+    .dark .bg-white {
+        background-color: #1f2937;
+    }
+    .dark .text-gray-900 {
+        color: #f3f4f6;
+    }
+    .dark .text-gray-500 {
+        color: #9ca3af;
+    }
+</style>
