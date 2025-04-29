@@ -1,3 +1,33 @@
-node_modules/
-npm-debug.log
-yarn-error.log
+
+# Environment variables
+.env
+venv
+
+# Logs
+logs/
+*.log
+
+# Build output
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.swp
+
+# IDE specific files
+.vscode/
+.idea/
+*.iml
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+
+# Django specific
+db.sqlite3
+/media/
+staticfiles/
