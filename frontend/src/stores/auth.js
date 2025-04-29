@@ -17,7 +17,7 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     async login(credentials) {
       try {
-        const response = await axios.post("/api/login", credentials);
+        const response = await axios.post("/api/auth/login", credentials);
         this.token = response.data.token;
         this.user = response.data.user;
         localStorage.setItem("token", this.token);
@@ -35,7 +35,7 @@ export const useAuthStore = defineStore("auth", {
 
     async register(credentials) {
       try {
-        await axios.post("/api/register", credentials);
+        await axios.post("/api/auth/register", credentials);
         router.push("/login"); // Redirect after registration
       } catch (error) {
         throw new Error(error.response?.data?.message || "Registration failed");
