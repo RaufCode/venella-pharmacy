@@ -40,10 +40,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "drf_spectacular",
     "core.apps.CoreConfig",
     "products.apps.ProductsConfig",
     "orders.apps.OrdersConfig",
+    "drf_spectacular",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "phonenumber_field",
+    "corsheaders",
 ]
 
 REST_FRAMEWORK = {
