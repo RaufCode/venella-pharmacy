@@ -3,96 +3,186 @@
     import InputField from "@/components/ui/InputField.vue";
     import Btn from "@/components/ui/Btn.vue";
 
-    const medications = [
+    const medicines = [
         {
-            id: 1,
-            name: "Paracetamol",
-            quantity: 120,
-            category: "Pain Relief",
-            type: "Tablet",
-            expiryDate: "2026-02-15",
-            isPrescriptionRequired: false,
-        },
-        {
-            id: 2,
-            name: "Amoxicillin",
-            quantity: 80,
-            category: "Antibiotic",
-            type: "Capsule",
-            expiryDate: "2025-10-01",
-            isPrescriptionRequired: true,
-        },
-        {
-            id: 3,
-            name: "Cetirizine",
-            quantity: 200,
-            category: "Allergy",
-            type: "Tablet",
-            expiryDate: "2026-06-30",
-            isPrescriptionRequired: false,
-        },
-        {
-            id: 4,
-            name: "Ibuprofen",
-            quantity: 150,
-            category: "Pain Relief",
-            type: "Tablet",
-            expiryDate: "2025-08-20",
-            isPrescriptionRequired: false,
-        },
-        {
-            id: 5,
-            name: "Metformin",
-            quantity: 90,
-            category: "Diabetes",
-            type: "Tablet",
-            expiryDate: "2027-01-10",
-            isPrescriptionRequired: true,
-        },
-        {
-            id: 6,
-            name: "Salbutamol",
-            quantity: 50,
-            category: "Asthma",
-            type: "Inhaler",
-            expiryDate: "2025-11-05",
-            isPrescriptionRequired: true,
-        },
-        {
-            id: 7,
-            name: "Loratadine",
+            medicineName: "Amoxicillin",
+            batchNumber: "AMX202401",
             quantity: 100,
-            category: "Allergy",
-            type: "Syrup",
-            expiryDate: "2026-03-18",
-            isPrescriptionRequired: false,
+            costPrice: 2.5,
+            sellingPrice: 5.0,
+            category: "Capsule",
+            antibiotic: true,
+            manufacturingDate: "01/15/2024",
+            expiryDate: "01/15/2026",
+            image: null,
         },
         {
-            id: 8,
-            name: "Omeprazole",
+            medicineName: "Paracetamol",
+            batchNumber: "PCM202402",
+            quantity: 200,
+            costPrice: 1.0,
+            sellingPrice: 2.0,
+            category: "Tablet",
+            antibiotic: false,
+            manufacturingDate: "02/10/2024",
+            expiryDate: "02/10/2026",
+            image: null,
+        },
+        {
+            medicineName: "Ciprofloxacin",
+            batchNumber: "CIP202403",
+            quantity: 150,
+            costPrice: 3.0,
+            sellingPrice: 6.0,
+            category: "Tablet",
+            antibiotic: true,
+            manufacturingDate: "03/05/2024",
+            expiryDate: "03/05/2026",
+            image: null,
+        },
+        {
+            medicineName: "Ibuprofen",
+            batchNumber: "IBU202404",
+            quantity: 180,
+            costPrice: 1.2,
+            sellingPrice: 2.5,
+            category: "Tablet",
+            antibiotic: false,
+            manufacturingDate: "04/01/2024",
+            expiryDate: "04/01/2026",
+            image: null,
+        },
+        {
+            medicineName: "Azithromycin",
+            batchNumber: "AZI202405",
+            quantity: 90,
+            costPrice: 4.0,
+            sellingPrice: 8.0,
+            category: "Tablet",
+            antibiotic: true,
+            manufacturingDate: "05/10/2024",
+            expiryDate: "05/10/2026",
+            image: null,
+        },
+        {
+            medicineName: "Metronidazole",
+            batchNumber: "MET202406",
+            quantity: 120,
+            costPrice: 2.0,
+            sellingPrice: 4.0,
+            category: "Tablet",
+            antibiotic: true,
+            manufacturingDate: "06/15/2024",
+            expiryDate: "06/15/2026",
+            image: null,
+        },
+        {
+            medicineName: "Cetirizine",
+            batchNumber: "CET202407",
+            quantity: 250,
+            costPrice: 0.8,
+            sellingPrice: 1.5,
+            category: "Tablet",
+            antibiotic: false,
+            manufacturingDate: "07/01/2024",
+            expiryDate: "07/01/2026",
+            image: null,
+        },
+        {
+            medicineName: "Erythromycin",
+            batchNumber: "ERY202408",
+            quantity: 130,
+            costPrice: 3.5,
+            sellingPrice: 7.0,
+            category: "Tablet",
+            antibiotic: true,
+            manufacturingDate: "08/05/2024",
+            expiryDate: "08/05/2026",
+            image: null,
+        },
+        {
+            medicineName: "Loratadine",
+            batchNumber: "LOR202409",
+            quantity: 175,
+            costPrice: 1.1,
+            sellingPrice: 2.2,
+            category: "Tablet",
+            antibiotic: false,
+            manufacturingDate: "09/10/2024",
+            expiryDate: "09/10/2026",
+            image: null,
+        },
+        {
+            medicineName: "Doxycycline",
+            batchNumber: "DOX202410",
+            quantity: 95,
+            costPrice: 2.8,
+            sellingPrice: 5.6,
+            category: "Capsule",
+            antibiotic: true,
+            manufacturingDate: "10/15/2024",
+            expiryDate: "10/15/2026",
+            image: null,
+        },
+        {
+            medicineName: "Omeprazole",
+            batchNumber: "OME202411",
+            quantity: 160,
+            costPrice: 1.9,
+            sellingPrice: 3.8,
+            category: "Capsule",
+            antibiotic: false,
+            manufacturingDate: "11/05/2024",
+            expiryDate: "11/05/2026",
+            image: null,
+        },
+        {
+            medicineName: "Clarithromycin",
+            batchNumber: "CLA202412",
             quantity: 110,
-            category: "Digestive",
-            type: "Capsule",
-            expiryDate: "2026-09-22",
-            isPrescriptionRequired: true,
+            costPrice: 4.2,
+            sellingPrice: 8.4,
+            category: "Tablet",
+            antibiotic: true,
+            manufacturingDate: "12/01/2024",
+            expiryDate: "12/01/2026",
+            image: null,
         },
         {
-            id: 9,
-            name: "Dextromethorphan",
-            quantity: 70,
-            category: "Cough & Cold",
-            type: "Syrup",
-            expiryDate: "2025-12-31",
-            isPrescriptionRequired: false,
+            medicineName: "Folic Acid",
+            batchNumber: "FOL202413",
+            quantity: 300,
+            costPrice: 0.6,
+            sellingPrice: 1.2,
+            category: "Tablet",
+            antibiotic: false,
+            manufacturingDate: "01/01/2025",
+            expiryDate: "01/01/2027",
+            image: null,
         },
         {
-            id: 10,
-            name: "Hydrochlorothiazide",
-            quantity: 60,
-            category: "Hypertension",
-            type: "Tablet",
-            expiryDate: "2026-07-12",
-            isPrescriptionRequired: true,
+            medicineName: "Penicillin V",
+            batchNumber: "PEN202414",
+            quantity: 140,
+            costPrice: 2.7,
+            sellingPrice: 5.4,
+            category: "Tablet",
+            antibiotic: true,
+            manufacturingDate: "02/20/2025",
+            expiryDate: "02/20/2027",
+            image: null,
+        },
+        {
+            medicineName: "Vitamin C",
+            batchNumber: "VIT202415",
+            quantity: 220,
+            costPrice: 0.9,
+            sellingPrice: 1.8,
+            category: "Tablet",
+            antibiotic: false,
+            manufacturingDate: "03/15/2025",
+            expiryDate: "03/15/2027",
+            image: null,
         },
     ];
 
@@ -100,67 +190,96 @@
 </script>
 
 <template>
-    <div class="h-screen overflow-y-auto w-full">
-        <div class="max-w-[1440px] mx-auto">
-            <div
-                class="w-full sticky top-0 z-40 bg-gray-50 shadow-md flex justify-between items-center p-3"
+    <div class="h-screen relative flex flex-col flex-1 overflow-hidden">
+        <div
+            class="hidden w-full md:absolute top-0 z-40 bg-gray-900 md:top-0 md:flex justify-between items-center p-3"
+        >
+            <h1 class="text-gray-300 text-lg font-styleScript md:text-2xl">
+                Inventory Hub
+            </h1>
+            <button
+                @click="showModal = true"
+                type="submit"
+                class="py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
             >
-                <h1 class="text-gray-600 text-lg font-semibold md:text-2xl">
-                    Inventory Hub
-                </h1>
-                <button
-                    @click="showModal = true"
-                    type="submit"
-                    class="py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500 md:text-base"
-                >
-                    Add Med
-                </button>
-            </div>
-            <div
-                class="p-3 md:w-[550px] lg:w-full h-[80vh] overflow-x-auto overscroll-contain"
+                Add Med
+            </button>
+        </div>
+        <div class="mx-auto container overflow-auto p-3">
+            <button
+                @click="showModal = true"
+                type="submit"
+                class="md:hidden py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
             >
-                <table
-                    class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
-                >
-                    <thead
-                        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-                    >
+                Add Med
+            </button>
+            <div
+                class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto"
+            >
+                <table class="text-sm text-left text-gray-400">
+                    <thead class="text-xs uppercase bg-gray-700 text-gray-400">
                         <tr>
-                            <th class="px-6 py-3">Name</th>
-                            <th class="px-6 py-3">Quantity</th>
-                            <th class="px-6 py-3">Category</th>
-                            <th class="px-6 py-3">Type</th>
-                            <th class="px-6 py-3">ExpiryDate</th>
-                            <th class="px-6 py-3">Prescription</th>
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                Medicine Name
+                            </th>
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                Batch Number
+                            </th>
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                Quantity
+                            </th>
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                Cost Price
+                            </th>
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                Selling Price
+                            </th>
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                Category
+                            </th>
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                Antibiotic
+                            </th>
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                Manufacturing Date
+                            </th>
+                            <th class="p-2 whitespace-nowrap">Expiry Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr
-                            v-for="medication in medications"
+                            v-for="medication in medicines"
                             :key="medication.id"
-                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                            class="border-b bg-gray-800 border-gray-700 hover:bg-gray-600"
                         >
                             <td
-                                class="px-6 py-4 font-medium text-gray-900 dark:text-white"
+                                class="px-6 py-4 font-medium text-white whitespace-nowrap"
                             >
-                                {{ medication.name }}
+                                {{ medication.medicineName }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ medication.batchNumber }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 {{ medication.quantity }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                GH₵{{ medication.costPrice }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                GH₵{{ medication.sellingPrice }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 {{ medication.category }}
                             </td>
-                            <td class="px-6 py-4">{{ medication.type }}</td>
-                            <td class="px-6 py-4">
-                                {{ medication.expiryDate }}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ medication.antibiotic ? "Yes" : "No" }}
                             </td>
-                            <td class="px-6 py-4">
-                                {{
-                                    medication.isPrescriptionRequired
-                                        ? "Yes"
-                                        : "No"
-                                }}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ medication.manufacturingDate }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ medication.expiryDate }}
                             </td>
                         </tr>
                     </tbody>
@@ -194,7 +313,7 @@
                             <select
                                 class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10 bg-transparent"
                             >
-                                <option disabled selected>
+                                <option value="" disabled>
                                     Select Category
                                 </option>
                                 <option value="Antibiotic">Antibiotic</option>

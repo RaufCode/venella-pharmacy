@@ -14,6 +14,7 @@
     });
 
     const login = async () => {
+        form.email = form.email.toLowerCase();
         console.log(form); // Log form data
         try {
             await authStore.login(form); // Call the store's login action
@@ -30,7 +31,7 @@
             <form
                 @submit.prevent="login"
                 method="post"
-                class="max-w-[370px] p-5 shadow w-11/12 mx-auto"
+                class="max-w-[370px] p-4 shadow w-11/12 mx-auto"
             >
                 <h1 class="form-title">Sign in</h1>
                 <InputField

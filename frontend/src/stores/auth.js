@@ -17,7 +17,7 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     async login(credentials) {
       try {
-        const response = await axios.post("/api/auth/login", credentials);
+        const response = await axios.post("/api/core/auth/login/", credentials);
         this.token = response.data.token;
         this.user = response.data.user;
         localStorage.setItem("token", this.token);
@@ -25,6 +25,8 @@ export const useAuthStore = defineStore("auth", {
 
         if (this.user.role === "admin") {
           router.push("/dashboard"); // Redirect to admin dashboard
+        } else if (this.user.role === "salesperson") {
+          router.push("/salesperson-dashboard"); // Redirect to pharmacist dashboard
         } else {
           router.push("/customer-dashboard"); // Redirect to customer dashboard
         }
@@ -35,7 +37,7 @@ export const useAuthStore = defineStore("auth", {
 
     async register(credentials) {
       try {
-        await axios.post("/api/auth/register", credentials);
+        await axios.post("/api/core/accounts/create/", credentials);
         router.push("/login"); // Redirect after registration
       } catch (error) {
         throw new Error(error.response?.data?.message || "Registration failed");
