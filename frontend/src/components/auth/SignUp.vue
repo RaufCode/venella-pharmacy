@@ -41,11 +41,13 @@
 </script>
 
 <template>
-    <div class="flex lg:h-screen lg:w-screen">
-        <div class="w-screen lg:w-1/2 h-screen overflow-y-scroll">
+    <div class="lg:flex lg:h-screen lg:w-screen">
+        <div
+            class="w-screen lg:w-1/2 h-screen overflow-y-scroll bg-white p-4 2lg:flex 2lg:justify-center 2lg:items-center"
+        >
             <form
                 @submit.prevent="validation"
-                class="max-w-[370px] p-4 shadow w-11/12 mx-auto my-3"
+                class="max-w-[370px] p-4 shadow w-11/12 mx-auto"
             >
                 <h1 class="form-title">Sign up</h1>
                 <InputField v-model="form.first_name" labelname="First Name" />

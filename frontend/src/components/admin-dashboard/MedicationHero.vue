@@ -216,7 +216,7 @@
             <div
                 class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto"
             >
-                <table class="text-sm text-left text-gray-400">
+                <table class="text-sm text-left text-gray-400 w-full">
                     <thead class="text-xs uppercase bg-gray-700 text-gray-400">
                         <tr>
                             <th class="px-6 py-4 whitespace-nowrap">
@@ -285,6 +285,7 @@
                     </tbody>
                 </table>
             </div>
+
             <!--Modal-->
 
             <div
@@ -323,6 +324,15 @@
                                 </option>
                                 <option value="Supplement">Supplement</option>
                             </select>
+                        </label>
+                        <label class="block mx-auto mt-3 text-sm text-gray-900">
+                            Description
+                            <textarea
+                                rows="3"
+                                required
+                                placeholder="Eg. Effective for pain relief and fever reduction."
+                                class="block mt-1 w-full p-4 rounded-md bg-transparent border border-gray-400 placeholder-gray-400 outline-none focus:border-orange-700 resize-none"
+                            ></textarea>
                         </label>
 
                         <InputField

@@ -36,7 +36,7 @@
                     <i class="pi pi-align-left"></i>
                 </button>
                 <h1 class="text-2xl font-styleScript text-orange-600">
-                    {{ tabLabel }}hello
+                    {{ tabLabel }}
                 </h1>
                 <RouterLink to="/login" class="text-gray-700">
                     <i class="pi pi-sign-out"></i>
@@ -46,7 +46,7 @@
             <div class="">
                 <aside
                     :class="[
-                        'fixed md:block top-0 z-50 md:min-w-[220px] w-full md:max-w-[220px] bg-white h-screen text-gray-800 transition-all duration-500 ease-in-out transform',
+                        'fixed md:block top-0 z-50 md:min-w-[220px] shadow w-full md:max-w-[220px] bg-white h-screen text-gray-800 transition-all duration-500 ease-in-out transform',
                         hamburger
                             ? 'translate-x-0 opacity-100 blur-none'
                             : '-translate-x-full opacity-20 blur-sm pointer-events-none',
@@ -138,8 +138,8 @@
                 </aside>
             </div>
         </header>
-        <main class="w-full h-screen overflow-auto">
-            <div>
+        <main class="w-full h-screen bg-gray-100 overflow-auto">
+            <div class="mx-auto">
                 <OverView v-if="activeTab === 'overview'" />
                 <MedicationHero v-if="activeTab === 'medication'" />
                 <SalesHero v-if="activeTab === 'sales'" />
