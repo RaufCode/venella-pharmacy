@@ -64,7 +64,9 @@
                             50
                         </p>
                     </div>
-                    <i class="pi pi-spinner-dotted text-blue-500 text-2xl"></i>
+                    <i
+                        class="pi pi-spinner-dotted animate-spin text-blue-500 text-2xl"
+                    ></i>
                 </div>
 
                 <div

@@ -2,6 +2,7 @@
     import { ref, computed } from "vue";
     import HomeHero from "./HomeHero.vue";
     import MedicationHero from "./MedicationHero.vue";
+    import CartHero from "./CartHero.vue";
 
     const activeTab = ref("home");
     const hamburger = ref(false);
@@ -13,8 +14,8 @@
                 return "home";
             case "medication":
                 return "Inventory Hub";
-            case "sales":
-                return "Sales Hub";
+            case "cart":
+                return "Cart Hub";
             case "staff":
                 return "Staff Hub";
             default:
@@ -96,19 +97,6 @@
                         </button>
                         <button
                             @click="
-                                activeTab = 'orders';
-                                hamburger = false;
-                            "
-                            class="a-dashboard-navs"
-                            :class="{
-                                'bg-orange-600 text-white hover:bg-orange-500':
-                                    activeTab === 'orders',
-                            }"
-                        >
-                            <i class="pi pi-cart-arrow-down"></i> Orders
-                        </button>
-                        <button
-                            @click="
                                 activeTab = 'cart';
                                 hamburger = false;
                             "
@@ -119,6 +107,19 @@
                             }"
                         >
                             <i class="pi pi-cart-plus"></i> Cart
+                        </button>
+                        <button
+                            @click="
+                                activeTab = 'orders';
+                                hamburger = false;
+                            "
+                            class="a-dashboard-navs"
+                            :class="{
+                                'bg-orange-600 text-white hover:bg-orange-500':
+                                    activeTab === 'orders',
+                            }"
+                        >
+                            <i class="pi pi-cart-arrow-down"></i> Orders
                         </button>
                         <button class="a-dashboard-navs">
                             <i class="pi pi-info-circle"></i> Notifications
@@ -139,6 +140,7 @@
             <div class="mx-auto">
                 <HomeHero v-if="activeTab === 'home'" />
                 <MedicationHero v-if="activeTab === 'medication'" />
+                <CartHero v-if="activeTab === 'cart'" />
             </div>
         </main>
     </div>

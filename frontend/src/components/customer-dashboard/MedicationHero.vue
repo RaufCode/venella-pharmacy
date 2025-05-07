@@ -230,25 +230,27 @@
                 </form>
             </div>
             <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 p-3"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2lg:grid-cols-4 gap-3 p-3"
             >
                 <div
                     v-for="med in medications"
                     :key="med.id"
                     class="rounded-lg shadow hover:shadow-md transition-shadow p-6 bg-white text-gray-500 font-medium text-sm"
                 >
-                    <p class="text-base text-gray-800 font-semibold">
+                    <p
+                        class="text-base text-gray-800 font-semibold overflow-hidden text-ellipsis"
+                    >
                         {{ med.name }}
                     </p>
-                    <p class="text-gray-500 font-medium">
-                        {{ med.description.slice(0, 20) + "..." }}
+                    <p class="text-gray-500 font-medium text-justify">
+                        {{ med.description.slice(0, 25) + "..." }}
                     </p>
 
                     <div class="flex items-center justify-between mt-2">
                         <p
                             class="font-semibold font-poppins text-green-500 text-lg"
                         >
-                            GH₵ 5
+                            ₵ 5
                         </p>
                         <button
                             type="submit"
