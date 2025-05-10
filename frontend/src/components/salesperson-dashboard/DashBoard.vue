@@ -2,9 +2,8 @@
     import { ref, computed } from "vue";
     import OverView from "./OverView.vue";
     import MedicationHero from "./MedicationHero.vue";
+    import OrdersHero from "./OrdersHero.vue";
     import SalesHero from "./SalesHero.vue";
-    import StaffHero from "./StaffHero.vue";
-    import { RouterLink } from "vue-router";
 
     const activeTab = ref("overview");
     const hamburger = ref(false);
@@ -15,11 +14,11 @@
             case "overview":
                 return "Overview";
             case "medication":
-                return "Inventory Hub";
+                return "Medicines Hub";
+            case "orders":
+                return "Orders Hub";
             case "sales":
                 return "Sales Hub";
-            case "staff":
-                return "Staff Hub";
             default:
                 return "Vanella Pharmacy";
         }
@@ -28,7 +27,7 @@
 
 <template>
     <div class="mt-14 md:mt-0 md:flex h-screen w-screen">
-        <header class="md:min-w-[220px] md:max-w-[220px]">
+        <header class="min-w-[220px] max-w-[220px]">
             <div
                 class="fixed top-0 md:hidden p-3 text-sm flex items-center justify-between bg-white shadow-md z-40 w-full"
             >
@@ -99,6 +98,19 @@
                         </button>
                         <button
                             @click="
+                                activeTab = 'orders';
+                                hamburger = false;
+                            "
+                            class="a-dashboard-navs"
+                            :class="{
+                                'bg-orange-600 text-white hover:bg-orange-500':
+                                    activeTab === 'orders',
+                            }"
+                        >
+                            <i class="pi pi-cart-plus"></i> Orders
+                        </button>
+                        <button
+                            @click="
                                 activeTab = 'sales';
                                 hamburger = false;
                             "
@@ -108,20 +120,7 @@
                                     activeTab === 'sales',
                             }"
                         >
-                            <i class="pi pi-book"></i> Sales
-                        </button>
-                        <button
-                            @click="
-                                activeTab = 'staff';
-                                hamburger = false;
-                            "
-                            class="a-dashboard-navs"
-                            :class="{
-                                'bg-orange-600 text-white hover:bg-orange-500':
-                                    activeTab === 'staff',
-                            }"
-                        >
-                            <i class="pi pi-users"></i> Staff
+                            <i class="pi pi-file"></i> Sales
                         </button>
                         <button class="a-dashboard-navs">
                             <i class="pi pi-info-circle"></i> Notifications
@@ -138,12 +137,12 @@
                 </aside>
             </div>
         </header>
-        <main class="w-full h-screen bg-gray-100 overflow-auto">
-            <div class="mx-auto">
+        <main class="w-full h-screen overflow-auto">
+            <div class="">
                 <OverView v-if="activeTab === 'overview'" />
                 <MedicationHero v-if="activeTab === 'medication'" />
+                <OrdersHero v-if="activeTab === 'orders'" />
                 <SalesHero v-if="activeTab === 'sales'" />
-                <StaffHero v-if="activeTab === 'staff'" />
             </div>
         </main>
     </div>

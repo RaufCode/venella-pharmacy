@@ -41,13 +41,13 @@
 </script>
 
 <template>
-    <div class="lg:flex lg:h-screen lg:w-screen">
+    <div class="grid lg:grid-cols-2 lg:h-screen">
         <div
-            class="w-screen lg:w-1/2 h-screen overflow-y-scroll bg-white p-4 2lg:flex 2lg:justify-center 2lg:items-center"
+            class="overflow-y-scroll py-4 bg-white 2lg:flex 2lg:justify-center 2lg:items-center"
         >
             <form
                 @submit.prevent="validation"
-                class="max-w-[370px] p-4 shadow w-11/12 mx-auto"
+                class="max-w-[370px] p-3 shadow w-11/12 mx-auto"
             >
                 <h1 class="form-title">Sign up</h1>
                 <InputField v-model="form.first_name" labelname="First Name" />
@@ -98,9 +98,7 @@
                 </p>
             </form>
         </div>
-        <div
-            class="hidden lg:flex items-center justify-center lg:w-1/2 lg:h-full bg-orange-700"
-        >
+        <div class="hidden lg:flex items-center justify-center bg-orange-700">
             <h1 class="text-5xl font-styleScript text-white">
                 Venella Pharmacy
             </h1>

@@ -3,6 +3,7 @@
     import HomeHero from "./HomeHero.vue";
     import MedicationHero from "./MedicationHero.vue";
     import CartHero from "./CartHero.vue";
+    import OrdersHero from "./OrdersHero.vue";
 
     const activeTab = ref("home");
     const hamburger = ref(false);
@@ -11,13 +12,13 @@
     const tabLabel = computed(() => {
         switch (activeTab.value) {
             case "home":
-                return "home";
+                return "Home";
             case "medication":
                 return "Inventory Hub";
             case "cart":
                 return "Cart Hub";
-            case "staff":
-                return "Staff Hub";
+            case "orders":
+                return "Orders Hub";
             default:
                 return "Vanella Pharmacy";
         }
@@ -125,9 +126,9 @@
                             <i class="pi pi-info-circle"></i> Notifications
                         </button>
                         <!-- Logout Button -->
-                        <RouterLink to="/login" class="block">
+                        <RouterLink to="/login" class="block mt-16 md:mt-20">
                             <button
-                                class="mt-16 md:mt-20 py-2 w-full pl-3 rounded font-medium text-sm flex items-center gap-4 text-gray-800 md:pl-5 hover:bg-gray-100 focus:bg-orange-600 focus:text-white"
+                                class="py-2 w-full pl-3 rounded font-medium text-sm flex items-center gap-4 text-gray-800 md:pl-5 hover:bg-gray-100 focus:bg-orange-600 focus:text-white"
                             >
                                 <i class="pi pi-sign-out"></i> Logout
                             </button>
@@ -136,11 +137,12 @@
                 </aside>
             </div>
         </header>
-        <main class="w-full h-screen bg-gray-100 overflow-auto">
-            <div class="mx-auto">
+        <main class="w-full h-screen">
+            <div class="overflow-y-auto overscroll-contain">
                 <HomeHero v-if="activeTab === 'home'" />
                 <MedicationHero v-if="activeTab === 'medication'" />
                 <CartHero v-if="activeTab === 'cart'" />
+                <OrdersHero v-if="activeTab === 'orders'" />
             </div>
         </main>
     </div>

@@ -192,28 +192,16 @@
 <template>
     <div class="h-screen relative flex flex-col flex-1 overflow-hidden">
         <div
-            class="hidden w-full md:absolute top-0 z-40 bg-gray-900 md:top-0 md:flex justify-between items-center p-3"
+            class="hidden w-full md:absolute top-0 z-40 bg-gray-900 md:top-0 md:block p-3"
         >
-            <h1 class="text-gray-300 text-lg font-styleScript md:text-2xl">
-                Inventory Hub
-            </h1>
-            <button
-                @click="showModal = true"
-                type="submit"
-                class="py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
+            <h1
+                class="text-gray-300 text-center text-lg font-styleScript md:text-2xl"
             >
-                Add Med
-            </button>
+                Orders Hub
+            </h1>
         </div>
         <div class="overflow-auto overscroll-contain w-full">
             <div class="mx-auto container p-3">
-                <button
-                    @click="showModal = true"
-                    type="submit"
-                    class="md:hidden py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
-                >
-                    Add Med
-                </button>
                 <div
                     class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto"
                 >
@@ -228,7 +216,7 @@
                                 <th class="px-6 py-4 whitespace-nowrap">
                                     Batch Number
                                 </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
+                                <th class="px-6 py-4 whitespace-nowrap"> 
                                     Quantity
                                 </th>
                                 <th class="px-6 py-4 whitespace-nowrap">
@@ -289,89 +277,6 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-
-                <!--Modal-->
-
-                <div
-                    v-if="showModal"
-                    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-                >
-                    <div
-                        class="bg-white overflow-hidden shadow w-11/12 max-w-md max-h-[70vh] p-5 overflow-y-auto"
-                    >
-                        <form class="w-full">
-                            <div class="flex justify-between items-center">
-                                <h1 class="form-title">Add meds</h1>
-                                <p @click="showModal = false">
-                                    <i class="pi pi-times text-orange-600"></i>
-                                </p>
-                            </div>
-
-                            <InputField labelname="Medicine Name" type="text" />
-                            <InputField labelname="Batch Number" type="text" />
-                            <InputField labelname="Quantity" type="number" />
-                            <InputField labelname="Cost Price" type="number" />
-                            <InputField
-                                labelname="Selling Price"
-                                type="number"
-                            />
-
-                            <label
-                                class="block mx-auto mt-3 text-sm text-gray-900"
-                            >
-                                Category
-                                <select
-                                    class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10 bg-transparent"
-                                >
-                                    <option value="" disabled>
-                                        Select Category
-                                    </option>
-                                    <option value="Antibiotic">
-                                        Antibiotic
-                                    </option>
-                                    <option value="Painkiller">
-                                        Painkiller
-                                    </option>
-                                    <option value="Antihistamine">
-                                        Antihistamine
-                                    </option>
-                                    <option value="Supplement">
-                                        Supplement
-                                    </option>
-                                </select>
-                            </label>
-                            <label
-                                class="block mx-auto mt-3 text-sm text-gray-900"
-                            >
-                                Description
-                                <textarea
-                                    rows="3"
-                                    required
-                                    placeholder="Eg. Effective for pain relief and fever reduction."
-                                    class="block mt-1 w-full p-4 rounded-md bg-transparent border border-gray-400 placeholder-gray-400 outline-none focus:border-orange-700 resize-none"
-                                ></textarea>
-                            </label>
-
-                            <InputField
-                                labelname="Manufacturing Date"
-                                type="date"
-                            />
-                            <InputField labelname="Expiry Date" type="date" />
-
-                            <label
-                                class="block mx-auto mt-3 text-sm text-gray-900"
-                            >
-                                Medicine Image (optional)
-                                <input
-                                    type="file"
-                                    class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10 bg-transparent"
-                                />
-                            </label>
-
-                            <Btn btnName="Save" />
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>
