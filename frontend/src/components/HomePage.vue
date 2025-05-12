@@ -271,22 +271,25 @@
                         Contact Us
                     </h2>
                     <form
-                        class="md:w-[300px] lg:w-auto max-w-[450px] space-y-3 text-center text-sm"
+                        class="md:w-[300px] lg:w-auto max-w-[450px] space-y-3 text-center text-sm text-white"
                     >
                         <input
                             type="text"
+                            required
                             placeholder="Your Name"
-                            class="w-full p-2 rounded-md bg-transparent border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+                            class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
                         />
                         <input
                             type="email"
+                            required
                             placeholder="Your Email"
-                            class="w-full p-2 rounded-md bg-transparent border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+                            class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
                         />
                         <textarea
                             rows="3"
+                            required
                             placeholder="Your Message"
-                            class="w-full p-2 rounded-md bg-transparent border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-white resize-none"
+                            class="w-full p-4 rounded-md bg-transparent border border-gray-400 text-white placeholder-gray-400 outline-none focus:border-orange-700 resize-none"
                         ></textarea>
                         <Btn btnName="Send Messsage" />
                     </form>

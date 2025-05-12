@@ -1,105 +1,149 @@
-<script setup></script>
+<script setup>
+    import { ref, computed } from "vue";
+    import HomeHero from "./HomeHero.vue";
+    import MedicationHero from "./MedicationHero.vue";
+    import CartHero from "./CartHero.vue";
+    import OrdersHero from "./OrdersHero.vue";
+
+    const activeTab = ref("home");
+    const hamburger = ref(false);
+
+    // Label for the top bar
+    const tabLabel = computed(() => {
+        switch (activeTab.value) {
+            case "home":
+                return "Home";
+            case "medication":
+                return "Inventory Hub";
+            case "cart":
+                return "Cart Hub";
+            case "orders":
+                return "Orders Hub";
+            default:
+                return "Vanella Pharmacy";
+        }
+    });
+</script>
 
 <template>
-    <div class="min-h-screen bg-gray-100">
-        <!-- Header -->
-        <header
-            class="bg-blue-600 text-white p-4 flex justify-between items-center"
-        >
-            <div class="text-xl font-bold">My Pharmacy</div>
-            <nav>
-                <ul class="flex space-x-4">
-                    <li><a href="#" class="hover:text-blue-200">Home</a></li>
-                    <li>
-                        <a href="#" class="hover:text-blue-200"
-                            >Prescriptions</a
+    <div class="mt-14 md:mt-0 md:flex h-screen w-screen">
+        <header class="min-w-[220px] max-w-[220px]">
+            <div
+                class="fixed top-0 md:hidden p-3 text-sm flex items-center justify-between bg-white shadow-md z-40 w-full"
+            >
+                <button @click="hamburger = !hamburger">
+                    <i class="pi pi-align-left"></i>
+                </button>
+                <h1 class="text-2xl font-styleScript text-orange-600">
+                    {{ tabLabel }}
+                </h1>
+                <RouterLink to="/login" class="text-gray-700">
+                    <i class="pi pi-sign-out"></i>
+                </RouterLink>
+            </div>
+            <!-- Sidebar for tablet view -->
+            <div class="">
+                <aside
+                    :class="[
+                        'fixed md:block top-0 z-50 md:min-w-[220px] shadow w-full md:max-w-[220px] bg-white h-screen text-gray-800 transition-all duration-500 ease-in-out transform',
+                        hamburger
+                            ? 'translate-x-0 opacity-100 blur-none'
+                            : '-translate-x-full opacity-20 blur-sm pointer-events-none',
+                        'md:translate-x-0 md:opacity-100 md:blur-none md:pointer-events-auto md:block',
+                    ]"
+                >
+                    <div
+                        class="pt-2 flex items-center gap-4 justify-end md:block"
+                    >
+                        <h1
+                            class="font-styleScript text-2xl text-center py-2 md:py-6 text-orange-600 md:text-3xl"
                         >
-                    </li>
-                    <li><a href="#" class="hover:text-blue-200">Orders</a></li>
-                    <li><a href="#" class="hover:text-blue-200">Profile</a></li>
-                </ul>
-            </nav>
-            <div class="text-sm">Welcome, John Doe!</div>
+                            Dashboard
+                        </h1>
+                        <button
+                            @click="hamburger = !hamburger"
+                            class="pr-2 md:hidden"
+                        >
+                            <i class="pi pi-align-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <nav class="md:flex flex-col">
+                        <button
+                            @click="
+                                activeTab = 'home';
+                                hamburger = false;
+                            "
+                            class="a-dashboard-navs"
+                            :class="{
+                                'bg-orange-600 text-white hover:bg-orange-500':
+                                    activeTab === 'home',
+                            }"
+                        >
+                            <i class="pi pi-home"></i> Home
+                        </button>
+                        <button
+                            @click="
+                                activeTab = 'medication';
+                                hamburger = false;
+                            "
+                            class="a-dashboard-navs"
+                            :class="{
+                                'bg-orange-600 text-white hover:bg-orange-500':
+                                    activeTab === 'medication',
+                            }"
+                        >
+                            <i class="pi pi-shield"></i> Medications
+                        </button>
+                        <button
+                            @click="
+                                activeTab = 'cart';
+                                hamburger = false;
+                            "
+                            class="a-dashboard-navs"
+                            :class="{
+                                'bg-orange-600 text-white hover:bg-orange-500':
+                                    activeTab === 'cart',
+                            }"
+                        >
+                            <i class="pi pi-cart-plus"></i> Cart
+                        </button>
+                        <button
+                            @click="
+                                activeTab = 'orders';
+                                hamburger = false;
+                            "
+                            class="a-dashboard-navs"
+                            :class="{
+                                'bg-orange-600 text-white hover:bg-orange-500':
+                                    activeTab === 'orders',
+                            }"
+                        >
+                            <i class="pi pi-cart-arrow-down"></i> Orders
+                        </button>
+                        <button class="a-dashboard-navs">
+                            <i class="pi pi-info-circle"></i> Notifications
+                        </button>
+                        <!-- Logout Button -->
+                        <RouterLink to="/login" class="block mt-16 md:mt-20">
+                            <button
+                                class="py-2 w-full pl-3 rounded font-medium text-sm flex items-center gap-4 text-gray-800 md:pl-5 hover:bg-gray-100 focus:bg-orange-600 focus:text-white"
+                            >
+                                <i class="pi pi-sign-out"></i> Logout
+                            </button>
+                        </RouterLink>
+                    </nav>
+                </aside>
+            </div>
         </header>
-
-        <!-- Main Content -->
-        <main class="p-6">
-            <!-- Prescription Management -->
-            <section class="mb-8">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4">
-                    Prescriptions
-                </h2>
-                <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <h3 class="text-lg font-medium">Medication A</h3>
-                        <p>Dosage: 500mg</p>
-                        <p>Refills Left: 2</p>
-                        <button
-                            class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                        >
-                            Request Refill
-                        </button>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <h3 class="text-lg font-medium">Medication B</h3>
-                        <p>Dosage: 250mg</p>
-                        <p>Refills Left: 0</p>
-                        <button
-                            class="mt-2 px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed"
-                            disabled
-                        >
-                            No Refills Left
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Medication Reminders -->
-            <section class="mb-8">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4">
-                    Medication Reminders
-                </h2>
-                <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <h3 class="text-lg font-medium">Medication A</h3>
-                        <p>Next Dose: 8:00 AM</p>
-                        <button
-                            class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                        >
-                            Snooze
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Order Tracking -->
-            <section>
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4">
-                    Order Tracking
-                </h2>
-                <div class="space-y-4">
-                    <div class="bg-white p-4 rounded-lg shadow">
-                        <h3 class="text-lg font-medium">Order #12345</h3>
-                        <p>Status: Shipped</p>
-                        <p>Estimated Delivery: October 30, 2023</p>
-                    </div>
-                </div>
-            </section>
+        <main class="w-full h-screen">
+            <div class="overflow-y-auto overscroll-contain">
+                <HomeHero v-if="activeTab === 'home'" />
+                <MedicationHero v-if="activeTab === 'medication'" />
+                <CartHero v-if="activeTab === 'cart'" />
+                <OrdersHero v-if="activeTab === 'orders'" />
+            </div>
         </main>
-
-        <!-- Footer -->
-        <footer class="bg-gray-800 text-white text-center p-4">
-            <p>Contact Us: (123) 456-7890 | email@pharmacy.com</p>
-            <p>
-                Follow Us:
-                <a href="#" class="text-blue-400 hover:text-blue-300"
-                    >Facebook</a
-                >
-                |
-                <a href="#" class="text-blue-400 hover:text-blue-300"
-                    >Twitter</a
-                >
-            </p>
-        </footer>
     </div>
 </template>

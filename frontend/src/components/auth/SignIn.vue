@@ -14,6 +14,7 @@
     });
 
     const login = async () => {
+        form.email = form.email.toLowerCase();
         console.log(form); // Log form data
         try {
             await authStore.login(form); // Call the store's login action
@@ -23,14 +24,12 @@
     };
 </script>
 <template>
-    <div class="lg:flex lg:h-screen lg:w-screen">
-        <div
-            class="w-screen min-h-screen flex justify-center items-center lg:w-1/2"
-        >
+    <div class="grid lg:grid-cols-2 lg:h-screen">
+        <div class="flex justify-center items-center h-screen">
             <form
                 @submit.prevent="login"
                 method="post"
-                class="max-w-[370px] p-5 shadow w-11/12 mx-auto"
+                class="max-w-[370px] p-4 shadow w-11/12 mx-auto"
             >
                 <h1 class="form-title">Sign in</h1>
                 <InputField
@@ -52,9 +51,7 @@
                 </p>
             </form>
         </div>
-        <div
-            class="hidden lg:flex items-center justify-center lg:w-1/2 lg:h-full bg-orange-700"
-        >
+        <div class="hidden lg:flex items-center justify-center bg-orange-700">
             <h1 class="text-5xl font-styleScript text-white">
                 Venella Pharmacy
             </h1>

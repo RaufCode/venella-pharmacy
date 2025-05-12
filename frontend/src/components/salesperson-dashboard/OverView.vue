@@ -69,13 +69,11 @@
                     class="flex items-center justify-between rounded-lg shadow hover:shadow-md transition-shadow p-6 bg-white"
                 >
                     <div>
-                        <p class="text-gray-500 font-medium text-sm">
-                            Stock Level
-                        </p>
+                        <p class="text-gray-500 font-medium text-sm">Orders</p>
                         <p
                             class="text-2xl font-semibold font-poppins text-yellow-500"
                         >
-                            70%
+                            70
                         </p>
                     </div>
                     <i class="pi pi-chart-bar text-yellow-500 text-2xl"></i>

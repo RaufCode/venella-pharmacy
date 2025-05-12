@@ -10,7 +10,7 @@
             <h1
                 class="text-gray-300 font-styleScript text-center text-lg md:text-2xl"
             >
-                Good to see you again, Admin
+                Welcome, Jane Doe
             </h1>
         </div>
         <div class="mx-auto container m-4 md:mt-[75px]">
@@ -22,15 +22,17 @@
                 >
                     <div>
                         <p class="text-gray-500 font-medium text-sm">
-                            Total Sales
+                            Total Orders
                         </p>
                         <p
                             class="text-2xl font-semibold font-poppins text-green-500"
                         >
-                            &#8373;15
+                            5
                         </p>
                     </div>
-                    <i class="pi pi-book text-green-500 text-2xl"></i>
+                    <i
+                        class="pi pi-cart-arrow-down text-green-500 text-2xl"
+                    ></i>
                 </div>
 
                 <div
@@ -54,7 +56,7 @@
                 >
                     <div>
                         <p class="text-gray-500 font-medium text-sm">
-                            Pending Ords
+                            Pending Deliveries
                         </p>
                         <p
                             class="text-2xl font-semibold font-poppins text-blue-500"
@@ -62,7 +64,9 @@
                             50
                         </p>
                     </div>
-                    <i class="pi pi-star-half-fill text-blue-500 text-2xl"></i>
+                    <i
+                        class="pi pi-spinner-dotted animate-spin text-blue-500 text-2xl"
+                    ></i>
                 </div>
 
                 <div
@@ -70,7 +74,7 @@
                 >
                     <div>
                         <p class="text-gray-500 font-medium text-sm">
-                            Stock Level
+                            cart Level
                         </p>
                         <p
                             class="text-2xl font-semibold font-poppins text-yellow-500"

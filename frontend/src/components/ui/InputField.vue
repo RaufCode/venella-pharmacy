@@ -26,7 +26,7 @@
             @input="$emit('update:modelValue', $event.target.value)"
             required
             autocomplete="on"
-            class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10 bg-transparent"
+            class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
         />
     </label>
 </template>
