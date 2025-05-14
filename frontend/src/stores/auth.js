@@ -25,10 +25,10 @@ export const useAuthStore = defineStore("auth", {
 
         if (this.user.role === "admin") {
           router.push("/dashboard"); // Redirect to admin dashboard
-        } else if (this.user.role === "salesperson") {
-          router.push("/salesperson-dashboard"); // Redirect to pharmacist dashboard
-        } else {
+        } else if (this.user.role === "customer") {
           router.push("/customer-dashboard"); // Redirect to customer dashboard
+        } else {
+          router.push("/salesperson"); // Redirect to pharmacist dashboard
         }
       } catch (error) {
         throw new Error(error.response?.data?.message || "Login failed");

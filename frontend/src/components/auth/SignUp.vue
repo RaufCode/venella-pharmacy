@@ -14,7 +14,7 @@
         other_names: "",
         email: "",
         phone: "",
-        adress: "",
+        address: "",
         password: "",
         role: "",
     });
@@ -29,9 +29,12 @@
         form.other_names =
             form.other_names.charAt(0).toUpperCase() +
             form.other_names.slice(1).toLowerCase();
-
         form.email = form.email.toLowerCase();
         console.log(form);
+        if (form.phone.startsWith("0") && form.phone.length === 10) {
+            form.phone = "+233" + form.phone.slice(1);
+        }
+
         try {
             await authStore.register(form); // Call the store's register action
         } catch (error) {
@@ -47,7 +50,7 @@
         >
             <form
                 @submit.prevent="validation"
-                class="max-w-[370px] p-3 shadow w-11/12 mx-auto"
+                class="max-w-[370px] p-4 shadow w-11/12 mx-auto"
             >
                 <h1 class="form-title">Sign up</h1>
                 <InputField v-model="form.first_name" labelname="First Name" />
@@ -66,7 +69,7 @@
                     type="email"
                 />
                 <InputField v-model="form.phone" labelname="Phone" />
-                <InputField v-model="form.adress" labelname="Address" />
+                <InputField v-model="form.address" labelname="Address" />
                 <div>
                     <label
                         for="role"

@@ -216,7 +216,7 @@
                                 <th class="px-6 py-4 whitespace-nowrap">
                                     Batch Number
                                 </th>
-                                <th class="px-6 py-4 whitespace-nowrap"> 
+                                <th class="px-6 py-4 whitespace-nowrap">
                                     Quantity
                                 </th>
                                 <th class="px-6 py-4 whitespace-nowrap">
