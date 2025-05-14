@@ -73,6 +73,28 @@ create_account_schema = extend_schema(
     tags=["Accounts"],
 )
 
+add_sales_person_schema = extend_schema(
+    summary="Create Sales Person Account",
+    description="This adds a sales person account",
+    request=inline_serializer(
+        name="CreateSalePersonAccount",
+        fields={
+            "email": serializers.EmailField(),
+            "password": serializers.CharField(),
+            "first_name": serializers.CharField(),
+            "last_name": serializers.CharField(),
+            "other_names": serializers.CharField(),
+            "phone": serializers.CharField(),
+            "address": serializers.CharField(),
+            "image": serializers.ImageField(),
+        },
+    ),
+    responses={
+        201: OpenApiResponse("Sales persson added successfully"),
+    },
+    tags=["Accounts"],
+)
+
 update_account_schema = extend_schema(
     summary="Update User Account",
     description="This update a user account",

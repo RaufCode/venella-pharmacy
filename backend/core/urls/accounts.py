@@ -5,6 +5,10 @@ ACCOUNTS_URLS = [
     path("accounts/", UserAccountViewset.as_view({"get": "list"})),
     path("accounts/create/", UserAccountViewset.as_view({"post": "create"})),
     path(
+        "accounts/salesperson/create/",
+        UserAccountViewset.as_view({"post": "add_sales_person"}),
+    ),
+    path(
         "accounts/<str:user_id>/retrieve/",
         UserAccountViewset.as_view({"get": "retrieve"}),
     ),

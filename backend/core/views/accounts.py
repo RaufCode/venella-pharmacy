@@ -25,7 +25,6 @@ class UserAccountViewset(viewsets.ViewSet):
                 "last_name",
                 "phone",
                 "address",
-                "role",
             ],
         )
         if err:
@@ -66,6 +65,7 @@ class UserAccountViewset(viewsets.ViewSet):
 
         profile = get_profile_by_id(profile_data.get("id"))
 
+        data.update({"role": "customer"})
         user_data, errors = create_user_account(data)
         if not user_data:
             context = {"detail": "Could not create user account", "errors": errors}
@@ -77,6 +77,74 @@ class UserAccountViewset(viewsets.ViewSet):
         user.save()
 
         context = {"detail": "Account created successfully"}
+        return Response(context, status=status.HTTP_201_CREATED)
+
+    @add_sales_person_schema
+    def add_sales_person(self, request):
+
+        data = request.data
+        # Validate the posted data
+        err, errors = validate_posted_data(
+            data,
+            [
+                "email",
+                "password",
+                "first_name",
+                "last_name",
+                "phone",
+                "address",
+            ],
+        )
+        if err:
+            context = {"detail": "Missing required fields", "errors": errors}
+            raise ValidationError(context)
+
+        user = get_user_account_by_email(data.get("email"))
+        if user:
+            context = {"detail": "Account with this email already exists"}
+            raise ValidationError(context)
+
+        # Create a profile for the user
+        profile_data = {
+            "first_name": data.pop("first_name"),
+            "last_name": data.pop("last_name"),
+            "other_names": data.pop("other_name", None),
+            "phone": data.pop("phone"),
+            "address": data.pop("address"),
+            "image": data.pop("image", None),
+        }
+
+        if profile_data.get("image"):
+            image = profile_data.get("image")
+            if isinstance(image, str):
+                handler = InMemoryUploadedFileHandler()
+                image = handler.from_img_path(image)
+                print("image created", image)
+
+            profile_data["image"] = image
+
+        profile_data, profile_errors = create_profile(profile_data)
+        if not profile_data:
+            context = {
+                "detail": "Could not create user profile",
+                "errors": profile_errors,
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        profile = get_profile_by_id(profile_data.get("id"))
+
+        data.update({"role": "salesperson"})
+        user_data, errors = create_user_account(data)
+        if not user_data:
+            context = {"detail": "Could not create user account", "errors": errors}
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        user = get_user_account_by_id(user_data.get("id"))
+        user.set_password(data["password"])
+        user.profile = profile
+        user.save()
+
+        context = {"detail": "Sales persson added successfully"}
         return Response(context, status=status.HTTP_201_CREATED)
 
     @list_accounts_schema
