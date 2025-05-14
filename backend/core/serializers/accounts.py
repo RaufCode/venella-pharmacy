@@ -32,7 +32,7 @@ class UserAccountSerializer(serializers.ModelSerializer):
             else None
         )
         data["account_type"] = instance.get_account_type()
-        data.pop("role", None)
+        # data.pop("role", None)
         data.pop("password", None)
         data["has_profile"] = True if instance.profile else False
         return data
