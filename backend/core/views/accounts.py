@@ -106,12 +106,14 @@ class UserAccountViewset(viewsets.ViewSet):
 
         # Create a profile for the user
         profile_data = {
-            "first_name": data.pop("first_name"),
-            "last_name": data.pop("last_name"),
-            "other_names": data.pop("other_name", None),
-            "phone": data.pop("phone"),
-            "address": data.pop("address"),
-            "image": data.pop("image", None),
+            "first_name": data.pop("first_name")[0],
+            "last_name": data.pop("last_name")[0],
+            "other_names": (
+                data.pop("other_name")[0] if data.get("other_name") else None
+            ),
+            "phone": data.pop("phone")[0],
+            "address": data.pop("address")[0],
+            "image": data.pop("image", None)[0],
         }
 
         if profile_data.get("image"):
@@ -119,7 +121,6 @@ class UserAccountViewset(viewsets.ViewSet):
             if isinstance(image, str):
                 handler = InMemoryUploadedFileHandler()
                 image = handler.from_img_path(image)
-                print("image created", image)
 
             profile_data["image"] = image
 
