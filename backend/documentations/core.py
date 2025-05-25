@@ -68,7 +68,11 @@ create_account_schema = extend_schema(
         },
     ),
     responses={
-        201: OpenApiResponse("User created successfully"),
+        201: OpenApiResponse(
+            inline_serializer(
+                name="CreateAccountResponse", fields={"detail": serializers.CharField()}
+            )
+        ),
     },
     tags=["Accounts"],
 )
@@ -90,7 +94,11 @@ add_sales_person_schema = extend_schema(
         },
     ),
     responses={
-        201: OpenApiResponse("Sales persson added successfully"),
+        201: OpenApiResponse(
+            inline_serializer(
+                name="AddSalesResponse", fields={"detail": serializers.CharField()}
+            )
+        ),
     },
     tags=["Accounts"],
 )
@@ -162,7 +170,11 @@ delete_profile_schema = extend_schema(
     summary="Delete Profile",
     description="This deletes a profile",
     responses={
-        204: OpenApiResponse("Profile deleted successfully"),
+        204: OpenApiResponse(
+            inline_serializer(
+                name="DeleteProfileResponse", fields={"detail": serializers.CharField()}
+            )
+        ),
     },
     tags=["Profiles"],
 )

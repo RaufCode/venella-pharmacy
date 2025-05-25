@@ -9,10 +9,10 @@ from documentations.products import *
 
 class ProductViewSet(viewsets.ViewSet):
 
-    parser_classes = (
-        "rest_framework.parsers.JSONParser",
-        "rest_framework.parsers.MultiPartParser",
-    )
+    # parser_classes = [
+    #     "rest_framework.parsers.JSONParser",
+    #     "rest_framework.parsers.MultiPartParser",
+    # ]
 
     @list_products_schema
     def list_products(self, request):
