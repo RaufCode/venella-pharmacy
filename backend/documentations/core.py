@@ -80,13 +80,13 @@ add_sales_person_schema = extend_schema(
         name="CreateSalePersonAccount",
         fields={
             "email": serializers.EmailField(),
-            "password": serializers.CharField(),
+            # "password": serializers.CharField(),
             "first_name": serializers.CharField(),
             "last_name": serializers.CharField(),
             "other_names": serializers.CharField(),
             "phone": serializers.CharField(),
             "address": serializers.CharField(),
-            "image": serializers.ImageField(),
+            # "image": serializers.ImageField(),
         },
     ),
     responses={

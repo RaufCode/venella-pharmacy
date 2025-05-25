@@ -11,5 +11,6 @@ from rest_framework.exceptions import (
     ValidationError,
 )
 from rest_framework_simplejwt.tokens import RefreshToken
+from decouple import config
 
 from documentations.core import *

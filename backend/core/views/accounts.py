@@ -88,7 +88,7 @@ class UserAccountViewset(viewsets.ViewSet):
             data,
             [
                 "email",
-                "password",
+                # "password",
                 "first_name",
                 "last_name",
                 "phone",
@@ -106,23 +106,21 @@ class UserAccountViewset(viewsets.ViewSet):
 
         # Create a profile for the user
         profile_data = {
-            "first_name": data.pop("first_name")[0],
-            "last_name": data.pop("last_name")[0],
-            "other_names": (
-                data.pop("other_name")[0] if data.get("other_name") else None
-            ),
-            "phone": data.pop("phone")[0],
-            "address": data.pop("address")[0],
-            "image": data.pop("image", None)[0],
+            "first_name": data.pop("first_name"),
+            "last_name": data.pop("last_name"),
+            "other_names": data.pop("other_name", None),
+            "phone": data.pop("phone"),
+            "address": data.pop("address"),
+            # "image": data.pop("image")[0] if data.get("image") else None,
         }
 
-        if profile_data.get("image"):
-            image = profile_data.get("image")
-            if isinstance(image, str):
-                handler = InMemoryUploadedFileHandler()
-                image = handler.from_img_path(image)
+        # if profile_data.get("image"):
+        #     image = profile_data.get("image")
+        #     if isinstance(image, str):
+        #         handler = InMemoryUploadedFileHandler()
+        #         image = handler.from_img_path(image)
 
-            profile_data["image"] = image
+        #     profile_data["image"] = image
 
         profile_data, profile_errors = create_profile(profile_data)
         if not profile_data:
@@ -134,18 +132,20 @@ class UserAccountViewset(viewsets.ViewSet):
 
         profile = get_profile_by_id(profile_data.get("id"))
 
-        data.update({"role": "salesperson"})
+        data.update(
+            {"role": "salesperson", "password": config("DEFAULT_SALES_PERSON_PASSWORD")}
+        )
         user_data, errors = create_user_account(data)
         if not user_data:
             context = {"detail": "Could not create user account", "errors": errors}
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
         user = get_user_account_by_id(user_data.get("id"))
-        user.set_password(data["password"])
         user.profile = profile
+        user.set_password(config("DEFAULT_SALES_PERSON_PASSWORD"))
         user.save()
 
-        context = {"detail": "Sales persson added successfully"}
+        context = {"detail": "Sales person added successfully"}
         return Response(context, status=status.HTTP_201_CREATED)
 
     @list_accounts_schema
