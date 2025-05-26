@@ -40,6 +40,6 @@ def get_category_by_id(category_id: str):
         return category
 
 
-def category_info(category: ProductCategory, many: bool = False):
+def category_representation(category: ProductCategory, many: bool = False):
     serializer = ProductCategorySerializer(category, many=many)
     return serializer.data

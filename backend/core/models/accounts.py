@@ -40,7 +40,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         ],
     )
     date_created = models.DateTimeField(auto_now_add=True)
-    profile = models.ForeignKey(
+    profile = models.OneToOneField(
         Profile,
         on_delete=models.SET_NULL,
         null=True,

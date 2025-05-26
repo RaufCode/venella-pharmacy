@@ -26,7 +26,9 @@ def get_all_users() -> UserAccount:
     return UserAccount.objects.all()
 
 
-def user_account_info(request, user_account: UserAccount, many: bool = False) -> dict:
+def user_account_representation(
+    request, user_account: UserAccount, many: bool = False
+) -> dict:
     """
     Get user account data
     """

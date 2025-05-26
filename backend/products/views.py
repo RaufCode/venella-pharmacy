@@ -1,5 +1,4 @@
-from rest_framework import viewsets
-from rest_framework import status
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from products.selectors import *
 from products.services import *
@@ -116,7 +115,7 @@ class ProductCategoryViewSet(viewsets.ViewSet):
     @list_categories_schema
     def list_categories(self, request):
         categories = get_all_categories()
-        context = category_info(categories, many=True)
+        context = category_representation(categories, many=True)
         return Response(context, status=status.HTTP_200_OK)
 
     @retrieve_category_schema
@@ -127,7 +126,7 @@ class ProductCategoryViewSet(viewsets.ViewSet):
                 {"detail": "Category not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        context = category_info(category)
+        context = category_representation(category)
         return Response(context, status=status.HTTP_200_OK)
 
     @create_category_schema
@@ -139,7 +138,7 @@ class ProductCategoryViewSet(viewsets.ViewSet):
                 {"detail": "Could not create category", "errors": errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        context = category_info(category)
+        context = category_representation(category)
         return Response(context, status=status.HTTP_201_CREATED)
 
     @update_category_schema
@@ -159,7 +158,7 @@ class ProductCategoryViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        context = category_info(updated_category)
+        context = category_representation(updated_category)
         return Response(context, status=status.HTTP_200_OK)
 
     @delete_category_schema

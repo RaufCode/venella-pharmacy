@@ -151,7 +151,7 @@ class UserAccountViewset(viewsets.ViewSet):
     @list_accounts_schema
     def list(self, request):
         users = get_all_users()
-        context = user_account_info(request, users, many=True)
+        context = user_account_representation(request, users, many=True)
         return Response(context, status=status.HTTP_200_OK)
 
     @retrieve_account_schema
@@ -164,7 +164,7 @@ class UserAccountViewset(viewsets.ViewSet):
             context = {"detail": "User account not found"}
             return Response(context, status=status.HTTP_404_NOT_FOUND)
 
-        context = user_account_info(request, user)
+        context = user_account_representation(request, user)
         return Response(context, status=status.HTTP_200_OK)
 
     @update_account_schema

@@ -144,7 +144,7 @@ class SignInView(APIView):
         if user.check_password(password) and user.is_active:
             # generate token for user
             token = RefreshToken.for_user(user)
-            user_data = user_account_info(request, user)
+            user_data = user_account_representation(request, user)
             context = {
                 "detail": "Login successful",
                 "user": user_data,
