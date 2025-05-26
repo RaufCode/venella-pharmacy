@@ -36,3 +36,8 @@ def user_account_representation(
         user_account, many=many, context={"request": request}
     )
     return serializer.data
+
+
+def get_all_sales_persons() -> UserAccount:
+    sales_persons = UserAccount.objects.filter(role="salesperson")
+    return sales_persons

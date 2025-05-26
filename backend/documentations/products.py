@@ -39,15 +39,14 @@ create_products_schema = extend_schema(
             "category": serializers.UUIDField(),
             "product_images": serializers.ListField(
                 child=serializers.DictField(
-                    child=serializers.ImageField(),
-                    required=False,
+                    child=serializers.ImageField(), required=False
                 ),
                 required=False,
             ),
         },
     ),
     responses={
-        200: ProductSerializer(many=True),
+        200: ProductSerializer(),
     },
     tags=["Products"],
 )

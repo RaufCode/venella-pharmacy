@@ -148,6 +148,33 @@ class UserAccountViewset(viewsets.ViewSet):
         context = {"detail": "Sales person added successfully"}
         return Response(context, status=status.HTTP_201_CREATED)
 
+    @list_sales_persons_schema
+    def list_sales_persons(self, request):
+        users = get_all_sales_persons()
+        context = user_account_representation(request, users, many=True)
+        return Response(context, status=status.HTTP_200_OK)
+
+    @remove_sales_person_schema
+    def remove_sales_person(self, request, user_id):
+        user = get_user_account_by_id(user_id)
+        if not user:
+            context = {"detail": "User account not found"}
+            return Response(context, status=status.HTTP_404_NOT_FOUND)
+
+        if user.role != "salesperson":
+            context = {"detail": "User is not a sales person"}
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        deleted = delete_user_account(user)
+        if not deleted:
+            context = {"detail": "Could not delete user account"}
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"detail": "Sales person removed successfully"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
     @list_accounts_schema
     def list(self, request):
         users = get_all_users()

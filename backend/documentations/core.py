@@ -103,6 +103,28 @@ add_sales_person_schema = extend_schema(
     tags=["Accounts"],
 )
 
+list_sales_persons_schema = extend_schema(
+    summary="List Sales Persons",
+    description="This lists all sales persons",
+    responses={
+        200: UserInfoSerializer(many=True),
+    },
+    tags=["Accounts"],
+)
+
+remove_sales_person_schema = extend_schema(
+    summary="Remove Sales Person",
+    description="This removes a sales person",
+    request=UserInfoSerializer,
+    responses={
+        204: OpenApiResponse(
+            inline_serializer(
+                name="RemoveSalesResponse", fields={"detail": serializers.CharField()}
+            )
+        ),
+    },
+)
+
 update_account_schema = extend_schema(
     summary="Update User Account",
     description="This update a user account",

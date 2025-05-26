@@ -1,5 +1,5 @@
-from orders.models import Order, OrderItems
-from orders.serializers import OrderSerializer, OrderItemsSerializer
+from orders.models import Order, OrderItem
+from orders.serializers import OrderSerializer, OrderItemSerializer
 from orders.selectors import get_order_by_id
 from products.models import Product
 from products.selectors import get_product_by_id
@@ -46,7 +46,7 @@ def create_order_items(data: dict):
 
         order_item["order"] = data.get("order")
 
-    serializer = OrderItemsSerializer(data=data["order_items"], many=True)
+    serializer = OrderItemSerializer(data=data["order_items"], many=True)
     if serializer.is_valid():
         serializer.save()
         return serializer.data, None
