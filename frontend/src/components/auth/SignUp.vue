@@ -31,7 +31,7 @@
             form.other_names.slice(1).toLowerCase();
         form.email = form.email.toLowerCase();
         console.log(form);
-        if (form.phone.startsWith("0") && form.phone.length === 10) {
+        if (form.phone.startsWith("0")) {
             form.phone = "+233" + form.phone.slice(1);
         }
 
@@ -44,44 +44,65 @@
 </script>
 
 <template>
-    <div class="grid lg:grid-cols-2 lg:h-screen">
-        <div
-            class="overflow-y-scroll py-4 bg-white 2lg:flex 2lg:justify-center 2lg:items-center"
-        >
+    <div class="p-3 md:p-0 bg-gray-100">
+        <div class="flex items-center min-h-screen w-full">
             <form
                 @submit.prevent="validation"
-                class="max-w-[370px] p-4 shadow w-11/12 mx-auto"
+                class="w-full max-w-xl p-3 md:p-4 shadow mx-auto bg-white rounded"
             >
-                <h1 class="form-title">Sign up</h1>
-                <InputField v-model="form.first_name" labelname="First Name" />
-                <InputField v-model="form.last_name" labelname="Last Name" />
-                <label class="block mx-auto mt-3 text-sm text-gray-900">
-                    Other Names
-                    <input
-                        v-model="form.other_names"
-                        type="text"
-                        class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
+                <h1 class="form-title text-center">Register Here</h1>
+                <div class="md:flex items-center flex-col md:flex-row gap-4">
+                    <InputField
+                        v-model="form.first_name"
+                        labelname="First Name"
+                        class="flex-1"
                     />
-                </label>
-                <InputField
-                    v-model="form.email"
-                    labelname="Email"
-                    type="email"
-                />
-                <InputField v-model="form.phone" labelname="Phone" />
-                <InputField v-model="form.address" labelname="Address" />
-                <div>
-                    <label
-                        for="role"
-                        class="block mx-auto mt-3 text-sm text-gray-900"
-                    >
-                        Role
+                    <InputField
+                        v-model="form.last_name"
+                        labelname="Last Name"
+                        class="flex-1"
+                    />
+                </div>
+                <div
+                    class="md:flex items-center flex-col md:flex-row gap-4 mt-3 md:mt-0"
+                >
+                    <label class="flex-1 text-sm text-gray-900 mt-3">
+                        Other Names
+                        <input
+                            v-model="form.other_names"
+                            type="text"
+                            class="block mt-1 w-full border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
+                        />
                     </label>
+                    <InputField
+                        v-model="form.email"
+                        labelname="Email"
+                        type="email"
+                        class="flex-1"
+                    />
+                </div>
+                <div class="md:flex items-center flex-col md:flex-row gap-4">
+                    <InputField
+                        v-model="form.phone"
+                        labelname="Phone"
+                        type="tel"
+                        class="flex-1"
+                    />
+                    <InputField
+                        v-model="form.address"
+                        labelname="Address"
+                        class="flex-1"
+                    />
+                </div>
+                <div class="mt-3">
+                    <label for="role" class="block text-sm text-gray-900"
+                        >Role</label
+                    >
                     <select
                         id="role"
-                        class="block mt-1 w-full mx-auto border text-sm text-gray-700 border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10"
                         v-model="form.role"
                         required
+                        class="block mt-1 w-full border text-sm text-gray-700 bg-inherit border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10"
                     >
                         <option value="" disabled>Select Role</option>
                         <option value="customer">Customer</option>
@@ -91,20 +112,16 @@
                     v-model="form.password"
                     labelname="Password"
                     type="password"
+                    class="mt-3"
                 />
-                <Btn btnName="Sign up" />
-                <p class="mt-3 text-sm text-gray-700">
+                <Btn btnName="Sign up" class="mt-4" />
+                <p class="mt-3 text-sm text-gray-700 text-center">
                     Already have an account?
                     <router-link to="/login" class="text-orange-700 text-xs"
                         >Sign in</router-link
                     >
                 </p>
             </form>
-        </div>
-        <div class="hidden lg:flex items-center justify-center bg-orange-700">
-            <h1 class="text-5xl font-styleScript text-white">
-                Venella Pharmacy
-            </h1>
         </div>
     </div>
 </template>

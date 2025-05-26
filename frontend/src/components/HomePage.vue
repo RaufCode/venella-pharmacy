@@ -1,315 +1,291 @@
 <script setup>
-    import Btn from "../components/ui/Btn.vue";
+    import { ref, computed, onMounted } from "vue";
+    import { useAuthStore } from "@/stores/auth";
+
+    const auth = useAuthStore();
+    const showMobileNav = ref(false);
+
+    // Initialize auth on mount
+    onMounted(() => {
+        auth.initializeAuth();
+    });
+
+    const isReady = computed(() => auth.ready); // wait until auth state is loaded
+    const isAuthenticated = computed(() => auth.isAuthenticated);
+
+    function toggleMobileNav() {
+        showMobileNav.value = !showMobileNav.value;
+    }
+
+    function handleLogout() {
+        auth.logout();
+    }
+
+    const products = ref([
+        {
+            id: 1,
+            name: "Paracetamol 500mg",
+            description: "Fast relief from headaches and fever.",
+            price: 20,
+            image: "/drug1.jpg",
+            rating: 5,
+        },
+        {
+            id: 2,
+            name: "Amoxicillin 250mg",
+            description: "Broad-spectrum antibiotic for infections.",
+            price: 35,
+            image: "/drug2.jpg",
+            rating: 4,
+        },
+    ]);
 </script>
 
 <template>
-    <div class="m-0 p-0">
-        <div class="shadow-md fixed top-0 w-full bg-white z-10">
+    <div v-if="isReady">
+        <header class="relative">
+            <!-- Top Navbar -->
             <div
-                class="flex justify-between items-center text-sm p-4 md:text-lg md:px-6 lg:px-10 max-w-[1440px] mx-auto"
+                class="w-full flex items-center justify-between p-4 gap-6 lg:px-10 lg:py-4 bg-white shadow-md fixed top-0 z-50"
             >
-                <router-link to="" class="text-blue-600 block font-semibold">
-                    <i class="pi pi-slack text-2xl"></i>
-                </router-link>
-                <h1 class="hidden md:flex text-blue-600 font-medium">
-                    <marquee>Venella Pharmacy</marquee>
-                    <!--I know marquee is deprecated though-->
-                </h1>
-                <div class="flex gap-2 items-center md:gap-4">
-                    <router-link
-                        to="/register"
-                        class="bg-orange-600 block font-medium py-1 px-3 text-white text-base hover:bg-orange-500"
-                    >
-                        Sign up
-                    </router-link>
-                    <router-link
-                        to="/login"
-                        class="bg-orange-600 block font-medium py-1 px-3 text-white text-base hover:bg-orange-500"
-                    >
-                        Sign in
-                    </router-link>
-                </div>
-            </div>
-        </div>
-        <!--HomeSection-->
-        <div class="h-svh flex justify-center items-center bg-gray-50">
-            <div>
-                <div class="px-4">
-                    <h1
-                        class="font-styleScript text-[29px] text-orange-600 md:text-4xl"
-                    >
-                        Welcome to Venella Pharmacy
-                    </h1>
-                    <p class="text-gray-800 pb-2">
-                        Your trusted partner in health and wellness
-                    </p>
-                </div>
-                <div
-                    class="flex justify-start gap-2 items-center text-sm w-full max-w-[500px] relative px-4"
+                <!-- Logo -->
+                <router-link
+                    to="/"
+                    class="text-orange-600 flex items-center gap-2 font-semibold"
                 >
-                    <label class="w-4/5">
+                    <i class="pi pi-slack text-2xl"></i>VPharm
+                </router-link>
+
+                <!-- Search Bar (md+) -->
+                <div
+                    class="hidden md:flex items-center w-full md:max-w-sm lg:max-w-md bg-white shadow rounded-full"
+                >
+                    <input
+                        type="search"
+                        placeholder="Search..."
+                        class="w-full px-4 py-1 text-gray-700 border focus:outline-none focus:border-orange-700 bg-transparent rounded-l-full"
+                    />
+                    <button
+                        class="flex items-center justify-center border border-orange-600 bg-orange-600 text-white px-4 py-1 rounded-r-full hover:bg-orange-700 transition"
+                    >
+                        <i class="pi pi-search text-base"></i>
+                    </button>
+                </div>
+
+                <!-- Desktop Navigation (lg+) -->
+                <nav class="hidden lg:flex items-center gap-6">
+                    <router-link
+                        v-if="isAuthenticated"
+                        to="/"
+                        class="text-gray-700 hover:text-orange-600"
+                        >Home</router-link
+                    >
+                    <router-link
+                        v-if="isAuthenticated"
+                        to="/carts"
+                        class="text-gray-700 hover:text-orange-600"
+                        >Carts</router-link
+                    >
+                    <router-link
+                        v-if="isAuthenticated"
+                        to="/orders"
+                        class="text-gray-700 hover:text-orange-600"
+                        >Orders</router-link
+                    >
+                    <button
+                        v-if="isAuthenticated"
+                        @click="handleLogout"
+                        class="text-gray-700 hover:text-orange-600"
+                    >
+                        Logout
+                    </button>
+                    <router-link
+                        v-if="!isAuthenticated"
+                        to="/login"
+                        class="text-gray-700 hover:text-orange-600"
+                        >Login</router-link
+                    >
+                    <router-link
+                        v-if="!isAuthenticated"
+                        to="/register"
+                        class="text-gray-700 hover:text-orange-600"
+                        >Register</router-link
+                    >
+                </nav>
+
+                <!-- Hamburger Icon (lg−) -->
+                <button
+                    @click="toggleMobileNav"
+                    class="lg:hidden text-2xl text-orange-600 focus:outline-none"
+                    aria-label="Toggle mobile navigation"
+                >
+                    <i
+                        :class="showMobileNav ? 'pi pi-times' : 'pi pi-bars'"
+                    ></i>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <transition name="fade">
+                <nav
+                    v-if="showMobileNav"
+                    class="lg:hidden fixed top-[65px] inset-x-0 bg-white z-40 shadow-lg p-4 space-y-4"
+                >
+                    <router-link
+                        v-if="isAuthenticated"
+                        to="/"
+                        class="block text-gray-700 hover:text-orange-600"
+                        @click="toggleMobileNav"
+                        >Home</router-link
+                    >
+                    <router-link
+                        v-if="isAuthenticated"
+                        to="/carts"
+                        class="block text-gray-700 hover:text-orange-600"
+                        @click="toggleMobileNav"
+                        >Carts</router-link
+                    >
+                    <router-link
+                        v-if="isAuthenticated"
+                        to="/orders"
+                        class="block text-gray-700 hover:text-orange-600"
+                        @click="toggleMobileNav"
+                        >Orders</router-link
+                    >
+                    <button
+                        v-if="isAuthenticated"
+                        @click="
+                            () => {
+                                handleLogout();
+                                toggleMobileNav();
+                            }
+                        "
+                        class="block w-full text-left text-gray-700 hover:text-orange-600"
+                    >
+                        Logout
+                    </button>
+                    <router-link
+                        v-if="!isAuthenticated"
+                        to="/login"
+                        class="block text-gray-700 hover:text-orange-600"
+                        @click="toggleMobileNav"
+                        >Login</router-link
+                    >
+                    <router-link
+                        v-if="!isAuthenticated"
+                        to="/register"
+                        class="block text-gray-700 hover:text-orange-600"
+                        @click="toggleMobileNav"
+                        >Register</router-link
+                    >
+                </nav>
+            </transition>
+        </header>
+
+        <main class="min-h-screen">
+            <!-- Top Banner -->
+            <section class="bg-gray-50">
+                <div class="container mx-auto px-4 lg:px-10">
+                    <h1
+                        class="text-sm md:text-2xl text-left pt-20 md:pt-24 md:pb-8 font-medium"
+                    >
+                        WELCOME TO VENELLA PHARMACY
+                    </h1>
+
+                    <!-- Mobile Search -->
+                    <div class="flex items-center w-full pt-2 pb-5 md:hidden">
                         <input
                             type="search"
-                            placeholder="Search for medicine"
-                            class="border border-gray-400 rounded outline-none w-full focus:border-orange-700 h-10 pl-5"
+                            placeholder="Search..."
+                            class="w-full px-4 py-1 text-black border border-black focus:outline-none focus:border-orange-700 bg-transparent rounded-l-full"
                         />
-                    </label>
-                    <button
-                        class="bg-orange-600 h-10 text-white rounded px-2 hover:bg-orange-500 shadow-md transition-all duration-500"
-                    >
-                        Search
-                    </button>
-                    <div
-                        class="hidden w-full absolute top-11 bg-gray-50 shadow p-2 z-20"
-                    >
-                        <h1>Medication List</h1>
+                        <button
+                            class="flex items-center justify-center border border-orange-600 bg-orange-600 text-white px-4 py-1 rounded-r-full hover:bg-orange-700 transition"
+                        >
+                            <i class="pi pi-search text-base"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
-        <!--MedicationSection-->
-        <div class="bg-white">
-            <h1
-                class="py-3 text-lg font-medium text-orange-600 text-center md:font-semibold"
-            >
-                Top Picks for You
-            </h1>
-            <div
-                class="px-4 mb-5 mx-auto grid grid-cols-2 gap-3 lg:grid-cols-4 md:px-6 md:gap-5 md:mb-8 max-w-[1440px]"
-            >
-                <div
-                    class="bg-[url('/drug1.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
-                >
-                    <div
-                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                    >
-                        <h1 class="text-center text-white p-1">
-                            <router-link to="/login" class="block">
-                                Pain Relief
-                            </router-link>
-                        </h1>
-                    </div>
-                </div>
-                <div
-                    class="bg-gray-500 bg-[url('/drug2.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
-                >
-                    <div
-                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                    >
-                        <h1 class="text-center text-white p-1">
-                            <router-link to="/login" class="block">
-                                Cold & Flu
-                            </router-link>
-                        </h1>
-                    </div>
-                </div>
-                <div
-                    class="bg-gray-500 bg-[url('/drug3.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
-                >
-                    <div
-                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                    >
-                        <h1 class="text-center text-white p-1">
-                            <router-link to="/login" class="block">
-                                Supplements
-                            </router-link>
-                        </h1>
-                    </div>
-                </div>
-                <div
-                    class="bg-gray-500 bg-[url('/drug4.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
-                >
-                    <div
-                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                    >
-                        <h1 class="text-center text-white p-1">
-                            <router-link to="/login" class="block">
-                                Antibiotics
-                            </router-link>
-                        </h1>
-                    </div>
-                </div>
+            </section>
 
+            <!-- Product Section -->
+            <section class="container mx-auto px-4 lg:px-10">
+                <h1 class="py-3 text-xl md:py-7 md:text-2xl font-medium">
+                    Products Available
+                </h1>
                 <div
-                    class="bg-gray-500 bg-[url('/syrup1.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
+                    class="grid place-items-center grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full mb-5 cursor-pointer"
                 >
-                    <div
-                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
+                    <article
+                        v-for="product in products"
+                        :key="product.id"
+                        class="bg-white p-2 rounded-2xl border shadow overflow-hidden w-full max-w-xs hover:shadow-lg transition-shadow duration-300"
                     >
-                        <h1 class="text-center text-white p-1">
-                            <router-link to="/login" class="block">
-                                Gut Flow
-                            </router-link>
-                        </h1>
-                    </div>
+                        <div class="h-40 bg-gray-100 rounded-t-xl">
+                            <img
+                                :src="product.image"
+                                :alt="product.name"
+                                class="w-full h-full object-cover rounded-t-xl"
+                            />
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <div class="flex gap-1 text-yellow-500 text-sm">
+                                <i
+                                    v-for="n in product.rating"
+                                    :key="n"
+                                    class="pi pi-heart-fill"
+                                ></i>
+                            </div>
+                            <p
+                                class="text-gray-700 text-sm font-semibold truncate"
+                            >
+                                {{ product.name }}
+                            </p>
+                            <p class="text-gray-600 text-sm truncate">
+                                {{ product.description }}
+                            </p>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-orange-600 font-bold">
+                                    ₵{{ product.price }}
+                                </p>
+                                <button
+                                    class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-full"
+                                >
+                                    <i class="pi pi-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
                 </div>
-                <div
-                    class="bg-gray-500 bg-[url('/vitamin.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
-                >
-                    <div
-                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                    >
-                        <h1 class="text-center text-white p-1">
-                            <router-link to="/login" class="block">
-                                Vitamins
-                            </router-link>
-                        </h1>
-                    </div>
-                </div>
-                <div
-                    class="bg-gray-500 bg-[url('/drug5.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
-                >
-                    <div
-                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                    >
-                        <h1 class="text-center text-white p-1">
-                            <router-link to="/login" class="block">
-                                Syrup
-                            </router-link>
-                        </h1>
-                    </div>
-                </div>
-                <div
-                    class="bg-gray-500 bg-[url('/skincare.jpg')] bg-no-repeat bg-cover p-1 rounded-xl transition-transform duration-300 hover:shadow-md shadow-black"
-                >
-                    <div
-                        class="bg-black bg-opacity-60 rounded-b-xl mt-40 md:mt-48"
-                    >
-                        <h1 class="text-center text-white p-1">
-                            <router-link to="/login" class="block">
-                                Skin Care
-                            </router-link>
-                        </h1>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--DeliverySection-->
-        <div class="bg-gray-50 py-3 px-4 text-center md:py-5 md:px-6">
-            <h2 class="text-lg font-semibold text-orange-600 my-2">
-                Fast & Reliable Delivery
-            </h2>
-            <p class="text-gray-600 mb-3">
-                Get your medicines delivered to your doorstep in no time
-            </p>
-            <img
-                src="../../delivery.png"
-                alt="a picture of a delivery man"
-                class="rounded-md w-full md:w-[500px] mx-auto"
-            />
-            <button
-                class="px-4 py-2 bg-orange-600 text-white text-base font-medium hover:bg-orange-700 transition"
-            >
-                Order Now
-            </button>
-        </div>
-        <!--FooterSection-->
-        <div class="bg-gray-800 px-4 py-5 grid place-items-center">
-            <div
-                class="grid grid-cols-1 gap-9 lg:w-full lg:grid-cols-3 md:px-6 max-w-[1440px]"
-            >
-                <div class="">
-                    <h2
-                        class="text-sm font-semibold text-blue-500 py-3 md:py-5"
-                    >
-                        Let's Connect
-                    </h2>
-                    <p
-                        class="text-gray-400 text-sm flex items-center gap-3 pb-4"
-                    >
-                        <i class="pi pi-ethereum block text-white"></i>
-                        Market junction, Kumasi, Ghana
-                    </p>
-                    <p
-                        class="text-gray-400 text-sm flex items-center gap-3 pb-4"
-                    >
-                        <i class="pi pi-phone block text-white"></i> +233 XXX
-                        XXX XXX
-                    </p>
-                    <p
-                        class="text-gray-400 text-sm flex items-center gap-3 pb-4"
-                    >
-                        <i class="pi pi-whatsapp block text-white"></i> +233 XXX
-                        XXX XXX
-                    </p>
-                    <p class="text-gray-400 text-sm flex items-center gap-3">
-                        <i class="pi pi-envelope block text-white"></i>
-                        support@vanellepharmacy.com
-                    </p>
-                </div>
-                <div>
-                    <h2
-                        class="font-semibold text-sm text-blue-500 py-3 md:py-5"
-                    >
-                        Join us on
-                    </h2>
-                    <div class="flex gap-4 w-max">
-                        <a href="" class="text-gray-400 hover:text-white">
-                            <i class="pi pi-facebook text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="pi pi-instagram text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="pi pi-twitter text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="pi pi-tiktok text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="pi pi-linkedin text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white">
-                            <i class="pi pi-google text-xl"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="">
-                    <h2
-                        class="text-sm font-semibold text-blue-500 py-3 md:py-5"
-                    >
-                        Contact Us
-                    </h2>
-                    <form
-                        class="md:w-[300px] lg:w-auto max-w-[450px] space-y-3 text-center text-sm text-white"
-                    >
-                        <input
-                            type="text"
-                            required
-                            placeholder="Your Name"
-                            class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
-                        />
-                        <input
-                            type="email"
-                            required
-                            placeholder="Your Email"
-                            class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
-                        />
-                        <textarea
-                            rows="3"
-                            required
-                            placeholder="Your Message"
-                            class="w-full p-4 rounded-md bg-transparent border border-gray-400 text-white placeholder-gray-400 outline-none focus:border-orange-700 resize-none"
-                        ></textarea>
-                        <Btn btnName="Send Messsage" />
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!--CopyRightSection-->
+            </section>
+        </main>
 
-        <div class="py-4 text-center text-gray-400 text-sm bg-gray-800">
-            <p>&copy; Vanelle Pharmacy - All Rights Reserved</p>
-        </div>
-        <div class="bg-gray-800 px-4 md:px-6 lg:px-10 pt-5">
-            <div
-                class="max-w-[1440px] border-t border-gray-400 pt-5 md:mx-auto md:w-[300px] lg:w-auto"
-            >
-                <p class="text-white text-lg font-semibold flex gap-3 pb-4">
-                    <i class="pi pi-slack text-blue-600 text-2xl"></i>venella
-                    pharmacy
-                </p>
+        <footer>
+            <div class="py-4 text-center text-gray-400 text-sm bg-gray-800">
+                <p>&copy; Vanelle Pharmacy - All Rights Reserved</p>
             </div>
-        </div>
+            <div class="bg-gray-800 px-4 md:px-6 lg:px-10 pt-2">
+                <div
+                    class="max-w-[1440px] border-t border-gray-400 pt-5 md:mx-auto md:w-[300px] lg:w-auto"
+                >
+                    <p class="text-white text-lg font-semibold flex gap-3 pb-4">
+                        <i class="pi pi-slack text-blue-600 text-2xl"></i
+                        >venella pharmacy
+                    </p>
+                </div>
+            </div>
+        </footer>
     </div>
 </template>
+
+<style scoped>
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: all 0.3s ease;
+    }
+    .fade-enter-from,
+    .fade-leave-to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+</style>

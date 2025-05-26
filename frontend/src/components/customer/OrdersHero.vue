@@ -59,13 +59,24 @@
     const redirect = () => {
         router.push("/login");
     };
+
+    const goBack = () => {
+        router.back();
+    };
 </script>
 
 <template>
     <div class="h-screen w-full relative flex flex-col flex-1 overflow-hidden">
+        <!-- Go Back Button -->
         <div
-            class="hidden md:block w-full md:absolute top-0 z-50 p-3 bg-gray-900"
+            class="flex items-center gap-4 w-full md:absolute top-0 z-50 p-3 bg-gray-900"
         >
+            <button
+                @click="goBack"
+                class="flex items-center text-gray-300 hover:text-orange-600 transition"
+            >
+                <i class="pi pi-arrow-left"></i>
+            </button>
             <h1
                 class="text-gray-300 font-styleScript text-center text-lg md:text-2xl"
             >
@@ -91,7 +102,8 @@
                         here for easy tracking and reference.
                     </p>
                 </div>
-                <!--Loaded Cart-->
+
+                <!-- Loaded Cart -->
                 <div v-else class="p-0 md:py-3">
                     <div class="">
                         <table class="min-w-full border bg-white text-center">
@@ -102,7 +114,7 @@
                                     <th class="px-6 py-2">Product</th>
                                     <th class="px-6 py-2">Price</th>
                                     <th class="px-6 py-2">Quantity</th>
-                                    <th class="px-6 py-2">Delete</th>
+                                    <th class="px-6 py-2">Date</th>
                                 </tr>
                             </thead>
                             <tbody class="text-black text-sm font-light">
@@ -116,12 +128,8 @@
                                     <td class="px-6 py-2 whitespace-nowrap">
                                         2
                                     </td>
-                                    <td>
-                                        <button class="block mx-auto">
-                                            <i
-                                                class="pi pi-trash text-red-600 text-2xl"
-                                            ></i>
-                                        </button>
+                                    <td class="px-6 py-2 whitespace-nowrap">
+                                        2023-10-01
                                     </td>
                                 </tr>
                             </tbody>

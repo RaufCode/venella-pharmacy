@@ -3,13 +3,13 @@ import HomeView from '../views/HomeView.vue'
 import SignUpView from '../views/SignUpView.vue'
 import SignInView from '../views/SignInView.vue'
 import DashboardView from '../views/DashboardView.vue'
-import CustomerDashboardView from '../views/CustomerDashboardView.vue'
+import CartsView from '../views/CartsView.vue'
+import OrdersView from '../views/OrdersView.vue'
+import ProductDetailsView from '../views/ProductDetailsView.vue'
 import SalesPersonView from '../views/SalesPersonView.vue'
 import CheckoutView from '../views/CheckOutView.vue'
-import { useAuthStore } from '@/stores/auth' // Adjust the path as needed
-import { createPinia } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 
-const pinia = createPinia() // Required if you're using Pinia outside setup
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -32,12 +32,12 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresRole: 'admin' },
     },
     {
-      path: '/customer-dashboard',
-      name: 'customer-dashboard',
-      component: CustomerDashboardView,
+      path: '/carts',
+      name: 'carts',
+      component: CartsView,
       meta: { requiresAuth: true },
     },
     {
@@ -47,24 +47,48 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/orders',
+      name: 'orders',
+      component: OrdersView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/details',
+      name: 'product-details',
+      component: ProductDetailsView,
+    },
+    {
       path: '/salesperson',
       name: 'salesperson',
       component: SalesPersonView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresRole: 'admin' },
     },
   ],
 })
 
-// Route guard
-router.beforeEach((to, from, next) => {
-  const auth = useAuthStore(pinia)
-  const isAuthenticated = auth.isAuthenticated
+// Route guard with authentication and role check
+router.beforeEach(async (to, from, next) => {
+  const auth = useAuthStore()
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login')
-  } else {
-    next()
+  // Ensure the auth store is initialized
+  if (!auth.ready) {
+    await auth.initializeAuth()
   }
+
+  const isAuthRequired = to.meta.requiresAuth
+  const requiredRole = to.meta.requiresRole
+  const isAuthenticated = auth.isAuthenticated
+  const userRole = auth.user?.role
+
+  if (isAuthRequired && !isAuthenticated) {
+    return next('/login')
+  }
+
+  if (requiredRole && userRole !== requiredRole) {
+    return next('/') // or show a 403 page if desired
+  }
+
+  next()
 })
 
 export default router

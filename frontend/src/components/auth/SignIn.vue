@@ -24,12 +24,14 @@
     };
 </script>
 <template>
-    <div class="grid lg:grid-cols-2 lg:h-screen">
-        <div class="flex justify-center items-center h-screen">
+    <div class="">
+        <div
+            class="flex justify-center items-center h-screen p-3 md:p-0 bg-gray-100"
+        >
             <form
                 @submit.prevent="login"
                 method="post"
-                class="max-w-[370px] p-4 shadow w-11/12 mx-auto"
+                class="w-full max-w-lg p-3 md:p-4 shadow mx-auto bg-white rounded"
             >
                 <h1 class="form-title">Sign in</h1>
                 <InputField
@@ -43,18 +45,13 @@
                     type="password"
                 />
                 <Btn btnName="Sign in" />
-                <p class="mt-3 text-sm text-gray-700 text-">
+                <p class="mt-3 text-sm text-gray-700 text-center">
                     Don't have an account?
                     <router-link to="/register" class="text-orange-700 text-xs"
                         >Sign up</router-link
                     >
                 </p>
             </form>
-        </div>
-        <div class="hidden lg:flex items-center justify-center bg-orange-700">
-            <h1 class="text-5xl font-styleScript text-white">
-                Venella Pharmacy
-            </h1>
         </div>
     </div>
 </template>

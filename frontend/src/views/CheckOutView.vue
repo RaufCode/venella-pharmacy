@@ -1,7 +1,7 @@
 <script setup>
-    import CheckOutHero from "@/components/customer-dashboard/CheckOut.vue";
+    import CheckOut from "@/components/customer/CheckOut.vue";
 </script>
 
 <template>
-    <CheckOutHero />
+    <CheckOut />
 </template>
