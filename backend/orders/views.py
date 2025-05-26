@@ -3,14 +3,17 @@ from rest_framework.response import Response
 from orders.selectors import *
 from orders.services import *
 from core.utils.general import get_user_from_jwttoken
+from documentations.orders import *
 
 
 class OrderViewSet(viewsets.ViewSet):
+    @list_orders_schema
     def list_orders(self, request):
         orders = get_all_orders()
         context = order_representation(orders, many=True)
         return Response(context, status=status.HTTP_200_OK)
 
+    @retrieve_order_schema
     def retrieve_order(self, request, order_id):
         order = get_order_by_id(order_id)
         if not order:
@@ -20,6 +23,7 @@ class OrderViewSet(viewsets.ViewSet):
         context = order_representation(order, many=False)
         return Response(context, status=status.HTTP_200_OK)
 
+    @list_customer_orders_schema
     def list_customer_orders(self, request):
         user = get_user_from_jwttoken(request)
         if not user:
@@ -30,6 +34,7 @@ class OrderViewSet(viewsets.ViewSet):
         context = order_representation(orders, many=True)
         return Response(context, status=status.HTTP_200_OK)
 
+    @create_order_schema
     def create_order(self, request):
         user = get_user_from_jwttoken(request)
         if not user:

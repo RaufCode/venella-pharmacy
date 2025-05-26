@@ -173,4 +173,8 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "SERVE_URLCONF": "venella_pharmacy.urls",
     "COMPONENT_SPLIT_REQUEST": True,
+    "SWAGGER_UI_SETTINGS": {
+        # "deepLinking": True,
+        "persistAuthorization": True,
+    },
 }

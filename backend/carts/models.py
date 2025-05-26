@@ -6,7 +6,7 @@ from core.models.accounts import UserAccount
 
 class Cart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    customer = models.ForeignKey(
+    customer = models.OneToOneField(
         UserAccount, on_delete=models.CASCADE, related_name="carts"
     )
     created_at = models.DateTimeField(auto_now_add=True)

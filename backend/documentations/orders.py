@@ -7,6 +7,7 @@ list_orders_schema = extend_schema(
     responses={
         200: OrderSerializer(many=True),
     },
+    tags=["Orders"],
 )
 
 retrieve_order_schema = extend_schema(
@@ -14,6 +15,7 @@ retrieve_order_schema = extend_schema(
     responses={
         200: OrderSerializer(many=False),
     },
+    tags=["Orders"],
 )
 
 list_customer_orders_schema = extend_schema(
@@ -21,6 +23,7 @@ list_customer_orders_schema = extend_schema(
     responses={
         200: OrderSerializer(many=True),
     },
+    tags=["Orders"],
 )
 
 create_order_schema = extend_schema(
@@ -49,4 +52,5 @@ create_order_schema = extend_schema(
     responses={
         201: OrderSerializer(many=False),
     },
+    tags=["Orders"],
 )

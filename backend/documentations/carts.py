@@ -14,12 +14,21 @@ list_customer_cart_items_schema = extend_schema(
     summary="List Customer Cart Items",
     description="This retrieves all cart items for a specific customer.",
     responses={200: CartItemSerializer(many=True)},
+    tags=["Carts"],
 )
 
 add_cart_item_schema = extend_schema(
     summary="Add Cart Item",
     description="This adds a new item to the customer's cart.",
-    request=CartItemSerializer,
+    request=inline_serializer(
+        name="AddCartItemRequest",
+        fields={
+            "product": serializers.UUIDField(help_text="ID of the product to add"),
+            "quantity": serializers.IntegerField(
+                default=1, help_text="Quantity of the product to add"
+            ),
+        },
+    ),
     responses={
         201: inline_serializer(
             name="AddCartItemResponse",
@@ -32,7 +41,14 @@ add_cart_item_schema = extend_schema(
 update_cart_item_schema = extend_schema(
     summary="Update Cart Item",
     description="This updates an existing item in the customer's cart.",
-    request=CartItemSerializer,
+    request=inline_serializer(
+        name="UpdateCartItemRequest",
+        fields={
+            "quantity": serializers.IntegerField(
+                default=1, help_text="New quantity of the product"
+            ),
+        },
+    ),
     responses={
         200: inline_serializer(
             name="UpdateCartItemResponse",

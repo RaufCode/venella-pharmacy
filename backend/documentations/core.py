@@ -123,6 +123,7 @@ remove_sales_person_schema = extend_schema(
             )
         ),
     },
+    tags=["Accounts"],
 )
 
 update_account_schema = extend_schema(
