@@ -4,8 +4,16 @@ from carts.views import CartItemViewSet, CartViewSet
 
 urlpatterns = [
     path("", CartViewSet.as_view({"get": "list"})),
-    path("items/", CartItemViewSet.as_view({"get": "list"})),
-    path("cart-items/", CartItemViewSet.as_view({"get": "list_cart_items"})),
+    path("<str:cart_id>/retrieve/", CartViewSet.as_view({"get": "retrieve_cart"})),
+    path("cart-items/", CartItemViewSet.as_view({"get": "list"})),
+    path(
+        "cart-items/<str:item_id>/retrieve/",
+        CartItemViewSet.as_view({"get": "retrieve"}),
+    ),
+    path(
+        "customer/cart-items/",
+        CartItemViewSet.as_view({"get": "list_customer_cart_items"}),
+    ),
     path("cart-items/add/", CartItemViewSet.as_view({"post": "add_item_to_cart"})),
     path(
         "cart-item/<str:item_id>/update/",

@@ -11,7 +11,10 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["product"] = ProductSerializer(instance.product).data
+        data["product"] = ProductSerializer(
+            instance.product, context={"request": self.context.get("request")}
+        ).data
+        return data
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -21,6 +24,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["customer"] = UserAccountSerializer(instance.customer).data
-        data["order_items"] = OrderItemSerializer(instance.items.all(), many=True).data
+        data["customer"] = UserAccountSerializer(
+            instance.customer, context={"request": self.context.get("request")}
+        ).data
+        data["order_items"] = OrderItemSerializer(
+            instance.order_items(),
+            many=True,
+            context={"request": self.context.get("request")},
+        ).data
         return data

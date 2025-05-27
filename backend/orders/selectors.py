@@ -1,3 +1,4 @@
+from django.http import HttpRequest
 from orders.serializers import OrderSerializer
 from orders.models import Order
 
@@ -21,6 +22,6 @@ def get_customer_orders_by_status(customer: str, status: str):
     return Order.objects.filter(customer=customer, status=status)
 
 
-def order_representation(order: Order, many: bool = False):
-    serializer = OrderSerializer(order, many=many)
+def order_representation(request: HttpRequest, order: Order, many: bool = False):
+    serializer = OrderSerializer(order, many=many, context={"request": request})
     return serializer.data

@@ -25,7 +25,10 @@ class Order(models.Model):
     shipping_address = models.TextField()
 
     def __str__(self):
-        return f"Order by {self.customer.profile.first_name} - {self.status}"
+        return f"Order by {self.customer} - {self.status}"
+
+    def order_items(self):
+        return self.items.all()
 
     class Meta:
         ordering = ["-created_at"]
@@ -44,4 +47,4 @@ class OrderItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name} for {self.order.customer.profile.first_name}"
+        return f"{self.quantity} x {self.product.name} for {self.order.customer}"

@@ -1,3 +1,4 @@
+from django.http import HttpRequest
 from carts.serializers import CartSerializer, CartItemSerializer
 from carts.models import Cart, CartItem
 
@@ -41,11 +42,13 @@ def get_cart_item_by_id(cart_item_id: str):
         return None
 
 
-def cart_representation(cart: Cart, many: bool = False):
-    serializer = CartSerializer(cart, many=many)
+def cart_representation(request: HttpRequest, cart: Cart, many: bool = False):
+    serializer = CartSerializer(cart, many=many, context={"request": request})
     return serializer.data
 
 
-def cart_item_representation(cart_item: CartItem, many: bool = False):
-    serializer = CartItemSerializer(cart_item, many=many)
+def cart_item_representation(
+    request: HttpRequest, cart_item: CartItem, many: bool = False
+):
+    serializer = CartItemSerializer(cart_item, many=many, context={"request": request})
     return serializer.data

@@ -59,6 +59,17 @@ def absolute_media_url_builder(request: HttpRequest, media_url: str):
     return request.build_absolute_uri(media_url)
 
 
+def valid_uuid(uuid: str) -> bool:
+    """Check if a string is a valid UUID"""
+    try:
+        from uuid import UUID
+
+        UUID(uuid)
+        return True
+    except ValueError:
+        return False
+
+
 class InMemoryUploadedFileHandler:
 
     def __init__(self) -> None:
