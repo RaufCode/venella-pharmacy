@@ -21,6 +21,11 @@ class Order(models.Model):
     status = models.CharField(
         max_length=20, choices=ORDER_STATUS_CHOICES, default="PENDING"
     )
+    order_type = models.CharField(
+        max_length=20,
+        choices=[("ONLINE", "Online"), ("OFFLINE", "Offline")],
+        default="ONLINE",
+    )
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     shipping_address = models.TextField()
 

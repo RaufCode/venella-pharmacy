@@ -41,3 +41,35 @@ create_order_schema = extend_schema(
     },
     tags=["Orders"],
 )
+
+
+sell_product_schema = extend_schema(
+    description="Sell products in-store",
+    request=inline_serializer(
+        name="SellProductRequest",
+        fields={
+            "products": serializers.ListField(
+                child=serializers.DictField(
+                    child=inline_serializer(
+                        name="ProductsRequestData",
+                        fields={
+                            "product": serializers.UUIDField(),
+                            "quantity": serializers.IntegerField(min_value=1),
+                        },
+                    )
+                )
+            ),
+        },
+        required=["products"],
+    ),
+    responses={
+        201: inline_serializer(
+            name="SellProductResponse",
+            fields={
+                "detail": serializers.CharField(),
+                "sale": OrderSerializer(),
+            },
+        ),
+    },
+    tags=["Orders"],
+)

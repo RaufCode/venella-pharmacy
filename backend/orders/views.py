@@ -119,3 +119,36 @@ class OrderViewSet(viewsets.ViewSet):
 
         context = order_representation(request, order, many=False)
         return Response(context, status=status.HTTP_201_CREATED)
+
+    @sell_product_schema
+    def sell_in_store(self, request):
+        user = get_user_from_jwttoken(request)
+        if not user:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        data = request.data
+        err, errors = validate_posted_data(data, ["products"])
+        if err:
+            return Response({"detail": errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        sale, errors = sell_product(data)
+        if not sale:
+            return Response({"detail": errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        order = get_order_by_id(sale["id"])
+
+        # Update product stock
+        for item in data.get("products"):
+            product = get_product_by_id(item["product"])
+            if product:
+                product.stock -= item["quantity"]
+                product.save()
+
+        context = {
+            "detail": "Sale processed successfully.",
+            "sale": order_representation(request, order),
+        }
+        return Response(context, status=status.HTTP_200_OK)

@@ -6,4 +6,5 @@ urlpatterns = [
     path("<str:order_id>/retrieve/", OrderViewSet.as_view({"get": "retrieve_order"})),
     path("customer/orders/", OrderViewSet.as_view({"get": "list_customer_orders"})),
     path("create/", OrderViewSet.as_view({"post": "create_order"})),
+    path("sell/", OrderViewSet.as_view({"post": "sell_in_store"})),
 ]
