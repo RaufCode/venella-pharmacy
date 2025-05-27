@@ -6,7 +6,7 @@ from products.selectors import get_product_by_id
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-# IN_STORE_USER = User.objects.get(email="instoreuser@venella.com")
+IN_STORE_USER = User.objects.get(email="instoreuser@venella.com")
 
 
 def create_order(data: dict):
@@ -53,10 +53,10 @@ def sell_product(data: list):
     for product_data in products:
         if not isinstance(product_data, dict):
             return None, ["Each product must be a dictionary."]
-        if "id" not in product_data or "quantity" not in product_data:
-            return None, ["Each product must have 'id' and 'quantity'."]
+        if "product" not in product_data or "quantity" not in product_data:
+            return None, ["Each product must have 'product' and 'quantity'."]
 
-        product = get_product_by_id(product_data["id"])
+        product = get_product_by_id(product_data["product"])
         if not product:
             return None, ["Product not found."]
 
@@ -82,7 +82,7 @@ def sell_product(data: list):
         for product_data in products:
             order_item_data = {
                 "order": order.id,
-                "product": product_data["id"],
+                "product": product_data["product"],
                 "quantity": product_data["quantity"],
                 "amount": product_data["amount"],
             }

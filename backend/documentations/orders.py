@@ -49,14 +49,12 @@ sell_product_schema = extend_schema(
         name="SellProductRequest",
         fields={
             "products": serializers.ListField(
-                child=serializers.DictField(
-                    child=inline_serializer(
-                        name="ProductsRequestData",
-                        fields={
-                            "product": serializers.UUIDField(),
-                            "quantity": serializers.IntegerField(min_value=1),
-                        },
-                    )
+                child=inline_serializer(
+                    name="ProductsRequestData",
+                    fields={
+                        "product": serializers.UUIDField(),
+                        "quantity": serializers.IntegerField(min_value=1),
+                    },
                 )
             ),
         },
