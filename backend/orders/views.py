@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from orders.selectors import *
 from orders.services import *
 from carts.selectors import *
+from carts.services import clear_cart
 from core.utils.general import get_user_from_jwttoken, validate_posted_data
 from documentations.orders import *
 
@@ -105,6 +106,16 @@ class OrderViewSet(viewsets.ViewSet):
                 {"detail": errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Update product stock
+        for item in order_items:
+            product = get_product_by_id(item["product"])
+            if product:
+                product.stock -= item["quantity"]
+                product.save()
+
+        # Clear the cart after order creation
+        clear_cart(cart.id)
 
         context = order_representation(request, order, many=False)
         return Response(context, status=status.HTTP_201_CREATED)

@@ -22,3 +22,11 @@ def update_cart_item(cart_item: CartItem, data: dict):
         updated_cart_item = serializer.save()
         return updated_cart_item, None
     return None, serializer.errors
+
+
+def clear_cart(cart_id: str):
+    """
+    Clear the cart by deleting all items associated with the cart.
+    """
+    CartItem.objects.filter(cart=cart_id).delete()
+    return True
