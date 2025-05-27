@@ -1,375 +1,274 @@
 <script setup>
-    import { ref } from "vue";
+    import { ref, reactive } from "vue";
     import InputField from "@/components/ui/InputField.vue";
     import Btn from "@/components/ui/Btn.vue";
+    import axios from "axios";
 
-    const medicines = [
-        {
-            medicineName: "Amoxicillin",
-            batchNumber: "AMX202401",
-            quantity: 100,
-            costPrice: 2.5,
-            sellingPrice: 5.0,
-            category: "Capsule",
-            antibiotic: true,
-            manufacturingDate: "01/15/2024",
-            expiryDate: "01/15/2026",
-            image: null,
-        },
-        {
-            medicineName: "Paracetamol",
-            batchNumber: "PCM202402",
-            quantity: 200,
-            costPrice: 1.0,
-            sellingPrice: 2.0,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "02/10/2024",
-            expiryDate: "02/10/2026",
-            image: null,
-        },
-        {
-            medicineName: "Ciprofloxacin",
-            batchNumber: "CIP202403",
-            quantity: 150,
-            costPrice: 3.0,
-            sellingPrice: 6.0,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "03/05/2024",
-            expiryDate: "03/05/2026",
-            image: null,
-        },
-        {
-            medicineName: "Ibuprofen",
-            batchNumber: "IBU202404",
-            quantity: 180,
-            costPrice: 1.2,
-            sellingPrice: 2.5,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "04/01/2024",
-            expiryDate: "04/01/2026",
-            image: null,
-        },
-        {
-            medicineName: "Azithromycin",
-            batchNumber: "AZI202405",
-            quantity: 90,
-            costPrice: 4.0,
-            sellingPrice: 8.0,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "05/10/2024",
-            expiryDate: "05/10/2026",
-            image: null,
-        },
-        {
-            medicineName: "Metronidazole",
-            batchNumber: "MET202406",
-            quantity: 120,
-            costPrice: 2.0,
-            sellingPrice: 4.0,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "06/15/2024",
-            expiryDate: "06/15/2026",
-            image: null,
-        },
-        {
-            medicineName: "Cetirizine",
-            batchNumber: "CET202407",
-            quantity: 250,
-            costPrice: 0.8,
-            sellingPrice: 1.5,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "07/01/2024",
-            expiryDate: "07/01/2026",
-            image: null,
-        },
-        {
-            medicineName: "Erythromycin",
-            batchNumber: "ERY202408",
-            quantity: 130,
-            costPrice: 3.5,
-            sellingPrice: 7.0,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "08/05/2024",
-            expiryDate: "08/05/2026",
-            image: null,
-        },
-        {
-            medicineName: "Loratadine",
-            batchNumber: "LOR202409",
-            quantity: 175,
-            costPrice: 1.1,
-            sellingPrice: 2.2,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "09/10/2024",
-            expiryDate: "09/10/2026",
-            image: null,
-        },
-        {
-            medicineName: "Doxycycline",
-            batchNumber: "DOX202410",
-            quantity: 95,
-            costPrice: 2.8,
-            sellingPrice: 5.6,
-            category: "Capsule",
-            antibiotic: true,
-            manufacturingDate: "10/15/2024",
-            expiryDate: "10/15/2026",
-            image: null,
-        },
-        {
-            medicineName: "Omeprazole",
-            batchNumber: "OME202411",
-            quantity: 160,
-            costPrice: 1.9,
-            sellingPrice: 3.8,
-            category: "Capsule",
-            antibiotic: false,
-            manufacturingDate: "11/05/2024",
-            expiryDate: "11/05/2026",
-            image: null,
-        },
-        {
-            medicineName: "Clarithromycin",
-            batchNumber: "CLA202412",
-            quantity: 110,
-            costPrice: 4.2,
-            sellingPrice: 8.4,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "12/01/2024",
-            expiryDate: "12/01/2026",
-            image: null,
-        },
-        {
-            medicineName: "Folic Acid",
-            batchNumber: "FOL202413",
-            quantity: 300,
-            costPrice: 0.6,
-            sellingPrice: 1.2,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "01/01/2025",
-            expiryDate: "01/01/2027",
-            image: null,
-        },
-        {
-            medicineName: "Penicillin V",
-            batchNumber: "PEN202414",
-            quantity: 140,
-            costPrice: 2.7,
-            sellingPrice: 5.4,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "02/20/2025",
-            expiryDate: "02/20/2027",
-            image: null,
-        },
-        {
-            medicineName: "Vitamin C",
-            batchNumber: "VIT202415",
-            quantity: 220,
-            costPrice: 0.9,
-            sellingPrice: 1.8,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "03/15/2025",
-            expiryDate: "03/15/2027",
-            image: null,
-        },
-    ];
-
+    // Modal visibility
     const showModal = ref(false);
+
+    // Submission state
+    const isSubmitting = ref(false);
+
+    // Form data
+    const form = reactive({
+        name: "",
+        stock: null,
+        price: null,
+        category: "",
+        description: "",
+        product_images: [],
+    });
+
+    // Handle image uploads
+    function handleImageUpload(event) {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            Array.from(files).forEach((file) => {
+                let img = {};
+                img["image"] = file;
+                form.product_images.push(img);
+            });
+            console.log("Uploaded images:", form.product_images);
+            // form.product_images = Array.from(files);
+        }
+    }
+
+    // Clear form fields
+    function resetForm() {
+        form.name = "";
+        form.stock = null;
+        form.price = null;
+        form.category = "";
+        form.description = "";
+        form.product_images = [];
+    }
+
+    // Handle form submission
+    async function submitForm() {
+        if (
+            !form.name ||
+            !form.stock ||
+            !form.price ||
+            !form.category ||
+            !form.description ||
+            form.product_images.length === 0
+        ) {
+            alert(
+                "Please fill all required fields and upload at least one image."
+            );
+            return;
+        }
+
+        isSubmitting.value = true;
+
+        try {
+            const formData = new FormData();
+            formData.append("name", form.name);
+            formData.append("stock", form.stock);
+            formData.append("price", form.price);
+            formData.append("category", form.category);
+            formData.append("description", form.description);
+            formData.append("product_images", form.product_images);
+
+            // 👇 Correctly append all images
+            // form.product_images.forEach((image) => {
+            //     formData.append("product_images", image);
+            // });
+
+            await axios.post("/api/products/add/", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            alert("Medication added successfully!");
+            resetForm();
+            showModal.value = false;
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            alert("An error occurred while submitting the form.");
+        } finally {
+            isSubmitting.value = false;
+        }
+    }
 </script>
 
 <template>
     <div class="h-screen relative flex flex-col flex-1 overflow-hidden">
+        <!-- Top bar (Desktop) -->
         <div
-            class="hidden w-full md:absolute top-0 z-40 bg-gray-900 md:top-0 md:flex justify-between items-center p-3"
+            class="hidden w-full md:absolute top-0 z-40 bg-gray-900 md:flex justify-between items-center p-3"
         >
             <h1 class="text-gray-300 text-lg font-styleScript md:text-2xl">
                 Inventory Hub
             </h1>
             <button
                 @click="showModal = true"
-                type="submit"
                 class="py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
             >
                 Add Med
             </button>
         </div>
+
+        <!-- Main content -->
         <div class="overflow-auto overscroll-contain w-full">
             <div class="mx-auto container p-3">
+                <!-- Add button (Mobile) -->
                 <button
                     @click="showModal = true"
-                    type="submit"
                     class="md:hidden py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
                 >
                     Add Med
                 </button>
-                <div
-                    class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto"
-                >
-                    <table class="text-sm text-left text-gray-400 w-full">
-                        <thead
-                            class="text-xs uppercase bg-gray-700 text-gray-400"
-                        >
-                            <tr>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Medicine Name
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Batch Number
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Quantity
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Cost Price
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Selling Price
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Category
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Antibiotic
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Manufacturing Date
-                                </th>
-                                <th class="p-2 whitespace-nowrap">
-                                    Expiry Date
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="medication in medicines"
-                                :key="medication.id"
-                                class="border-b bg-gray-800 border-gray-700 hover:bg-gray-600"
-                            >
-                                <td
-                                    class="px-6 py-4 font-medium text-white whitespace-nowrap"
-                                >
-                                    {{ medication.medicineName }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.batchNumber }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.quantity }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    GH₵{{ medication.costPrice }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    GH₵{{ medication.sellingPrice }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.category }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.antibiotic ? "Yes" : "No" }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.manufacturingDate }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.expiryDate }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
 
-                <!--Modal-->
-
+                <!-- Modal -->
                 <div
                     v-if="showModal"
                     class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
                 >
-                    <div
-                        class="bg-white overflow-hidden shadow w-11/12 max-w-md max-h-[70vh] p-5 overflow-y-auto"
-                    >
-                        <form class="w-full">
-                            <div class="flex justify-between items-center">
-                                <h1 class="form-title">Add meds</h1>
-                                <p @click="showModal = false">
-                                    <i class="pi pi-times text-orange-600"></i>
-                                </p>
+                    <div class="w-full p-3">
+                        <form
+                            @submit.prevent="submitForm"
+                            class="w-full max-w-xl max-h-[90vh] overflow-y-auto p-4 shadow mx-auto bg-white rounded"
+                        >
+                            <!-- Modal header -->
+                            <div class="flex justify-between items-center mb-4">
+                                <h1 class="text-lg font-bold text-gray-800">
+                                    Add Meds
+                                </h1>
+                                <button
+                                    type="button"
+                                    @click="showModal = false"
+                                    class="text-orange-600 text-xl"
+                                >
+                                    <i class="pi pi-times"></i>
+                                </button>
                             </div>
 
-                            <InputField labelname="Medicine Name" type="text" />
-                            <InputField labelname="Batch Number" type="text" />
-                            <InputField labelname="Quantity" type="number" />
-                            <InputField labelname="Cost Price" type="number" />
-                            <InputField
-                                labelname="Selling Price"
-                                type="number"
-                            />
-
-                            <label
-                                class="block mx-auto mt-3 text-sm text-gray-900"
-                            >
-                                Category
-                                <select
-                                    class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10 bg-transparent"
-                                >
-                                    <option value="" disabled>
-                                        Select Category
-                                    </option>
-                                    <option value="Antibiotic">
-                                        Antibiotic
-                                    </option>
-                                    <option value="Painkiller">
-                                        Painkiller
-                                    </option>
-                                    <option value="Antihistamine">
-                                        Antihistamine
-                                    </option>
-                                    <option value="Supplement">
-                                        Supplement
-                                    </option>
-                                </select>
-                            </label>
-                            <label
-                                class="block mx-auto mt-3 text-sm text-gray-900"
-                            >
-                                Description
-                                <textarea
-                                    rows="3"
+                            <!-- Row 1 -->
+                            <div class="md:flex gap-4">
+                                <InputField
+                                    v-model="form.name"
+                                    labelname="Medicine Name"
+                                    class="flex-1"
                                     required
-                                    placeholder="Eg. Effective for pain relief and fever reduction."
-                                    class="block mt-1 w-full p-4 rounded-md bg-transparent border border-gray-400 placeholder-gray-400 outline-none focus:border-orange-700 resize-none"
+                                />
+                                <InputField
+                                    v-model.number="form.stock"
+                                    labelname="Quantity"
+                                    type="number"
+                                    class="flex-1"
+                                    required
+                                />
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="md:flex gap-4 mt-3">
+                                <InputField
+                                    v-model.number="form.price"
+                                    labelname="Price"
+                                    class="flex-1"
+                                    required
+                                />
+                                <label
+                                    class="flex-1 text-sm text-gray-900 block mt-3"
+                                >
+                                    Category
+                                    <select
+                                        v-model="form.category"
+                                        class="mt-1 w-full border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
+                                        required
+                                    >
+                                        <option value="" disabled>
+                                            Select Category
+                                        </option>
+                                        <option
+                                            value="11111111-1111-1111-1111-111111111111"
+                                        >
+                                            Antibiotic
+                                        </option>
+                                        <option
+                                            value="22222222-2222-2222-2222-222222222222"
+                                        >
+                                            Painkiller
+                                        </option>
+                                        <option
+                                            value="33333333-3333-3333-3333-333333333333"
+                                        >
+                                            Antihistamine
+                                        </option>
+                                        <option
+                                            value="44444444-4444-4444-4444-444444444444"
+                                        >
+                                            Supplement
+                                        </option>
+                                        <option
+                                            value="55555555-5555-5555-5555-555555555555"
+                                        >
+                                            Analgesic
+                                        </option>
+                                        <option
+                                            value="66666666-6666-6666-6666-666666666666"
+                                        >
+                                            Antacid
+                                        </option>
+                                        <option
+                                            value="77777777-7777-7777-7777-777777777777"
+                                        >
+                                            Antidepressant
+                                        </option>
+                                        <option
+                                            value="88888888-8888-8888-8888-888888888888"
+                                        >
+                                            Antiviral
+                                        </option>
+                                        <option
+                                            value="99999999-9999-9999-9999-999999999999"
+                                        >
+                                            Diuretic
+                                        </option>
+                                        <option
+                                            value="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+                                        >
+                                            Vitamin
+                                        </option>
+                                    </select>
+                                </label>
+                            </div>
+
+                            <!-- Row 3 -->
+                            <div class="mt-3">
+                                <label
+                                    for="description"
+                                    class="block text-sm text-gray-900 mb-1"
+                                    >Description</label
+                                >
+                                <textarea
+                                    id="description"
+                                    v-model="form.description"
+                                    required
+                                    rows="2"
+                                    class="w-full border border-gray-400 rounded outline-none focus:border-orange-700 px-4 py-2 resize-none"
                                 ></textarea>
-                            </label>
+                            </div>
 
-                            <InputField
-                                labelname="Manufacturing Date"
-                                type="date"
-                            />
-                            <InputField labelname="Expiry Date" type="date" />
-
-                            <label
-                                class="block mx-auto mt-3 text-sm text-gray-900"
-                            >
-                                Medicine Image (optional)
+                            <!-- Image Upload -->
+                            <label class="block mt-3 text-sm text-gray-900">
+                                Medicine Image
                                 <input
                                     type="file"
-                                    class="block mt-1 w-full mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 p-1 md:h-10 bg-transparent"
+                                    multiple
+                                    @change="handleImageUpload"
+                                    class="block mt-1 py-2 w-full border border-gray-400 rounded outline-none focus:border-orange-700 px-4 bg-transparent"
+                                    accept="image/*"
                                 />
                             </label>
 
-                            <Btn btnName="Save" />
+                            <!-- Submit Button -->
+                            <div class="mt-5">
+                                <Btn :disabled="isSubmitting" btnName="Save" />
+                            </div>
                         </form>
                     </div>
                 </div>
