@@ -1,9 +1,10 @@
 from django.urls import path
-from carts.views import CartItemViewSet
+from carts.views import CartItemViewSet, CartViewSet
 
 
 urlpatterns = [
-    path("", CartItemViewSet.as_view({"get": "list"})),
+    path("", CartViewSet.as_view({"get": "list"})),
+    path("items/", CartItemViewSet.as_view({"get": "list"})),
     path("cart-items/", CartItemViewSet.as_view({"get": "list_cart_items"})),
     path("cart-items/add/", CartItemViewSet.as_view({"post": "add_item_to_cart"})),
     path(

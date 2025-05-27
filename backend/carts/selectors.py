@@ -2,6 +2,13 @@ from carts.serializers import CartSerializer, CartItemSerializer
 from carts.models import Cart, CartItem
 
 
+def get_all_carts():
+    """
+    Retrieve all carts from the database.
+    """
+    return Cart.objects.all()
+
+
 def get_cart_by_customer(customer_id: str):
     """
     Retrieve the cart for a specific customer.

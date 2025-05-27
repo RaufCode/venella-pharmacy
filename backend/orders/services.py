@@ -8,31 +8,16 @@ from core.utils.general import validate_posted_data
 
 
 def create_order(data: dict):
-    err, errors = validate_posted_data(
-        data, ["customer", "total_amount", "shipping_address", "order_items"]
-    )
-    if err:
-        return None, errors
-
-    if not isinstance(data.get("order_items"), list) or not data["order_items"]:
-        return None, ["Order items must be a non-empty list"]
-
-    err, errors = validate_posted_data(
-        data["order_items"], ["product", "quantity", "amount"]
-    )
-    if err:
-        return None, errors
-
     serializer = OrderSerializer(data=data)
     if serializer.is_valid():
-        order = serializer.save()
-        return order.data
+        serializer.save()
+        return serializer.data, None
     else:
         return None, serializer.errors
 
 
 def create_order_items(data: dict):
-
+    print("Creating order items with data:", data)
     for order_item in data["order_items"]:
         product = get_product_by_id(order_item.get("product"))
         if not product:
@@ -45,10 +30,12 @@ def create_order_items(data: dict):
             return None, ["Amount must be greater than zero"]
 
         order_item["order"] = data.get("order")
-
+    print("Order items after processing:", data["order_items"])
     serializer = OrderItemSerializer(data=data["order_items"], many=True)
     if serializer.is_valid():
+        # print("Serializer data:", serializer.data, "serializer", serializer)
         serializer.save()
+        print("After save Serializer data:", serializer.data, "serializer", serializer)
         return serializer.data, None
     else:
         return None, serializer.errors

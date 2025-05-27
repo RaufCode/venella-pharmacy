@@ -117,3 +117,12 @@ class CartItemViewSet(viewsets.ViewSet):
             {"detail": "Cart item removed successfully."},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
+class CartViewSet(viewsets.ViewSet):
+
+    @list_carts_schema
+    def list(self, request):
+        carts = get_all_carts()
+        context = cart_representation(carts, many=True)
+        return Response(context, status=status.HTTP_200_OK)

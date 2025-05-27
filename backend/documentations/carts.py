@@ -68,3 +68,13 @@ delete_cart_item_schema = extend_schema(
     },
     tags=["Carts"],
 )
+
+
+list_carts_schema = extend_schema(
+    summary="List All Carts",
+    description="This retrieves all carts in the system.",
+    responses={
+        200: CartItemSerializer(many=True),
+    },
+    tags=["Carts"],
+)

@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, parsers
 from rest_framework.response import Response
 from products.selectors import *
 from products.services import *
@@ -8,10 +8,10 @@ from documentations.products import *
 
 class ProductViewSet(viewsets.ViewSet):
 
-    # parser_classes = [
-    #     "rest_framework.parsers.JSONParser",
-    #     "rest_framework.parsers.MultiPartParser",
-    # ]
+    parser_classes = [
+        parsers.JSONParser,
+        parsers.MultiPartParser,
+    ]
 
     @list_products_schema
     def list_products(self, request):

@@ -2,7 +2,8 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from orders.selectors import *
 from orders.services import *
-from core.utils.general import get_user_from_jwttoken
+from carts.selectors import *
+from core.utils.general import get_user_from_jwttoken, validate_posted_data
 from documentations.orders import *
 
 
@@ -42,7 +43,38 @@ class OrderViewSet(viewsets.ViewSet):
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
 
         data = request.data
+        err, errors = validate_posted_data(data, ["cart", "shipping_address"])
+        if err:
+            return None, errors
+
         data["customer"] = user.id
+
+        cart = get_cart_by_id(data.get("cart"))
+        if not cart:
+            context = {"detail": "Cart not found."}
+            return Response(context, status=status.HTTP_404_NOT_FOUND)
+
+        if cart.customer != user:
+            context = {"detail": "Cart does not belong to the authenticated user."}
+            return Response(context, status=status.HTTP_403_FORBIDDEN)
+
+        cart_items = get_cart_items(cart.id)
+        if not cart_items:
+            context = {"detail": "Cart is empty."}
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+        data["order_items"] = []
+        for item in cart_items:
+            order_item = {
+                "product": item.product.id,
+                "quantity": item.quantity,
+                "amount": item.product.price,
+            }
+            data["order_items"].append(order_item)
+
+        data["total_amount"] = sum(
+            item["quantity"] * item["amount"] for item in data["order_items"]
+        )
 
         order_data, errors = create_order(data)
         if not order_data:
@@ -56,6 +88,7 @@ class OrderViewSet(viewsets.ViewSet):
 
         order_items = {"order": order.id, "order_items": data.get("order_items")}
         order_items_data, errors = create_order_items(order_items)
+        print("order_items_data", order_items_data)
         if not order_items_data:
             context = {"detail": errors}
             return Response(context, status=status.HTTP_400_BAD_REQUEST)

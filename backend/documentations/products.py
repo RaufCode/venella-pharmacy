@@ -37,12 +37,7 @@ create_products_schema = extend_schema(
             "price": serializers.DecimalField(max_digits=10, decimal_places=2),
             "stock": serializers.IntegerField(),
             "category": serializers.UUIDField(),
-            "product_images": serializers.ListField(
-                child=serializers.DictField(
-                    child=serializers.ImageField(), required=False
-                ),
-                required=False,
-            ),
+            "product_images": serializers.ListField(child=serializers.ImageField()),
         },
     ),
     responses={
@@ -64,13 +59,7 @@ update_product_schema = extend_schema(
             ),
             "stock": serializers.IntegerField(required=False),
             "category": serializers.UUIDField(required=False),
-            "product_images": serializers.ListField(
-                child=serializers.DictField(
-                    child=serializers.ImageField(),
-                    required=False,
-                ),
-                required=False,
-            ),
+            "product_images": serializers.ListField(child=serializers.ImageField()),
         },
     ),
     responses={

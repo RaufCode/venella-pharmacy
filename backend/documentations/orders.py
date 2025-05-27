@@ -31,23 +31,10 @@ create_order_schema = extend_schema(
     request=inline_serializer(
         name="CreateOrderRequest",
         fields={
-            "total_amount": serializers.DecimalField(max_digits=10, decimal_places=2),
+            "cart": serializers.UUIDField(),
             "shipping_address": serializers.CharField(max_length=255),
-            "order_items": serializers.ListField(
-                child=inline_serializer(
-                    name="OrderItem",
-                    fields={
-                        "product": serializers.UUIDField(),
-                        "quantity": serializers.IntegerField(min_value=1),
-                        "amount": serializers.DecimalField(
-                            max_digits=10, decimal_places=2
-                        ),
-                    },
-                ),
-                min_length=1,
-            ),
         },
-        required=["total_amount", "shipping_address", "order_items"],
+        required=["cart", "shipping_address"],
     ),
     responses={
         201: OrderSerializer(many=False),
