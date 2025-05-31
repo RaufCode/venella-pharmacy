@@ -33,6 +33,7 @@ create_products_schema = extend_schema(
         name="CreateProductsRequest",
         fields={
             "name": serializers.CharField(),
+            "brand": serializers.CharField(),
             "description": serializers.CharField(),
             "price": serializers.DecimalField(max_digits=10, decimal_places=2),
             "stock": serializers.IntegerField(),
