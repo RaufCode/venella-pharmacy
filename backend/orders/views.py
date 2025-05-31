@@ -32,7 +32,9 @@ class OrderViewSet(viewsets.ViewSet):
             context = {"detail": "Authentication credentials were not provided."}
             return Response(context, status=status.HTTP_401_UNAUTHORIZED)
 
-        orders = get_orders_by_customer(user.id)
+        orders = [
+            order for order in get_orders_by_customer(user.id) if not order.deleted
+        ]
         context = order_representation(request, orders, many=True)
         return Response(context, status=status.HTTP_200_OK)
 

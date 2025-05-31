@@ -23,13 +23,11 @@ def get_orders_by_statuses(statuses: list):
 
 
 def get_orders_by_customer(customer_id: str):
-    return Order.objects.filter(customer=customer_id, deleted=False).order_by("status")
+    return Order.objects.filter(customer=customer_id).order_by("status")
 
 
 def get_customer_orders_by_status(customer: str, status: str):
-    return Order.objects.filter(
-        customer=customer, status=status, deleted=False
-    ).order_by("status")
+    return Order.objects.filter(customer=customer, status=status).order_by("status")
 
 
 def order_representation(request: HttpRequest, order: Order, many: bool = False):
