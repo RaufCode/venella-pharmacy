@@ -32,4 +32,10 @@ class OrderSerializer(serializers.ModelSerializer):
             many=True,
             context={"request": self.context.get("request")},
         ).data
+        if instance.sales_person:
+            data["sales_person"] = UserAccountSerializer(
+                instance.sales_person, context={"request": self.context.get("request")}
+            ).data
+        else:
+            data["sales_person"] = None
         return data

@@ -71,3 +71,51 @@ sell_product_schema = extend_schema(
     },
     tags=["Orders"],
 )
+
+
+list_pending_orders_schema = extend_schema(
+    description="List all pending orders",
+    responses={
+        200: OrderSerializer(many=True),
+    },
+    tags=["Orders"],
+)
+
+list_processing_orders_schema = extend_schema(
+    description="List all processing orders",
+    responses={
+        200: OrderSerializer(many=True),
+    },
+    tags=["Orders"],
+)
+
+update_order_status_schema = extend_schema(
+    description="Update the status of an order",
+    request=inline_serializer(
+        name="UpdateOrderStatusRequest",
+        fields={
+            "status": serializers.ChoiceField(
+                choices=["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"]
+            ),
+        },
+        required=["status"],
+    ),
+    responses={
+        200: OrderSerializer(many=False),
+    },
+    tags=["Orders"],
+)
+
+delete_order_schema = extend_schema(
+    description="Delete an order",
+    request=OrderSerializer,
+    responses={
+        204: inline_serializer(
+            name="DeleteOrderResponse",
+            fields={
+                "detail": serializers.CharField(),
+            },
+        ),
+    },
+    tags=["Orders"],
+)

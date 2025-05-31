@@ -152,3 +152,81 @@ class OrderViewSet(viewsets.ViewSet):
             "sale": order_representation(request, order),
         }
         return Response(context, status=status.HTTP_200_OK)
+
+    @list_pending_orders_schema
+    def list_pending_orders(self, request):
+        """List orders placed by customers to the store 'Pending and Processing'."""
+        orders = get_orders_by_status("PENDING")
+        context = order_representation(request, orders, many=True)
+        return Response(context, status=status.HTTP_200_OK)
+
+    @list_processing_orders_schema
+    def list_processing_orders(self, request):
+        orders = get_orders_by_status("PROCESSING")
+        context = order_representation(request, orders, many=True)
+        return Response(context, status=status.HTTP_200_OK)
+
+    @update_order_status_schema
+    def update_order_status(self, request, order_id):
+        """Update the status of an order."""
+        user = get_user_from_jwttoken(request)
+        if not user:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        order = get_order_by_id(order_id)
+        if not order:
+            return Response(
+                {"detail": "Order not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        data = request.data
+        new_status = data.get("status").strip().upper()
+        if new_status not in dict(order.ORDER_STATUS_CHOICES).keys():
+            return Response(
+                {"detail": "Invalid status provided."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        order.status = new_status
+        order.save()
+
+        context = order_representation(request, order)
+        return Response(context, status=status.HTTP_200_OK)
+
+    @delete_order_schema
+    def delete_order(self, request, order_id):
+        """Delete an order."""
+        user = get_user_from_jwttoken(request)
+        if not user:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        order = get_order_by_id(order_id)
+        if not order:
+            return Response(
+                {"detail": "Order not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if order.deleted:
+            return Response(
+                {"detail": "Order has already been deleted."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        deleted_order, error = delete_order(order)
+        if not deleted_order:
+            return Response(
+                {"detail": "Failed to delete order.", "error": error},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {"detail": "Order deleted successfully."}, status=status.HTTP_204_NO_CONTENT
+        )

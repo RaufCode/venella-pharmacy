@@ -1,4 +1,4 @@
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, DeletedOrder
 from orders.serializers import OrderSerializer, OrderItemSerializer
 from orders.selectors import get_order_by_id
 from products.models import Product
@@ -95,3 +95,12 @@ def sell_product(data: list):
         return order_serializer.data, None
     else:
         return None, order_serializer.errors
+
+
+def delete_order(order: Order):
+    try:
+        deleted_order = DeletedOrder.objects.create(order=order)
+        order.delete()
+        return deleted_order, None
+    except Exception as e:
+        return None, str(e)

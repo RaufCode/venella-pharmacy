@@ -29,6 +29,7 @@ def create_product(data: dict):
         "price": data.get("price"),
         "stock": data.get("stock"),
         "category": data.get("category"),
+        "brand": data.get("brand"),
     }
     serializer = ProductSerializer(data=product_data)
     if serializer.is_valid():
