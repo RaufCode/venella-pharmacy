@@ -6,7 +6,7 @@ from products.selectors import get_product_by_id
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-IN_STORE_USER = User.objects.get(email="instoreuser@venella.com")
+IN_STORE_USER = User.objects.get(email="customer@venella.com")
 
 
 def create_order(data: dict):
