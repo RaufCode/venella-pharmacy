@@ -3,7 +3,8 @@ from orders.serializers import OrderSerializer
 
 
 list_orders_schema = extend_schema(
-    description="List all orders",
+    summary="List all orders in DB",
+    description="List all orders in the system",
     responses={
         200: OrderSerializer(many=True),
     },
@@ -11,6 +12,7 @@ list_orders_schema = extend_schema(
 )
 
 retrieve_order_schema = extend_schema(
+    summary="Retrieve an order",
     description="Retrieve a specific order by ID",
     responses={
         200: OrderSerializer(many=False),
@@ -19,6 +21,7 @@ retrieve_order_schema = extend_schema(
 )
 
 list_customer_orders_schema = extend_schema(
+    summary="List a customer's orders",
     description="List all orders for the authenticated customer",
     responses={
         200: OrderSerializer(many=True),
@@ -27,6 +30,7 @@ list_customer_orders_schema = extend_schema(
 )
 
 create_order_schema = extend_schema(
+    summary="Create an order by customer",
     description="Create a new order for the authenticated customer",
     request=inline_serializer(
         name="CreateOrderRequest",
@@ -44,6 +48,7 @@ create_order_schema = extend_schema(
 
 
 sell_product_schema = extend_schema(
+    summary="Sell a product offline",
     description="Sell products in-store",
     request=inline_serializer(
         name="SellProductRequest",
@@ -74,6 +79,7 @@ sell_product_schema = extend_schema(
 
 
 list_pending_orders_schema = extend_schema(
+    summary="List Pending orders",
     description="List all pending orders",
     responses={
         200: OrderSerializer(many=True),
@@ -82,6 +88,7 @@ list_pending_orders_schema = extend_schema(
 )
 
 list_processing_orders_schema = extend_schema(
+    summary="List orders in processing state",
     description="List all processing orders",
     responses={
         200: OrderSerializer(many=True),
@@ -90,6 +97,7 @@ list_processing_orders_schema = extend_schema(
 )
 
 update_order_status_schema = extend_schema(
+    summary="Update order status",
     description="Update the status of an order",
     request=inline_serializer(
         name="UpdateOrderStatusRequest",
@@ -107,6 +115,7 @@ update_order_status_schema = extend_schema(
 )
 
 delete_order_schema = extend_schema(
+    summary="Delete an order",
     description="Delete an order",
     request=OrderSerializer,
     responses={
