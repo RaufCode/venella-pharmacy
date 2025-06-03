@@ -38,7 +38,7 @@
                 >
                     <div>
                         <p class="text-gray-500 font-medium text-sm">
-                            Notifications
+                            total Order
                         </p>
                         <p
                             class="text-2xl font-semibold font-poppins text-red-500"
@@ -69,7 +69,9 @@
                     class="flex items-center justify-between rounded-lg shadow hover:shadow-md transition-shadow p-6 bg-white"
                 >
                     <div>
-                        <p class="text-gray-500 font-medium text-sm">Orders</p>
+                        <p class="text-gray-500 font-medium text-sm">
+                            Total Orders
+                        </p>
                         <p
                             class="text-2xl font-semibold font-poppins text-yellow-500"
                         >

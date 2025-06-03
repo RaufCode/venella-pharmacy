@@ -22,6 +22,8 @@
                 return "Orders Hub";
             case "sales":
                 return "Sales Hub";
+            case "onsite":
+                return "Onsite";
             default:
                 return "Vanella Pharmacy";
         }
