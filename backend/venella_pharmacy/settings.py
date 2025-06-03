@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "products.apps.ProductsConfig",
     "orders.apps.OrdersConfig",
     "carts.apps.CartsConfig",
+    "notifications.apps.NotificationsConfig",
 ]
 
 REST_FRAMEWORK = {

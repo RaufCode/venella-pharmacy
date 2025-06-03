@@ -17,10 +17,10 @@ def create_product(data: dict):
         return None, ["Product images should be a list"]
     else:
         fhandler = InMemoryUploadedFileHandler()
+        print("Product images:", product_images)
         product_images = [
-            {"image": fhandler.from_img_path(image_data.get("image"))}
-            for image_data in product_images
-            if isinstance(image_data.get("image"), str)
+            image if not isinstance(image, str) else fhandler.from_img_path(image)
+            for image in product_images
         ]
 
     product_data = {
@@ -29,6 +29,7 @@ def create_product(data: dict):
         "price": data.get("price"),
         "stock": data.get("stock"),
         "category": data.get("category"),
+        "brand": data.get("brand"),
     }
     serializer = ProductSerializer(data=product_data)
     if serializer.is_valid():
@@ -39,11 +40,12 @@ def create_product(data: dict):
     product = get_product_by_id(serializer.data.get("id"))
     if not product:
         return None, ["Product could not be created"]
-
-    for image_data in product_images:
-        image_data["product"] = product.id
-
-    image_serializer = ProductImageSerializer(data=product_images, many=True)
+    print("product images:", product_images)
+    image_data = []
+    for image in product_images:
+        image_data.append({"image": image, "product": product.id})
+    print("Image data:", image_data)
+    image_serializer = ProductImageSerializer(data=image_data, many=True)
     if image_serializer.is_valid():
         image_serializer.save()
     else:

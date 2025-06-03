@@ -1,32 +1,19 @@
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, DeletedOrder
 from orders.serializers import OrderSerializer, OrderItemSerializer
 from orders.selectors import get_order_by_id
 from products.models import Product
 from products.selectors import get_product_by_id
-from core.models.accounts import UserAccount
-from core.utils.general import validate_posted_data
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+IN_STORE_USER = User.objects.get(email="customer@venella.com")
 
 
 def create_order(data: dict):
-    err, errors = validate_posted_data(
-        data, ["customer", "total_amount", "shipping_address", "order_items"]
-    )
-    if err:
-        return None, errors
-
-    if not isinstance(data.get("order_items"), list) or not data["order_items"]:
-        return None, ["Order items must be a non-empty list"]
-
-    err, errors = validate_posted_data(
-        data["order_items"], ["product", "quantity", "amount"]
-    )
-    if err:
-        return None, errors
-
     serializer = OrderSerializer(data=data)
     if serializer.is_valid():
-        order = serializer.save()
-        return order.data
+        serializer.save()
+        return serializer.data, None
     else:
         return None, serializer.errors
 
@@ -37,6 +24,9 @@ def create_order_items(data: dict):
         product = get_product_by_id(order_item.get("product"))
         if not product:
             return None, [f"Product {order_item.get('product')} not found"]
+
+        if product.stock < order_item.get("quantity", 0):
+            return None, [f"Insufficient stock for product {product.name}"]
 
         if order_item.get("quantity") <= 0:
             return None, ["Quantity must be greater than zero"]
@@ -52,3 +42,65 @@ def create_order_items(data: dict):
         return serializer.data, None
     else:
         return None, serializer.errors
+
+
+def sell_product(data: list):
+    products = data.get("products", [])
+    if not isinstance(products, list) or not products:
+        return None, ["Products must be a non-empty list."]
+
+    total_amount = 0
+    for product_data in products:
+        if not isinstance(product_data, dict):
+            return None, ["Each product must be a dictionary."]
+        if "product" not in product_data or "quantity" not in product_data:
+            return None, ["Each product must have 'product' and 'quantity'."]
+
+        product = get_product_by_id(product_data["product"])
+        if not product:
+            return None, ["Product not found."]
+
+        if product.stock < product_data.get("quantity", 0):
+            return None, ["Insufficient stock for the product."]
+
+        product_data["amount"] = product.price
+        total_amount += product_data["quantity"] * product.price
+
+    order_serializer = OrderSerializer(
+        data={
+            "customer": IN_STORE_USER.id,
+            "status": "DELIVERED",
+            "order_type": "OFFLINE",
+            "total_amount": total_amount,
+            "shipping_address": "In-Store Purchase",
+        }
+    )
+
+    if order_serializer.is_valid():
+        order = order_serializer.save()
+
+        for product_data in products:
+            order_item_data = {
+                "order": order.id,
+                "product": product_data["product"],
+                "quantity": product_data["quantity"],
+                "amount": product_data["amount"],
+            }
+            order_item_serializer = OrderItemSerializer(data=order_item_data)
+            if order_item_serializer.is_valid():
+                order_item_serializer.save()
+            else:
+                return None, order_item_serializer.errors
+
+        return order_serializer.data, None
+    else:
+        return None, order_serializer.errors
+
+
+def delete_order(order: Order):
+    try:
+        deleted_order = DeletedOrder.objects.create(order=order)
+        order.delete()
+        return deleted_order, None
+    except Exception as e:
+        return None, str(e)

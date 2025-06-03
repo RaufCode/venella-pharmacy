@@ -11,11 +11,22 @@ class CartItemViewSet(viewsets.ViewSet):
     @list_all_cart_items_schema
     def list(self, request):
         cart_items = get_all_cart_items()
-        context = cart_item_representation(cart_items, many=True)
+        context = cart_item_representation(request, cart_items, many=True)
+        return Response(context, status=status.HTTP_200_OK)
+
+    @retrieve_cart_item_schema
+    def retrieve(self, request, item_id):
+        cart_item = get_cart_item_by_id(item_id)
+        if not cart_item:
+            return Response(
+                {"detail": "Cart item not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        context = cart_item_representation(request, cart_item, many=False)
         return Response(context, status=status.HTTP_200_OK)
 
     @list_customer_cart_items_schema
-    def list_cart_items(self, request):
+    def list_customer_cart_items(self, request):
         user = get_user_from_jwttoken(request)
         if not user:
             return Response(
@@ -30,7 +41,7 @@ class CartItemViewSet(viewsets.ViewSet):
             )
 
         cart_items = get_cart_items(cart.id)
-        context = cart_item_representation(cart_items, many=True)
+        context = cart_item_representation(request, cart_items, many=True)
         return Response(context, status=status.HTTP_200_OK)
 
     @add_cart_item_schema
@@ -65,7 +76,7 @@ class CartItemViewSet(viewsets.ViewSet):
 
         context = {
             "detail": "Cart item created successfully.",
-            "item": cart_item_representation(cart_item),
+            "item": cart_item_representation(request, cart_item),
         }
         return Response(context, status=status.HTTP_201_CREATED)
 
@@ -93,7 +104,7 @@ class CartItemViewSet(viewsets.ViewSet):
             )
         context = {
             "detail": "Cart item updated successfully.",
-            "item": cart_item_representation(updated_cart_item),
+            "item": cart_item_representation(request, updated_cart_item),
         }
         return Response(context, status=status.HTTP_200_OK)
 
@@ -117,3 +128,23 @@ class CartItemViewSet(viewsets.ViewSet):
             {"detail": "Cart item removed successfully."},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
+class CartViewSet(viewsets.ViewSet):
+
+    @list_carts_schema
+    def list(self, request):
+        carts = get_all_carts()
+        context = cart_representation(request, carts, many=True)
+        return Response(context, status=status.HTTP_200_OK)
+
+    @retrieve_cart_schema
+    def retrieve_cart(self, request, cart_id):
+        cart = get_cart_by_id(cart_id)
+        if not cart:
+            return Response(
+                {"detail": "Cart not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        context = cart_representation(request, cart, many=False)
+        return Response(context, status=status.HTTP_200_OK)

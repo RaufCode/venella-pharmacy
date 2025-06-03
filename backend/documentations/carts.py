@@ -1,11 +1,20 @@
 from ._base import *
-from carts.serializers import CartItemSerializer
+from carts.serializers import CartItemSerializer, CartSerializer
 
 list_all_cart_items_schema = extend_schema(
     summary="List All Cart Items",
     description="This retrieves all cart items in the system.",
     responses={
         200: CartItemSerializer(many=True),
+    },
+    tags=["Carts"],
+)
+
+retrieve_cart_item_schema = extend_schema(
+    summary="Retrieve Cart Item",
+    description="This retrieves a specific cart item by its ID.",
+    responses={
+        200: CartItemSerializer(),
     },
     tags=["Carts"],
 )
@@ -65,6 +74,25 @@ delete_cart_item_schema = extend_schema(
         204: inline_serializer(
             name="DeleteCartItemResponse", fields={"detail": serializers.CharField()}
         ),
+    },
+    tags=["Carts"],
+)
+
+
+list_carts_schema = extend_schema(
+    summary="List All Carts",
+    description="This retrieves all carts in the system.",
+    responses={
+        200: CartItemSerializer(many=True),
+    },
+    tags=["Carts"],
+)
+
+retrieve_cart_schema = extend_schema(
+    summary="Retrieve Cart",
+    description="This retrieves all items in a specific cart.",
+    responses={
+        200: CartSerializer(many=True),
     },
     tags=["Carts"],
 )

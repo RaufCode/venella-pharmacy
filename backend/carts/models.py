@@ -13,7 +13,7 @@ class Cart(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Cart {self.id} for {self.customer.profile.first_name}"
+        return f"Cart {self.id} for {self.customer}"
 
 
 class CartItem(models.Model):
