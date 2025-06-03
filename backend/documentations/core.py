@@ -30,6 +30,23 @@ login_schema = extend_schema(
     tags=["Authentication"],
 )
 
+change_password_schema = extend_schema(
+    summary="Change Password",
+    description="This changes the password of a user",
+    request=inline_serializer(
+        name="ChangePasswordRequest",
+        fields={
+            "current_password": serializers.CharField(),
+            "new_password": serializers.CharField(),
+        },
+    ),
+    responses={
+        200: inline_serializer(
+            name="ChangePasswordResponse", fields={"detail": serializers.CharField()}
+        ),
+    },
+    tags=["Authentication"],
+)
 
 # Accounts
 list_accounts_schema = extend_schema(
