@@ -1,14 +1,17 @@
 <script setup>
-    import { ref, computed } from "vue";
+    import { ref, computed, onMounted, onUnmounted } from "vue";
+    import { useOrderStore } from "@/stores/orderStore"; // Update path if different
     import OverView from "./OverView.vue";
     import MedicationHero from "./MedicationHero.vue";
     import OrdersHero from "./OrdersHero.vue";
     import SalesHero from "./SalesHero.vue";
 
+    // 👇 Import your Pinia order store
+    const orderStore = useOrderStore();
+
     const activeTab = ref("overview");
     const hamburger = ref(false);
 
-    // Label for the top bar
     const tabLabel = computed(() => {
         switch (activeTab.value) {
             case "overview":
@@ -23,8 +26,26 @@
                 return "Vanella Pharmacy";
         }
     });
-</script>
 
+    // 👇 Use the store
+
+    // 👇 Interval setup for background polling
+    let pollingInterval;
+
+    // onMounted(() => {
+    //     // Fetch orders immediately
+    //     orderStore.fetchAllOrders();
+
+    //     // Then fetch orders every 15 seconds (adjust as needed)
+    //     pollingInterval = setInterval(() => {
+    //         orderStore.fetchAllOrders();
+    //     }, 15000);
+    // });
+
+    onUnmounted(() => {
+        clearInterval(pollingInterval);
+    });
+</script>
 <template>
     <div class="mt-14 md:mt-0 md:flex h-screen w-screen">
         <header class="min-w-[220px] max-w-[220px]">

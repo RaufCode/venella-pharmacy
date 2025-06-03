@@ -1,73 +1,59 @@
 <script setup>
-    import { ref } from "vue";
-    import router from "@/router";
+    import { onMounted } from "vue";
+    import { useRouter } from "vue-router";
+    import { useOrderStore } from "@/stores/orderStore";
+    import { storeToRefs } from "pinia";
 
-    const carts = [
-        {
-            price: "₵ 160",
-            name: "Paracetamol",
-            description: "Effective pain relief for fever and headaches...",
-        },
-        {
-            price: "₵ 85",
-            name: "Ibuprofen",
-            description: "Relieves inflammation, pain, and reduces fever.",
-        },
-        {
-            price: "₵ 210",
-            name: "Ciprofloxacin",
-            description: "Used to treat bacterial infections effectively.",
-        },
-        {
-            price: "₵ 75",
-            name: "Cetirizine",
-            description: "Provides relief from allergies and hay fever.",
-        },
-        {
-            price: "₵ 320",
-            name: "Azithromycin",
-            description: "Broad-spectrum antibiotic for serious infections.",
-        },
-        {
-            price: "₵ 60",
-            name: "Vitamin C",
-            description: "Boosts immune system and prevents deficiency.",
-        },
-        {
-            price: "₵ 110",
-            name: "Metronidazole",
-            description: "Treats bacterial and parasitic infections.",
-        },
-        {
-            price: "₵ 185",
-            name: "Amoxicillin",
-            description: "A widely used antibiotic for various infections.",
-        },
-        {
-            price: "₵ 140",
-            name: "Loratadine",
-            description: "Non-drowsy antihistamine for allergies.",
-        },
-        {
-            price: "₵ 90",
-            name: "Omeprazole",
-            description: "Reduces stomach acid to treat ulcers and GERD.",
-        },
-    ];
+    const orderStore = useOrderStore();
+    const { customerOrders, loading, error } = storeToRefs(orderStore);
 
-    const cart = ref(false);
-    const redirect = () => {
-        router.push("/login");
-    };
+    const router = useRouter();
 
-    const goBack = () => {
+    function goBack() {
         router.back();
-    };
-</script>
+    }
 
+    function formatDate(dateStr) {
+        const options = { year: "numeric", month: "short", day: "numeric" };
+        return new Date(dateStr).toLocaleDateString(undefined, options);
+    }
+
+    function statusBadge(status) {
+        const base = "px-3 py-1 rounded-full text-xs font-medium";
+        switch (status?.toLowerCase()) {
+            case "pending":
+                return `${base} bg-yellow-100 text-yellow-700`;
+            case "completed":
+                return `${base} bg-green-100 text-green-700`;
+            case "cancelled":
+                return `${base} bg-red-100 text-red-700`;
+            default:
+                return `${base} bg-gray-100 text-gray-600`;
+        }
+    }
+
+    async function deleteOrder(orderId) {
+        const confirmed = confirm(
+            "Are you sure you want to cancel/delete this order?"
+        );
+        if (!confirmed) return;
+
+        try {
+            await orderStore.deleteOrder(orderId);
+            await orderStore.fetchCustomerOrders();
+        } catch (err) {
+            alert("Failed to delete the order.");
+            console.error(err);
+        }
+    }
+
+    onMounted(() => {
+        orderStore.fetchCustomerOrders();
+    });
+</script>
 <template>
-    <div class="h-screen w-full relative flex flex-col flex-1 overflow-hidden">
-        <!-- Go Back Button -->
+    <div class="relative min-h-screen bg-gray-100 pt-20">
+        <!-- Header Bar -->
         <div
             class="flex items-center gap-4 w-full md:absolute top-0 z-50 p-3 bg-gray-900"
         >
@@ -84,59 +70,105 @@
             </h1>
         </div>
 
-        <div class="overflow-auto overscroll-contain w-full mb-14 md:mb-0">
-            <div class="mx-auto container md:pt-14 p-3">
-                <!-- Empty Cart -->
-                <div
-                    v-if="cart === !false"
-                    class="text-center text-gray-500 mt-20"
-                >
-                    <i
-                        class="pi pi-shopping-cart text-5xl animate-pulse text-gray-400 mb-4"
-                    ></i>
-                    <p class="text-lg font-medium text-gray-700">
-                        You haven't placed an order yet!
-                    </p>
-                    <p class="text-sm text-gray-500">
-                        Once you start shopping, your order history will appear
-                        here for easy tracking and reference.
-                    </p>
-                </div>
+        <!-- Content -->
+        <div class="max-w-5xl mx-auto px-4 py-8">
+            <div v-if="loading" class="text-center py-10 text-gray-600">
+                Loading your orders...
+            </div>
 
-                <!-- Loaded Cart -->
-                <div v-else class="p-0 md:py-3">
-                    <div class="">
-                        <table class="min-w-full border bg-white text-center">
-                            <thead>
-                                <tr
-                                    class="bg-gray-300 text-gray-600 font-semibold text-sm uppercase tracking-wider"
+            <div v-else-if="error" class="text-center text-red-500 py-10">
+                {{ error }}
+            </div>
+
+            <div
+                v-else-if="customerOrders.length === 0"
+                class="text-center py-10 text-gray-600"
+            >
+                No orders found.
+            </div>
+
+            <!-- Order Cards -->
+            <div class="grid md:grid-cols-2 gap-6" v-else>
+                <div
+                    v-for="order in customerOrders"
+                    :key="order.id"
+                    class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition"
+                >
+                    <!-- Top Section -->
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1">
+                            <p
+                                class="text-sm font-semibold text-gray-800 truncate"
+                            >
+                                {{ order.order_items?.[0]?.product?.name }}
+                                <span
+                                    v-if="order.order_items?.length > 1"
+                                    class="text-gray-500 text-xs"
                                 >
-                                    <th class="px-6 py-2">Product</th>
-                                    <th class="px-6 py-2">Price</th>
-                                    <th class="px-6 py-2">Quantity</th>
-                                    <th class="px-6 py-2">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-black text-sm font-light">
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-2 whitespace-nowrap">
-                                        prduct name
-                                    </td>
-                                    <td class="px-6 py-2 whitespace-nowrap">
-                                        ₵ 160
-                                    </td>
-                                    <td class="px-6 py-2 whitespace-nowrap">
-                                        2
-                                    </td>
-                                    <td class="px-6 py-2 whitespace-nowrap">
-                                        2023-10-01
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    + {{ order.order_items.length - 1 }} more
+                                </span>
+                            </p>
+                            <p
+                                class="text-xs text-gray-500 italic mt-1 max-h-10 overflow-hidden"
+                            >
+                                {{
+                                    order.order_items?.[0]?.product
+                                        ?.description ||
+                                    "No description available."
+                                }}
+                            </p>
+                        </div>
+                        <span :class="statusBadge(order.status)">
+                            {{ order.status }}
+                        </span>
+                    </div>
+
+                    <!-- Order Items -->
+                    <ul class="text-sm text-gray-700 mb-4 space-y-1">
+                        <li
+                            v-for="item in order.order_items || []"
+                            :key="item.id"
+                            class="flex justify-between"
+                        >
+                            <span>{{ item.product.name }}</span>
+                            <span class="text-gray-500"
+                                >x{{ item.quantity }}</span
+                            >
+                        </li>
+                    </ul>
+
+                    <!-- Order Summary -->
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Total:</span>
+                        <span class="font-semibold text-orange-600"
+                            >GH₵ {{ order.total_amount }}</span
+                        >
+                    </div>
+
+                    <div class="text-right mt-2 text-xs text-gray-400">
+                        {{ formatDate(order.created_at) }}
+                    </div>
+
+                    <!-- Cancel Button -->
+                    <div
+                        v-if="order.status?.toLowerCase() === 'pending'"
+                        class="mt-4 text-right"
+                    >
+                        <button
+                            @click="deleteOrder(order.id)"
+                            class="text-red-600 text-xs hover:underline"
+                        >
+                            Cancel Order
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+    .font-styleScript {
+        font-family: "Satisfy", cursive;
+    }
+</style>

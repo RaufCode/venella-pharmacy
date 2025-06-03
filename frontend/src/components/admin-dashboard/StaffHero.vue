@@ -94,7 +94,7 @@
 
             alert("Staff added successfully!");
 
-            // <-- Add this to refresh staff list -->
+            // Refresh staff list
             await fetchStaff();
 
             showModal.value = false;
@@ -164,7 +164,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="overflow-y-auto overscroll-contain w-full">
+        <div class="overflow-y-auto overscroll-contain w-full pt-6">
             <div class="mx-auto container p-3">
                 <!-- Button (Mobile) -->
                 <button
@@ -176,62 +176,84 @@
 
                 <!-- Staff Table -->
                 <div
-                    class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto"
+                    class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto rounded-lg shadow-lg border border-gray-200 bg-white"
                 >
                     <table
-                        class="w-full text-sm text-left text-gray-700 bg-white shadow"
+                        v-if="staffList.length > 0"
+                        class="min-w-full divide-y divide-gray-200 table-auto"
                     >
-                        <thead
-                            class="text-xs uppercase bg-gray-600 text-gray-800"
-                        >
+                        <thead class="bg-gray-800 sticky top-0 z-10">
                             <tr>
-                                <th class="px-6 py-3 whitespace-nowrap">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider truncate"
+                                    scope="col"
+                                >
                                     Name
                                 </th>
-                                <th class="px-6 py-3 whitespace-nowrap">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-semibold text-indigo-400 uppercase tracking-wider truncate"
+                                    scope="col"
+                                >
                                     Email
                                 </th>
-                                <th class="px-6 py-3 whitespace-nowrap">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-semibold text-orange-400 uppercase tracking-wider truncate"
+                                    scope="col"
+                                >
                                     Phone
                                 </th>
                                 <th
-                                    class="px-6 py-3 whitespace-nowrap text-center"
+                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider"
+                                    scope="col"
                                 >
                                     Update
                                 </th>
                                 <th
-                                    class="px-6 py-3 whitespace-nowrap text-center"
+                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider"
+                                    scope="col"
                                 >
                                     Delete
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="bg-white divide-y divide-gray-200">
                             <tr
                                 v-for="staff in staffList"
                                 :key="staff.id"
-                                class="border-b hover:bg-gray-200"
+                                class="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                                :title="`${staff.profile.first_name} ${staff.profile.last_name}`"
                             >
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 truncate max-w-xs"
+                                >
                                     {{ staff.profile.first_name }}
                                     {{ staff.profile.last_name }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 truncate max-w-md"
+                                >
                                     {{ staff.email }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-orange-600 truncate max-w-xs"
+                                >
                                     {{ staff.profile.phone }}
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <button class="text-blue-600 text-2xl">
+                                    <button
+                                        class="text-blue-600 hover:text-blue-800 text-xl transition"
+                                        title="Edit staff"
+                                        aria-label="Edit staff"
+                                    >
                                         <i class="pi pi-user-edit"></i>
                                     </button>
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <button
                                         @click="deleteStaff(staff.id)"
-                                        class="text-red-600 text-2xl"
+                                        class="text-red-600 hover:text-red-800 text-xl transition"
                                         title="Delete staff"
+                                        aria-label="Delete staff"
                                     >
                                         <i class="pi pi-trash"></i>
                                     </button>
@@ -239,83 +261,99 @@
                             </tr>
                         </tbody>
                     </table>
+
+                    <div
+                        v-if="staffList.length === 0"
+                        class="text-center text-gray-500 mt-10 py-16"
+                    >
+                        <p>
+                            <i
+                                class="pi pi-user text-3xl md:text-5xl animate-pulse"
+                            ></i>
+                        </p>
+                        <p>No staff members found</p>
+                    </div>
                 </div>
 
                 <!-- Modal -->
                 <div
                     v-if="showModal"
-                    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+                    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4"
                 >
-                    <div class="w-full p-3">
-                        <form
-                            @submit.prevent="submitStaff"
-                            class="w-full max-w-xl max-h-[90vh] overflow-y-auto p-4 shadow mx-auto bg-white rounded"
-                        >
-                            <div class="flex justify-between items-center mb-4">
-                                <h1 class="text-lg font-bold text-gray-800">
+                    <div
+                        class="w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 bg-white rounded-lg shadow-lg"
+                    >
+                        <form @submit.prevent="submitStaff" class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-xl font-bold text-gray-800">
                                     Register Staff
-                                </h1>
+                                </h2>
                                 <button
                                     type="button"
                                     @click="showModal = false"
-                                    class="text-orange-600 text-xl"
+                                    class="text-orange-600 text-2xl hover:text-orange-800 transition"
+                                    aria-label="Close modal"
                                 >
                                     <i class="pi pi-times"></i>
                                 </button>
                             </div>
 
-                            <!-- Row 1 -->
+                            <!-- Name inputs -->
                             <div class="md:flex gap-4">
                                 <InputField
                                     v-model="form.first_name"
                                     labelname="First Name"
                                     class="flex-1"
+                                    required
                                 />
                                 <InputField
                                     v-model="form.last_name"
                                     labelname="Last Name"
                                     class="flex-1"
+                                    required
                                 />
                             </div>
 
-                            <!-- Row 2 -->
-                            <div class="md:flex gap-4 mt-3">
+                            <!-- Other Names & Address -->
+                            <div class="md:flex gap-4">
                                 <label
-                                    class="flex-1 text-sm text-gray-900 block mt-3"
+                                    class="flex-1 block mt-3 text-sm text-gray-900"
                                 >
                                     Other Names
                                     <input
                                         v-model="form.other_names"
                                         type="text"
-                                        class="block mt-1 w-full border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
-                                        required
+                                        class="mt-1 w-full border border-gray-400 rounded px-4 py-2 focus:outline-none focus:border-orange-700 bg-transparent"
                                     />
                                 </label>
                                 <InputField
                                     v-model="form.address"
                                     labelname="Address"
                                     class="flex-1"
+                                    required
                                 />
                             </div>
 
-                            <!-- Row 3 -->
-                            <div class="md:flex gap-4 mt-3">
+                            <!-- Phone & Email -->
+                            <div class="md:flex gap-4">
                                 <InputField
                                     v-model="form.phone"
                                     labelname="Phone"
                                     type="tel"
                                     class="flex-1"
+                                    required
                                 />
                                 <InputField
                                     v-model="form.email"
                                     labelname="Email"
                                     type="email"
                                     class="flex-1"
+                                    required
                                 />
                             </div>
 
                             <!-- Submit Button -->
-                            <div class="mt-5">
+                            <div>
                                 <Btn :disabled="isSubmitting" btnName="Save" />
                             </div>
                         </form>

@@ -53,15 +53,16 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/details',
+      path: '/product/:id',
       name: 'product-details',
       component: ProductDetailsView,
+      props: true,
     },
     {
       path: '/salesperson',
       name: 'salesperson',
       component: SalesPersonView,
-      meta: { requiresAuth: true, requiresRole: 'admin' },
+      meta: { requiresAuth: true, requiresRole: 'salesperson' },
     },
   ],
 })

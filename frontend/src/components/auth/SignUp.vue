@@ -77,6 +77,8 @@
                     <InputField
                         v-model="form.email"
                         labelname="Email"
+                        autocomplete="email"
+                        name="email"
                         type="email"
                         class="flex-1"
                     />
@@ -94,7 +96,7 @@
                         class="flex-1"
                     />
                 </div>
-                <div class="mt-3">
+                <!-- <div class="mt-3">
                     <label for="role" class="block text-sm text-gray-900"
                         >Role</label
                     >
@@ -107,7 +109,7 @@
                         <option value="" disabled>Select Role</option>
                         <option value="customer">Customer</option>
                     </select>
-                </div>
+                </div> -->
                 <InputField
                     v-model="form.password"
                     labelname="Password"

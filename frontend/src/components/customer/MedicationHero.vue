@@ -1,405 +1,300 @@
-<script setup lang="ts">
-    import router from "@/router";
-    const medications = [
-        {
-            name: "Paracetamol",
-            description:
-                "Paracetamol is a widely used painkiller and fever reducer. It treats headaches, toothaches, and minor aches. It is safe for most users when taken as directed. Overuse can lead to liver damage. Available in tablets, syrup, and suppository forms for both adults and children.",
-        },
-        {
-            name: "Ibuprofen",
-            description:
-                "Ibuprofen is a non-steroidal anti-inflammatory drug (NSAID) used for pain, inflammation, and fever. It’s effective for menstrual cramps, arthritis, and muscle aches. Best taken with food to reduce stomach irritation. Available in tablets and suspension forms. Not suitable for people with ulcers or kidney issues.",
-        },
-        {
-            name: "Amoxicillin",
-            description:
-                "Amoxicillin is a penicillin antibiotic used to treat bacterial infections like ear infections, pneumonia, and urinary tract infections. It works by stopping the growth of bacteria. Always complete the prescribed course. Not effective against viral infections. May cause mild side effects like nausea or rash.",
-        },
-        {
-            name: "Cetirizine",
-            description:
-                "Cetirizine is an antihistamine that relieves allergy symptoms such as runny nose, sneezing, and itchy eyes. It’s commonly used for hay fever and skin hives. Non-drowsy in most people. Works within an hour and lasts up to 24 hours. Safe for adults and children over six.",
-        },
-        {
-            name: "Metformin",
-            description:
-                "Metformin is an oral medication for managing type 2 diabetes. It helps control blood sugar levels by improving insulin sensitivity and reducing liver glucose production. Taken with meals to reduce stomach upset. Not for type 1 diabetes. Regular monitoring of kidney function is advised during long-term use.",
-        },
-        {
-            name: "Loratadine",
-            description:
-                "Loratadine is a non-drowsy antihistamine used to treat allergy symptoms like sneezing, itchy eyes, and runny nose. Suitable for both adults and children. Typically taken once daily. Relief starts within an hour. Not recommended during pregnancy without medical advice. Available in tablets, syrup, and dissolvable forms.",
-        },
-        {
-            name: "Azithromycin",
-            description:
-                "Azithromycin is a macrolide antibiotic used to treat bacterial infections like bronchitis, pneumonia, and certain STDs. It works by preventing bacteria from growing. Often prescribed in short courses. Take on an empty stomach for better absorption. Can cause mild gastrointestinal upset or temporary changes in taste.",
-        },
-        {
-            name: "Omeprazole",
-            description:
-                "Omeprazole reduces stomach acid and treats conditions like ulcers, GERD, and acid reflux. It belongs to the proton pump inhibitor (PPI) class. Best taken before meals. Long-term use may affect calcium and magnesium levels. Available over-the-counter or by prescription. Improves symptoms within a few days of use.",
-        },
-        {
-            name: "Salbutamol",
-            description:
-                "Salbutamol is a bronchodilator used to relieve asthma and chronic obstructive pulmonary disease (COPD) symptoms. It quickly opens airways to ease breathing. Usually inhaled via inhaler or nebulizer. Works within minutes. Not a long-term controller—used for quick relief. Side effects may include tremors or increased heart rate.",
-        },
-        {
-            name: "Diphenhydramine",
-            description:
-                "Diphenhydramine is a sedating antihistamine used to treat allergies, insomnia, and motion sickness. It provides quick relief for sneezing, itching, and hives. Also used as a nighttime sleep aid. Causes drowsiness, so avoid driving. Available in tablets, capsules, and syrups. Not recommended for children under two years.",
-        },
-        {
-            name: "Lisinopril",
-            description:
-                "Lisinopril is an ACE inhibitor used to treat high blood pressure and heart failure. It helps relax blood vessels, improving blood flow. Regular use reduces stroke and heart attack risk. Taken once daily. Side effects may include dizziness or cough. Not safe during pregnancy. Requires regular blood pressure monitoring.",
-        },
-        {
-            name: "Amlodipine",
-            description:
-                "Amlodipine is a calcium channel blocker used to treat high blood pressure and angina. It relaxes blood vessels to improve blood flow and reduce heart workload. Taken daily, with or without food. May cause swelling or dizziness. Gradual onset—results appear over days. Do not stop abruptly without advice.",
-        },
-        {
-            name: "Hydrochlorothiazide",
-            description:
-                "Hydrochlorothiazide is a diuretic used to treat high blood pressure and fluid retention. It helps the body eliminate excess salt and water. Best taken in the morning. Can cause increased urination, dizziness, or electrolyte imbalance. Regular blood tests recommended. Works well as part of combination therapy for hypertension.",
-        },
-        {
-            name: "Clopidogrel",
-            description:
-                "Clopidogrel is an antiplatelet drug that prevents blood clots in patients with heart disease, stroke risk, or after certain surgeries. It helps maintain blood flow in arteries. Taken once daily. Do not stop without doctor’s advice. May cause bleeding or bruising. Avoid alcohol and NSAIDs while on treatment.",
-        },
-        {
-            name: "Folic Acid",
-            description:
-                "Folic acid is a vitamin essential for red blood cell production and fetal development during pregnancy. It prevents neural tube defects and treats folate deficiency anemia. Often prescribed for pregnant women. Usually well tolerated. Taken once daily with or without food. Available alone or in prenatal multivitamin combinations.",
-        },
-        {
-            name: "Prednisolone",
-            description:
-                "Prednisolone is a corticosteroid used to reduce inflammation in conditions like asthma, arthritis, and allergic reactions. It suppresses the immune response and relieves swelling. Must be taken as prescribed and tapered gradually. Side effects include mood changes, weight gain, and increased blood sugar. Not recommended for long-term unsupervised use.",
-        },
-        {
-            name: "Diazepam",
-            description:
-                "Diazepam is a benzodiazepine used to relieve anxiety, muscle spasms, and seizures. It also treats alcohol withdrawal symptoms. Has a calming effect on the brain. Can cause drowsiness or dependence if misused. Prescribed for short-term use only. Avoid alcohol while taking diazepam. Should not be stopped abruptly.",
-        },
-        {
-            name: "Simvastatin",
-            description:
-                "Simvastatin is a cholesterol-lowering medication used to reduce the risk of heart disease and stroke. It works by decreasing LDL (bad) cholesterol and increasing HDL (good) cholesterol. Taken at night, often once daily. May cause muscle pain or liver issues. Regular monitoring of cholesterol and liver function is advised.",
-        },
-        {
-            name: "Insulin",
-            description:
-                "Insulin is a hormone therapy used to control blood sugar in people with diabetes, especially type 1. Administered via injection or pump. Different types vary in onset and duration. Essential for managing glucose levels. Requires careful dosage and monitoring to avoid hypoglycemia. Diet and exercise should be coordinated accordingly.",
-        },
-        {
-            name: "Codeine",
-            description:
-                "Codeine is a mild opioid used to treat moderate pain and persistent cough. It works by altering pain perception in the brain. May cause drowsiness, constipation, or dependency. Often combined with paracetamol. Should not be used in children under 12. Avoid alcohol and driving while taking codeine-containing medications.",
-        },
-        {
-            name: "Ciprofloxacin",
-            description:
-                "Ciprofloxacin is a broad-spectrum antibiotic used to treat infections like UTIs, respiratory issues, and gastrointestinal infections. Belongs to the fluoroquinolone class. Not suitable for children or pregnant women. Can cause tendon problems or photosensitivity. Take with water and avoid dairy or calcium-rich products close to dosage time.",
-        },
-        {
-            name: "Levothyroxine",
-            description:
-                "Levothyroxine is a thyroid hormone replacement used to treat hypothyroidism. It normalizes metabolism and energy levels. Taken on an empty stomach, usually in the morning. Requires regular blood tests for dose adjustment. Do not switch brands without consulting a doctor. Overdose may cause rapid heartbeat, insomnia, or anxiety.",
-        },
-        {
-            name: "Ranitidine",
-            description:
-                "Ranitidine is an H2 blocker that reduces stomach acid, treating ulcers, GERD, and heartburn. It offers quick symptom relief. Taken once or twice daily. Avoid long-term use without medical supervision. Due to safety concerns, some countries have restricted its use. Alternatives like famotidine are often recommended now.",
-        },
-        {
-            name: "Iron Sulfate",
-            description:
-                "Iron sulfate is a supplement used to treat or prevent iron-deficiency anemia. It helps the body produce healthy red blood cells. Best absorbed on an empty stomach, but may cause nausea or constipation. Vitamin C improves absorption. Long-term use should be monitored to avoid iron overload or toxicity.",
-        },
-        {
-            name: "Warfarin",
-            description:
-                "Warfarin is a blood thinner used to prevent and treat blood clots in conditions like deep vein thrombosis and atrial fibrillation. Dosage is closely monitored with blood tests (INR). Avoid sudden changes in diet, especially with vitamin K-rich foods. Interacts with many drugs. Requires consistent follow-up and caution.",
-        },
-        {
-            name: "Prednisolone",
-            description:
-                "Prednisolone is a corticosteroid used to reduce inflammation in conditions like asthma, arthritis, and allergic reactions. It suppresses the immune response and relieves swelling. Must be taken as prescribed and tapered gradually. Side effects include mood changes, weight gain, and increased blood sugar. Not recommended for long-term unsupervised use.",
-        },
-        {
-            name: "Diazepam",
-            description:
-                "Diazepam is a benzodiazepine used to relieve anxiety, muscle spasms, and seizures. It also treats alcohol withdrawal symptoms. Has a calming effect on the brain. Can cause drowsiness or dependence if misused. Prescribed for short-term use only. Avoid alcohol while taking diazepam. Should not be stopped abruptly.",
-        },
-        {
-            name: "Simvastatin",
-            description:
-                "Simvastatin is a cholesterol-lowering medication used to reduce the risk of heart disease and stroke. It works by decreasing LDL (bad) cholesterol and increasing HDL (good) cholesterol. Taken at night, often once daily. May cause muscle pain or liver issues. Regular monitoring of cholesterol and liver function is advised.",
-        },
-        {
-            name: "Insulin",
-            description:
-                "Insulin is a hormone therapy used to control blood sugar in people with diabetes, especially type 1. Administered via injection or pump. Different types vary in onset and duration. Essential for managing glucose levels. Requires careful dosage and monitoring to avoid hypoglycemia. Diet and exercise should be coordinated accordingly.",
-        },
-        {
-            name: "Codeine",
-            description:
-                "Codeine is a mild opioid used to treat moderate pain and persistent cough. It works by altering pain perception in the brain. May cause drowsiness, constipation, or dependency. Often combined with paracetamol. Should not be used in children under 12. Avoid alcohol and driving while taking codeine-containing medications.",
-        },
-        {
-            name: "Ciprofloxacin",
-            description:
-                "Ciprofloxacin is a broad-spectrum antibiotic used to treat infections like UTIs, respiratory issues, and gastrointestinal infections. Belongs to the fluoroquinolone class. Not suitable for children or pregnant women. Can cause tendon problems or photosensitivity. Take with water and avoid dairy or calcium-rich products close to dosage time.",
-        },
-        {
-            name: "Levothyroxine",
-            description:
-                "Levothyroxine is a thyroid hormone replacement used to treat hypothyroidism. It normalizes metabolism and energy levels. Taken on an empty stomach, usually in the morning. Requires regular blood tests for dose adjustment. Do not switch brands without consulting a doctor. Overdose may cause rapid heartbeat, insomnia, or anxiety.",
-        },
-        {
-            name: "Ranitidine",
-            description:
-                "Ranitidine is an H2 blocker that reduces stomach acid, treating ulcers, GERD, and heartburn. It offers quick symptom relief. Taken once or twice daily. Avoid long-term use without medical supervision. Due to safety concerns, some countries have restricted its use. Alternatives like famotidine are often recommended now.",
-        },
-        {
-            name: "Iron Sulfate",
-            description:
-                "Iron sulfate is a supplement used to treat or prevent iron-deficiency anemia. It helps the body produce healthy red blood cells. Best absorbed on an empty stomach, but may cause nausea or constipation. Vitamin C improves absorption. Long-term use should be monitored to avoid iron overload or toxicity.",
-        },
-        {
-            name: "Warfarin",
-            description:
-                "Warfarin is a blood thinner used to prevent and treat blood clots in conditions like deep vein thrombosis and atrial fibrillation. Dosage is closely monitored with blood tests (INR). Avoid sudden changes in diet, especially with vitamin K-rich foods. Interacts with many drugs. Requires consistent follow-up and caution.",
-        },
-        {
-            name: "Metformin",
-            description:
-                "Metformin is an oral medication for managing type 2 diabetes. It helps control blood sugar levels by improving insulin sensitivity and reducing liver glucose production. Taken with meals to reduce stomach upset. Not for type 1 diabetes. Regular monitoring of kidney function is advised during long-term use.",
-        },
-        {
-            name: "Loratadine",
-            description:
-                "Loratadine is a non-drowsy antihistamine used to treat allergy symptoms like sneezing, itchy eyes, and runny nose. Suitable for both adults and children. Typically taken once daily. Relief starts within an hour. Not recommended during pregnancy without medical advice. Available in tablets, syrup, and dissolvable forms.",
-        },
-        {
-            name: "Azithromycin",
-            description:
-                "Azithromycin is a macrolide antibiotic used to treat bacterial infections like bronchitis, pneumonia, and certain STDs. It works by preventing bacteria from growing. Often prescribed in short courses. Take on an empty stomach for better absorption. Can cause mild gastrointestinal upset or temporary changes in taste.",
-        },
-        {
-            name: "Omeprazole",
-            description:
-                "Omeprazole reduces stomach acid and treats conditions like ulcers, GERD, and acid reflux. It belongs to the proton pump inhibitor (PPI) class. Best taken before meals. Long-term use may affect calcium and magnesium levels. Available over-the-counter or by prescription. Improves symptoms within a few days of use.",
-        },
-        {
-            name: "Salbutamol",
-            description:
-                "Salbutamol is a bronchodilator used to relieve asthma and chronic obstructive pulmonary disease (COPD) symptoms. It quickly opens airways to ease breathing. Usually inhaled via inhaler or nebulizer. Works within minutes. Not a long-term controller—used for quick relief. Side effects may include tremors or increased heart rate.",
-        },
-        {
-            name: "Diphenhydramine",
-            description:
-                "Diphenhydramine is a sedating antihistamine used to treat allergies, insomnia, and motion sickness. It provides quick relief for sneezing, itching, and hives. Also used as a nighttime sleep aid. Causes drowsiness, so avoid driving. Available in tablets, capsules, and syrups. Not recommended for children under two years.",
-        },
-        {
-            name: "Lisinopril",
-            description:
-                "Lisinopril is an ACE inhibitor used to treat high blood pressure and heart failure. It helps relax blood vessels, improving blood flow. Regular use reduces stroke and heart attack risk. Taken once daily. Side effects may include dizziness or cough. Not safe during pregnancy. Requires regular blood pressure monitoring.",
-        },
-        {
-            name: "Amlodipine",
-            description:
-                "Amlodipine is a calcium channel blocker used to treat high blood pressure and angina. It relaxes blood vessels to improve blood flow and reduce heart workload. Taken daily, with or without food. May cause swelling or dizziness. Gradual onset—results appear over days. Do not stop abruptly without advice.",
-        },
-        {
-            name: "Hydrochlorothiazide",
-            description:
-                "Hydrochlorothiazide is a diuretic used to treat high blood pressure and fluid retention. It helps the body eliminate excess salt and water. Best taken in the morning. Can cause increased urination, dizziness, or electrolyte imbalance. Regular blood tests recommended. Works well as part of combination therapy for hypertension.",
-        },
-        {
-            name: "Clopidogrel",
-            description:
-                "Clopidogrel is an antiplatelet drug that prevents blood clots in patients with heart disease, stroke risk, or after certain surgeries. It helps maintain blood flow in arteries. Taken once daily. Do not stop without doctor’s advice. May cause bleeding or bruising. Avoid alcohol and NSAIDs while on treatment.",
-        },
-        {
-            name: "Folic Acid",
-            description:
-                "Folic acid is a vitamin essential for red blood cell production and fetal development during pregnancy. It prevents neural tube defects and treats folate deficiency anemia. Often prescribed for pregnant women. Usually well tolerated. Taken once daily with or without food. Available alone or in prenatal multivitamin combinations.",
-        },
-        {
-            name: "Prednisolone",
-            description:
-                "Prednisolone is a corticosteroid used to reduce inflammation in conditions like asthma, arthritis, and allergic reactions. It suppresses the immune response and relieves swelling. Must be taken as prescribed and tapered gradually. Side effects include mood changes, weight gain, and increased blood sugar. Not recommended for long-term unsupervised use.",
-        },
-        {
-            name: "Diazepam",
-            description:
-                "Diazepam is a benzodiazepine used to relieve anxiety, muscle spasms, and seizures. It also treats alcohol withdrawal symptoms. Has a calming effect on the brain. Can cause drowsiness or dependence if misused. Prescribed for short-term use only. Avoid alcohol while taking diazepam. Should not be stopped abruptly.",
-        },
-        {
-            name: "Simvastatin",
-            description:
-                "Simvastatin is a cholesterol-lowering medication used to reduce the risk of heart disease and stroke. It works by decreasing LDL (bad) cholesterol and increasing HDL (good) cholesterol. Taken at night, often once daily. May cause muscle pain or liver issues. Regular monitoring of cholesterol and liver function is advised.",
-        },
-        {
-            name: "Insulin",
-            description:
-                "Insulin is a hormone therapy used to control blood sugar in people with diabetes, especially type 1. Administered via injection or pump. Different types vary in onset and duration. Essential for managing glucose levels. Requires careful dosage and monitoring to avoid hypoglycemia. Diet and exercise should be coordinated accordingly.",
-        },
-        {
-            name: "Codeine",
-            description:
-                "Codeine is a mild opioid used to treat moderate pain and persistent cough. It works by altering pain perception in the brain. May cause drowsiness, constipation, or dependency. Often combined with paracetamol. Should not be used in children under 12. Avoid alcohol and driving while taking codeine-containing medications.",
-        },
-        {
-            name: "Ciprofloxacin",
-            description:
-                "Ciprofloxacin is a broad-spectrum antibiotic used to treat infections like UTIs, respiratory issues, and gastrointestinal infections. Belongs to the fluoroquinolone class. Not suitable for children or pregnant women. Can cause tendon problems or photosensitivity. Take with water and avoid dairy or calcium-rich products close to dosage time.",
-        },
-        {
-            name: "Levothyroxine",
-            description:
-                "Levothyroxine is a thyroid hormone replacement used to treat hypothyroidism. It normalizes metabolism and energy levels. Taken on an empty stomach, usually in the morning. Requires regular blood tests for dose adjustment. Do not switch brands without consulting a doctor. Overdose may cause rapid heartbeat, insomnia, or anxiety.",
-        },
-        {
-            name: "Ranitidine",
-            description:
-                "Ranitidine is an H2 blocker that reduces stomach acid, treating ulcers, GERD, and heartburn. It offers quick symptom relief. Taken once or twice daily. Avoid long-term use without medical supervision. Due to safety concerns, some countries have restricted its use. Alternatives like famotidine are often recommended now.",
-        },
-        {
-            name: "Iron Sulfate",
-            description:
-                "Iron sulfate is a supplement used to treat or prevent iron-deficiency anemia. It helps the body produce healthy red blood cells. Best absorbed on an empty stomach, but may cause nausea or constipation. Vitamin C improves absorption. Long-term use should be monitored to avoid iron overload or toxicity.",
-        },
-        {
-            name: "Warfarin",
-            description:
-                "Warfarin is a blood thinner used to prevent and treat blood clots in conditions like deep vein thrombosis and atrial fibrillation. Dosage is closely monitored with blood tests (INR). Avoid sudden changes in diet, especially with vitamin K-rich foods. Interacts with many drugs. Requires consistent follow-up and caution.",
-        },
-        {
-            name: "Prednisolone",
-            description:
-                "Prednisolone is a corticosteroid used to reduce inflammation in conditions like asthma, arthritis, and allergic reactions. It suppresses the immune response and relieves swelling. Must be taken as prescribed and tapered gradually. Side effects include mood changes, weight gain, and increased blood sugar. Not recommended for long-term unsupervised use.",
-        },
-        {
-            name: "Diazepam",
-            description:
-                "Diazepam is a benzodiazepine used to relieve anxiety, muscle spasms, and seizures. It also treats alcohol withdrawal symptoms. Has a calming effect on the brain. Can cause drowsiness or dependence if misused. Prescribed for short-term use only. Avoid alcohol while taking diazepam. Should not be stopped abruptly.",
-        },
-        {
-            name: "Simvastatin",
-            description:
-                "Simvastatin is a cholesterol-lowering medication used to reduce the risk of heart disease and stroke. It works by decreasing LDL (bad) cholesterol and increasing HDL (good) cholesterol. Taken at night, often once daily. May cause muscle pain or liver issues. Regular monitoring of cholesterol and liver function is advised.",
-        },
-        {
-            name: "Insulin",
-            description:
-                "Insulin is a hormone therapy used to control blood sugar in people with diabetes, especially type 1. Administered via injection or pump. Different types vary in onset and duration. Essential for managing glucose levels. Requires careful dosage and monitoring to avoid hypoglycemia. Diet and exercise should be coordinated accordingly.",
-        },
-        {
-            name: "Codeine",
-            description:
-                "Codeine is a mild opioid used to treat moderate pain and persistent cough. It works by altering pain perception in the brain. May cause drowsiness, constipation, or dependency. Often combined with paracetamol. Should not be used in children under 12. Avoid alcohol and driving while taking codeine-containing medications.",
-        },
-        {
-            name: "Ciprofloxacin",
-            description:
-                "Ciprofloxacin is a broad-spectrum antibiotic used to treat infections like UTIs, respiratory issues, and gastrointestinal infections. Belongs to the fluoroquinolone class. Not suitable for children or pregnant women. Can cause tendon problems or photosensitivity. Take with water and avoid dairy or calcium-rich products close to dosage time.",
-        },
-        {
-            name: "Levothyroxine",
-            description:
-                "Levothyroxine is a thyroid hormone replacement used to treat hypothyroidism. It normalizes metabolism and energy levels. Taken on an empty stomach, usually in the morning. Requires regular blood tests for dose adjustment. Do not switch brands without consulting a doctor. Overdose may cause rapid heartbeat, insomnia, or anxiety.",
-        },
-    ];
+<script setup>
+    import { onMounted, ref } from "vue";
+    import { useMedStore } from "@/stores/medStore";
+    import InputField from "@/components/InputField.vue";
+    import Btn from "@/components/Btn.vue";
+
+    const medStore = useMedStore();
+    const {
+        products,
+        categories,
+        showModal,
+        isSubmitting,
+        editingProductId,
+        form,
+        hasProducts,
+        isEditing,
+        fetchProducts,
+        fetchCategories,
+        submitForm,
+        editProduct,
+        deleteProduct,
+        resetForm,
+        handleImageUpload,
+    } = medStore;
+
+    // Modal state
+    function openModal() {
+        showModal.value = true;
+    }
+    function closeModal() {
+        resetForm();
+        showModal.value = false;
+    }
+
+    onMounted(async () => {
+        await fetchCategories();
+        await fetchProducts();
+    });
 </script>
 
 <template>
     <div class="h-screen w-full relative flex flex-col flex-1 overflow-hidden">
+        <!-- Top Bar -->
         <div
-            class="hidden md:flex md:justify-between md:items-center w-full md:absolute top-0 z-50 p-3 bg-gray-900"
+            class="hidden w-full md:absolute top-0 z-40 bg-gray-900 shadow-md md:flex justify-between items-center p-3"
         >
-            <h1
-                class="text-gray-300 font-styleScript text-center text-lg md:text-2xl"
-            >
-                Meds Jane Doe
+            <h1 class="text-gray-300 font-styleScript text-lg md:text-2xl">
+                Medication Manager
             </h1>
-            <div>
-                <form
-                    @submit.prevent=""
-                    class="flex items-center justify-between gap-4 text-white"
-                >
-                    <input
-                        type="text"
-                        placeholder="Search medications"
-                        class="block mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
-                    />
-                    <button
-                        type="submit"
-                        class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded"
-                    >
-                        <i class="pi pi-search"></i>
-                    </button>
-                </form>
-            </div>
+            <button
+                @click="openModal"
+                class="py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
+            >
+                Add Medication
+            </button>
         </div>
-        <div class="overflow-y-auto overscroll-contain w-full mb-14 md:mb-0">
-            <div class="mx-auto container md:pt-16">
-                <div class="md:hidden p-3 pb-0">
-                    <form
-                        @submit.prevent=""
-                        class="flex items-center justify-between gap-4"
-                    >
-                        <input
-                            type="text"
-                            placeholder="Search medications"
-                            class="block mx-auto border border-gray-400 rounded outline-none focus:border-orange-700 h-9 px-4 md:h-10 bg-transparent"
-                        />
-                        <button
-                            type="submit"
-                            class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded"
-                        >
-                            <i class="pi pi-search"></i>
-                        </button>
-                    </form>
-                </div>
+
+        <!-- Main Content -->
+        <div class="overflow-y-auto overscroll-contain w-full">
+            <div class="mx-auto container p-3">
+                <!-- Button (Mobile) -->
+                <button
+                    @click="openModal"
+                    class="py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500 md:hidden"
+                >
+                    Add Medication
+                </button>
+
+                <!-- Medication Table -->
                 <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2lg:grid-cols-4 gap-3 p-3"
+                    class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto rounded-lg shadow-lg border border-gray-200 bg-white"
+                >
+                    <table
+                        v-if="products.length > 0"
+                        class="min-w-full divide-y divide-gray-200 table-auto"
+                    >
+                        <thead class="bg-gray-800 sticky top-0 z-10">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider truncate"
+                                >
+                                    Name
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-semibold text-orange-400 uppercase tracking-wider truncate"
+                                >
+                                    Category
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-semibold text-indigo-400 uppercase tracking-wider truncate"
+                                >
+                                    Stock
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-semibold text-green-400 uppercase tracking-wider truncate"
+                                >
+                                    Price
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider truncate"
+                                >
+                                    Description
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider"
+                                >
+                                    Update
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider"
+                                >
+                                    Delete
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr
+                                v-for="med in products"
+                                :key="med.id"
+                                class="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                                :title="med.name"
+                            >
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 truncate max-w-xs"
+                                >
+                                    <div class="flex items-center gap-2">
+                                        <img
+                                            v-if="
+                                                med.images && med.images.length
+                                            "
+                                            :src="med.images[0].image"
+                                            alt="product"
+                                            class="w-8 h-8 object-cover rounded"
+                                        />
+                                        <span>{{ med.name }}</span>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-orange-600 truncate max-w-md"
+                                >
+                                    {{ med.category?.name || "-" }}
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 font-bold truncate max-w-xs"
+                                >
+                                    {{ med.stock }}
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-green-700 font-semibold truncate max-w-xs"
+                                >
+                                    ₵{{ med.price }}
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 truncate max-w-sm"
+                                >
+                                    {{ med.description }}
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <button
+                                        @click="editProduct(med.id)"
+                                        class="text-blue-600 hover:text-blue-800 text-xl transition"
+                                        title="Edit medication"
+                                        aria-label="Edit medication"
+                                    >
+                                        <i class="pi pi-file-edit"></i>
+                                    </button>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <button
+                                        @click="deleteProduct(med.id)"
+                                        class="text-red-600 hover:text-red-800 text-xl transition"
+                                        title="Delete medication"
+                                        aria-label="Delete medication"
+                                    >
+                                        <i class="pi pi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div
+                        v-if="products.length === 0"
+                        class="text-center text-gray-500 mt-10 py-16"
+                    >
+                        <p>
+                            <i
+                                class="pi pi-box text-3xl md:text-5xl animate-pulse"
+                            ></i>
+                        </p>
+                        <p>No medications found</p>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div
+                    v-if="showModal"
+                    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4"
                 >
                     <div
-                        v-for="med in medications"
-                        :key="med.name"
-                        class="rounded-lg shadow hover:shadow-md transition-shadow p-6 bg-white text-gray-500 font-medium text-sm"
+                        class="w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 bg-white rounded-lg shadow-lg"
                     >
-                        <p
-                            class="text-base text-gray-800 font-semibold overflow-hidden text-ellipsis"
-                        >
-                            {{ med.name }}
-                        </p>
-                        <p
-                            class="text-gray-500 font-medium text-justify overflow-hidden text-ellipsis whitespace-nowrap"
-                        >
-                            {{ med.description }}
-                        </p>
-
-                        <div class="flex items-center justify-between mt-2">
-                            <p
-                                class="font-semibold font-poppins text-green-500 text-lg"
-                            >
-                                ₵ 5
-                            </p>
-                            <button
-                                type="submit"
-                                class="whitespace-nowrap py-2 px-4 rounded bg-orange-600 text-white font-medium hover:bg-orange-500"
-                            >
-                                Add item
-                            </button>
-                        </div>
+                        <form @submit.prevent="submitForm" class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-xl font-bold text-gray-800">
+                                    {{
+                                        isEditing
+                                            ? "Edit Medication"
+                                            : "Add Medication"
+                                    }}
+                                </h2>
+                                <button
+                                    type="button"
+                                    @click="closeModal"
+                                    class="text-orange-600 text-2xl hover:text-orange-800 transition"
+                                    aria-label="Close modal"
+                                >
+                                    <i class="pi pi-times"></i>
+                                </button>
+                            </div>
+                            <!-- Name -->
+                            <InputField
+                                v-model="form.name"
+                                labelname="Name"
+                                class="w-full"
+                                required
+                            />
+                            <!-- Category & Stock -->
+                            <div class="md:flex gap-4">
+                                <label
+                                    class="flex-1 block mt-3 text-sm text-gray-900"
+                                >
+                                    Category
+                                    <select
+                                        v-model="form.category"
+                                        class="mt-1 w-full border border-gray-400 rounded px-4 py-2 focus:outline-none focus:border-orange-700 bg-transparent"
+                                        required
+                                    >
+                                        <option value="" disabled>
+                                            Select category
+                                        </option>
+                                        <option
+                                            v-for="cat in categories"
+                                            :key="cat.id"
+                                            :value="cat.id"
+                                        >
+                                            {{ cat.name }}
+                                        </option>
+                                    </select>
+                                </label>
+                                <InputField
+                                    v-model="form.stock"
+                                    labelname="Stock"
+                                    type="number"
+                                    class="flex-1"
+                                    min="0"
+                                    required
+                                />
+                            </div>
+                            <!-- Price -->
+                            <InputField
+                                v-model="form.price"
+                                labelname="Price"
+                                type="number"
+                                min="0"
+                                class="w-full"
+                                required
+                            />
+                            <!-- Description -->
+                            <label class="block mt-3 text-sm text-gray-900">
+                                Description
+                                <textarea
+                                    v-model="form.description"
+                                    rows="2"
+                                    class="mt-1 w-full border border-gray-400 rounded px-4 py-2 focus:outline-none focus:border-orange-700 bg-transparent resize-none"
+                                    required
+                                ></textarea>
+                            </label>
+                            <!-- Product Images -->
+                            <label class="block mt-3 text-sm text-gray-900">
+                                Product Images
+                                <input
+                                    type="file"
+                                    multiple
+                                    @change="handleImageUpload"
+                                    class="mt-1 w-full border border-gray-400 rounded px-4 py-2 bg-white"
+                                    accept="image/*"
+                                />
+                            </label>
+                            <!-- Submit Button -->
+                            <div>
+                                <Btn
+                                    :disabled="isSubmitting"
+                                    :btnName="isEditing ? 'Update' : 'Save'"
+                                />
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

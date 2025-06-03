@@ -1,284 +1,342 @@
 <script setup>
-    import { ref } from "vue";
-    import InputField from "@/components/ui/InputField.vue";
-    import Btn from "@/components/ui/Btn.vue";
+    import { ref, onMounted, watch, computed } from "vue";
+    import { useOrderStore } from "@/stores/orderStore";
+    import { storeToRefs } from "pinia";
 
-    const medicines = [
-        {
-            medicineName: "Amoxicillin",
-            batchNumber: "AMX202401",
-            quantity: 100,
-            costPrice: 2.5,
-            sellingPrice: 5.0,
-            category: "Capsule",
-            antibiotic: true,
-            manufacturingDate: "01/15/2024",
-            expiryDate: "01/15/2026",
-            image: null,
-        },
-        {
-            medicineName: "Paracetamol",
-            batchNumber: "PCM202402",
-            quantity: 200,
-            costPrice: 1.0,
-            sellingPrice: 2.0,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "02/10/2024",
-            expiryDate: "02/10/2026",
-            image: null,
-        },
-        {
-            medicineName: "Ciprofloxacin",
-            batchNumber: "CIP202403",
-            quantity: 150,
-            costPrice: 3.0,
-            sellingPrice: 6.0,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "03/05/2024",
-            expiryDate: "03/05/2026",
-            image: null,
-        },
-        {
-            medicineName: "Ibuprofen",
-            batchNumber: "IBU202404",
-            quantity: 180,
-            costPrice: 1.2,
-            sellingPrice: 2.5,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "04/01/2024",
-            expiryDate: "04/01/2026",
-            image: null,
-        },
-        {
-            medicineName: "Azithromycin",
-            batchNumber: "AZI202405",
-            quantity: 90,
-            costPrice: 4.0,
-            sellingPrice: 8.0,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "05/10/2024",
-            expiryDate: "05/10/2026",
-            image: null,
-        },
-        {
-            medicineName: "Metronidazole",
-            batchNumber: "MET202406",
-            quantity: 120,
-            costPrice: 2.0,
-            sellingPrice: 4.0,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "06/15/2024",
-            expiryDate: "06/15/2026",
-            image: null,
-        },
-        {
-            medicineName: "Cetirizine",
-            batchNumber: "CET202407",
-            quantity: 250,
-            costPrice: 0.8,
-            sellingPrice: 1.5,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "07/01/2024",
-            expiryDate: "07/01/2026",
-            image: null,
-        },
-        {
-            medicineName: "Erythromycin",
-            batchNumber: "ERY202408",
-            quantity: 130,
-            costPrice: 3.5,
-            sellingPrice: 7.0,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "08/05/2024",
-            expiryDate: "08/05/2026",
-            image: null,
-        },
-        {
-            medicineName: "Loratadine",
-            batchNumber: "LOR202409",
-            quantity: 175,
-            costPrice: 1.1,
-            sellingPrice: 2.2,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "09/10/2024",
-            expiryDate: "09/10/2026",
-            image: null,
-        },
-        {
-            medicineName: "Doxycycline",
-            batchNumber: "DOX202410",
-            quantity: 95,
-            costPrice: 2.8,
-            sellingPrice: 5.6,
-            category: "Capsule",
-            antibiotic: true,
-            manufacturingDate: "10/15/2024",
-            expiryDate: "10/15/2026",
-            image: null,
-        },
-        {
-            medicineName: "Omeprazole",
-            batchNumber: "OME202411",
-            quantity: 160,
-            costPrice: 1.9,
-            sellingPrice: 3.8,
-            category: "Capsule",
-            antibiotic: false,
-            manufacturingDate: "11/05/2024",
-            expiryDate: "11/05/2026",
-            image: null,
-        },
-        {
-            medicineName: "Clarithromycin",
-            batchNumber: "CLA202412",
-            quantity: 110,
-            costPrice: 4.2,
-            sellingPrice: 8.4,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "12/01/2024",
-            expiryDate: "12/01/2026",
-            image: null,
-        },
-        {
-            medicineName: "Folic Acid",
-            batchNumber: "FOL202413",
-            quantity: 300,
-            costPrice: 0.6,
-            sellingPrice: 1.2,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "01/01/2025",
-            expiryDate: "01/01/2027",
-            image: null,
-        },
-        {
-            medicineName: "Penicillin V",
-            batchNumber: "PEN202414",
-            quantity: 140,
-            costPrice: 2.7,
-            sellingPrice: 5.4,
-            category: "Tablet",
-            antibiotic: true,
-            manufacturingDate: "02/20/2025",
-            expiryDate: "02/20/2027",
-            image: null,
-        },
-        {
-            medicineName: "Vitamin C",
-            batchNumber: "VIT202415",
-            quantity: 220,
-            costPrice: 0.9,
-            sellingPrice: 1.8,
-            category: "Tablet",
-            antibiotic: false,
-            manufacturingDate: "03/15/2025",
-            expiryDate: "03/15/2027",
-            image: null,
-        },
-    ];
+    const orderStore = useOrderStore();
+    const { orders, loading, error } = storeToRefs(orderStore);
 
-    const showModal = ref(false);
+    const activeTab = ref("all");
+    const currentPage = ref(1);
+    const itemsPerPage = 7;
+
+    const selectedDate = ref(null);
+    const filterMode = ref("all");
+
+    const today = new Date().toISOString().split("T")[0];
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    const fetchOrdersByTab = async (tab) => {
+        selectedDate.value = null;
+        filterMode.value = "all";
+        if (tab === "pending") {
+            await orderStore.fetchPendingOrders();
+        } else if (tab === "processing") {
+            await orderStore.fetchProcessingOrders();
+        } else {
+            await orderStore.fetchAllOrders();
+        }
+    };
+
+    onMounted(() => fetchOrdersByTab(activeTab.value));
+
+    watch(activeTab, async (newTab) => {
+        currentPage.value = 1;
+        await fetchOrdersByTab(newTab);
+    });
+
+    const filteredOrders = computed(() => {
+        if (filterMode.value === "today") {
+            return orders.value.filter((order) => {
+                const date = new Date(order.created_at);
+                return date.toISOString().split("T")[0] === today;
+            });
+        }
+
+        if (filterMode.value === "thisMonth") {
+            return orders.value.filter((order) => {
+                const date = new Date(order.created_at);
+                return (
+                    date.getMonth() === currentMonth &&
+                    date.getFullYear() === currentYear
+                );
+            });
+        }
+
+        if (filterMode.value === "exactDate" && selectedDate.value) {
+            return orders.value.filter((order) => {
+                const orderDate = order.created_at.split("T")[0];
+                return orderDate === selectedDate.value;
+            });
+        }
+
+        return orders.value;
+    });
+
+    const paginatedOrders = computed(() => {
+        const start = (currentPage.value - 1) * itemsPerPage;
+        return filteredOrders.value.slice(start, start + itemsPerPage);
+    });
+
+    const totalPages = computed(() =>
+        Math.ceil(filteredOrders.value.length / itemsPerPage)
+    );
+
+    const canGoPrev = computed(() => currentPage.value > 1);
+    const canGoNext = computed(() => currentPage.value < totalPages.value);
+
+    const goPrev = () => {
+        if (canGoPrev.value) currentPage.value--;
+    };
+
+    const goNext = () => {
+        if (canGoNext.value) currentPage.value++;
+    };
+
+    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString();
+    const formatTime = (dateStr) =>
+        new Date(dateStr).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+
+    const setTab = (tab) => {
+        activeTab.value = tab;
+    };
+
+    const filterToday = () => {
+        filterMode.value = "today";
+    };
+
+    const filterThisMonth = () => {
+        filterMode.value = "thisMonth";
+    };
+
+    const filterByDate = (e) => {
+        selectedDate.value = e.target.value;
+        filterMode.value = "exactDate";
+    };
+
+    const updateStatusAndRefresh = async (orderId, newStatus) => {
+        await orderStore.updateOrderStatus(orderId, newStatus);
+        await fetchOrdersByTab(activeTab.value);
+    };
+
+    const markAsProcessing = (orderId) =>
+        updateStatusAndRefresh(orderId, "processing");
+
+    const markAsDelivered = (orderId) =>
+        updateStatusAndRefresh(orderId, "delivered");
 </script>
 
 <template>
-    <div class="h-screen relative flex flex-col flex-1 overflow-hidden">
-        <div
-            class="hidden w-full md:absolute top-0 z-40 bg-gray-900 md:top-0 md:block p-3"
+    <div class="min-h-screen bg-gray-50 flex flex-col">
+        <!-- Header -->
+        <header
+            class="bg-white px-6 py-4 border-b shadow-sm flex justify-between items-center"
         >
-            <h1
-                class="text-gray-300 text-center text-lg font-styleScript md:text-2xl"
-            >
-                Orders Hub
-            </h1>
-        </div>
-        <div class="overflow-auto overscroll-contain w-full">
-            <div class="mx-auto container p-3">
-                <div
-                    class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto"
+            <h1 class="text-xl font-semibold text-gray-800">Orders</h1>
+        </header>
+
+        <!-- Tabs and Filter Controls -->
+        <nav class="p-4 bg-white shadow-sm overflow-x-auto">
+            <div class="flex gap-3 flex-nowrap min-w-max w-fit">
+                <button
+                    @click="setTab('all')"
+                    :class="[
+                        'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                        activeTab === 'all'
+                            ? 'bg-orange-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                    ]"
                 >
-                    <table class="text-sm text-left text-gray-400 w-full">
-                        <thead
-                            class="text-xs uppercase bg-gray-700 text-gray-400"
+                    All Orders
+                </button>
+
+                <button
+                    @click="setTab('pending')"
+                    :class="[
+                        'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                        activeTab === 'pending'
+                            ? 'bg-yellow-500 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                    ]"
+                >
+                    Pending
+                </button>
+
+                <button
+                    @click="setTab('processing')"
+                    :class="[
+                        'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                        activeTab === 'processing'
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                    ]"
+                >
+                    Processing
+                </button>
+
+                <button
+                    @click="filterToday"
+                    :class="[
+                        'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                        filterMode === 'today'
+                            ? 'bg-green-500 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                    ]"
+                >
+                    Today
+                </button>
+
+                <button
+                    @click="filterThisMonth"
+                    :class="[
+                        'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                        filterMode === 'thisMonth'
+                            ? 'bg-purple-500 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                    ]"
+                >
+                    This Month
+                </button>
+
+                <input
+                    type="date"
+                    @change="filterByDate"
+                    class="px-3 py-2 border rounded-md text-sm focus:outline-none whitespace-nowrap"
+                />
+            </div>
+        </nav>
+
+        <!-- Main Order Display -->
+        <main class="flex-1 overflow-y-auto p-4">
+            <div v-if="loading" class="text-center py-10 text-gray-600">
+                Loading orders...
+            </div>
+            <div v-else-if="error" class="text-center py-10 text-red-600">
+                {{ error }}
+            </div>
+            <div
+                v-else-if="!filteredOrders.length"
+                class="text-center py-10 text-gray-500"
+            >
+                No orders found for this filter.
+            </div>
+            <div
+                v-else
+                class="overflow-x-auto rounded-md shadow bg-white border"
+            >
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-800 text-white text-left">
+                        <tr>
+                            <th class="px-4 py-3">Items</th>
+                            <th class="px-4 py-3">Total Qty</th>
+                            <th class="px-4 py-3">Date</th>
+                            <th class="px-4 py-3">Time</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Type</th>
+                            <th class="px-4 py-3">Amount (GH₵)</th>
+                            <th class="px-4 py-3">Address</th>
+                            <th v-if="activeTab !== 'all'" class="px-4 py-3">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr
+                            v-for="order in paginatedOrders"
+                            :key="order.id"
+                            class="hover:bg-gray-50 transition"
                         >
-                            <tr>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Medicine Name
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Batch Number
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Quantity
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Cost Price
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Selling Price
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Category
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Antibiotic
-                                </th>
-                                <th class="px-6 py-4 whitespace-nowrap">
-                                    Manufacturing Date
-                                </th>
-                                <th class="p-2 whitespace-nowrap">
-                                    Expiry Date
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="medication in medicines"
-                                :key="medication.id"
-                                class="border-b bg-gray-800 border-gray-700 hover:bg-gray-600"
+                            <td class="px-4 py-3">
+                                {{ order.order_items.length }} item
+                                {{ order.order_items.length > 1 ? "s" : "" }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{
+                                    order.order_items.reduce(
+                                        (sum, item) => sum + item.quantity,
+                                        0
+                                    )
+                                }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ formatDate(order.created_at) }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ formatTime(order.created_at) }}
+                            </td>
+                            <td
+                                class="px-4 py-3 font-semibold capitalize"
+                                :class="{
+                                    'text-yellow-600':
+                                        order.status === 'pending',
+                                    'text-blue-600':
+                                        order.status === 'processing',
+                                    'text-green-600':
+                                        order.status === 'delivered',
+                                    'text-red-600':
+                                        order.status === 'cancelled',
+                                }"
                             >
-                                <td
-                                    class="px-6 py-4 font-medium text-white whitespace-nowrap"
+                                {{ order.status }}
+                            </td>
+                            <td class="px-4 py-3 uppercase">
+                                {{ order.order_type }}
+                            </td>
+                            <td class="px-4 py-3 font-bold text-orange-600">
+                                {{ order.total_amount }}
+                            </td>
+                            <td
+                                class="px-4 py-3 truncate max-w-[250px]"
+                                :title="order.shipping_address"
+                            >
+                                {{ order.shipping_address }}
+                            </td>
+                            <td
+                                v-if="activeTab === 'pending'"
+                                class="px-4 py-3"
+                            >
+                                <button
+                                    @click="markAsProcessing(order.id)"
+                                    class="bg-yellow-500 text-white px-3 py-1 rounded-full hover:bg-yellow-600 transition"
                                 >
-                                    {{ medication.medicineName }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.batchNumber }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.quantity }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    GH₵{{ medication.costPrice }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    GH₵{{ medication.sellingPrice }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.category }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.antibiotic ? "Yes" : "No" }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.manufacturingDate }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {{ medication.expiryDate }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    Process
+                                </button>
+                            </td>
+                            <td
+                                v-else-if="activeTab === 'processing'"
+                                class="px-4 py-3"
+                            >
+                                <button
+                                    @click="markAsDelivered(order.id)"
+                                    class="bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600 transition"
+                                >
+                                    Delivered
+                                </button>
+                            </td>
+                            <td v-else class="px-4 py-3"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <div
+                    class="flex justify-between items-center p-4 border-t bg-gray-50 text-gray-600"
+                >
+                    <button
+                        @click="goPrev"
+                        :disabled="!canGoPrev"
+                        class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Prev
+                    </button>
+                    <span> Page {{ currentPage }} of {{ totalPages }} </span>
+                    <button
+                        @click="goNext"
+                        :disabled="!canGoNext"
+                        class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 </template>
+
+<style scoped>
+    /* Add any custom styles if needed */
+</style>

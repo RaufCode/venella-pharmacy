@@ -37,11 +37,15 @@
                 <InputField
                     v-model="form.email"
                     labelname="Email"
+                    autocomplete="email"
+                    name="email"
                     type="email"
                 />
                 <InputField
                     v-model="form.password"
                     labelname="Password"
+                    autocomplete="password"
+                    name="password"
                     type="password"
                 />
                 <Btn btnName="Sign in" />
