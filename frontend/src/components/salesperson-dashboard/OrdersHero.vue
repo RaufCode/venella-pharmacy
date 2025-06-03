@@ -13,9 +13,17 @@
     const selectedDate = ref(null);
     const filterMode = ref("all");
 
-    const today = new Date().toISOString().split("T")[0];
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
+
+    const getLocalDateString = (dateStr) => {
+        const date = new Date(dateStr);
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+            .toISOString()
+            .split("T")[0];
+    };
+
+    const today = getLocalDateString(new Date());
 
     const fetchOrdersByTab = async (tab) => {
         selectedDate.value = null;
@@ -33,14 +41,15 @@
 
     watch(activeTab, async (newTab) => {
         currentPage.value = 1;
-        await fetchOrdersByTab(newTab);
+        if (["all", "pending", "processing"].includes(newTab)) {
+            await fetchOrdersByTab(newTab);
+        }
     });
 
     const filteredOrders = computed(() => {
         if (filterMode.value === "today") {
             return orders.value.filter((order) => {
-                const date = new Date(order.created_at);
-                return date.toISOString().split("T")[0] === today;
+                return getLocalDateString(order.created_at) === today;
             });
         }
 
@@ -56,8 +65,9 @@
 
         if (filterMode.value === "exactDate" && selectedDate.value) {
             return orders.value.filter((order) => {
-                const orderDate = order.created_at.split("T")[0];
-                return orderDate === selectedDate.value;
+                return (
+                    getLocalDateString(order.created_at) === selectedDate.value
+                );
             });
         }
 
@@ -95,17 +105,23 @@
         activeTab.value = tab;
     };
 
-    const filterToday = () => {
+    const filterToday = async () => {
+        activeTab.value = "today";
         filterMode.value = "today";
+        await orderStore.fetchAllOrders();
     };
 
-    const filterThisMonth = () => {
+    const filterThisMonth = async () => {
+        activeTab.value = "thisMonth";
         filterMode.value = "thisMonth";
+        await orderStore.fetchAllOrders();
     };
 
-    const filterByDate = (e) => {
+    const filterByDate = async (e) => {
+        activeTab.value = "exactDate";
         selectedDate.value = e.target.value;
         filterMode.value = "exactDate";
+        await orderStore.fetchAllOrders();
     };
 
     const updateStatusAndRefresh = async (orderId, newStatus) => {
@@ -122,14 +138,12 @@
 
 <template>
     <div class="min-h-screen bg-gray-50 flex flex-col">
-        <!-- Header -->
         <header
             class="bg-white px-6 py-4 border-b shadow-sm flex justify-between items-center"
         >
             <h1 class="text-xl font-semibold text-gray-800">Orders</h1>
         </header>
 
-        <!-- Tabs and Filter Controls -->
         <nav class="p-4 bg-white shadow-sm overflow-x-auto">
             <div class="flex gap-3 flex-nowrap min-w-max w-fit">
                 <button
@@ -172,7 +186,7 @@
                     @click="filterToday"
                     :class="[
                         'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
-                        filterMode === 'today'
+                        activeTab === 'today'
                             ? 'bg-green-500 text-white'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
                     ]"
@@ -184,7 +198,7 @@
                     @click="filterThisMonth"
                     :class="[
                         'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
-                        filterMode === 'thisMonth'
+                        activeTab === 'thisMonth'
                             ? 'bg-purple-500 text-white'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
                     ]"
@@ -195,12 +209,16 @@
                 <input
                     type="date"
                     @change="filterByDate"
-                    class="px-3 py-2 border rounded-md text-sm focus:outline-none whitespace-nowrap"
+                    :class="[
+                        'px-3 py-2 border rounded-md text-sm focus:outline-none whitespace-nowrap transition',
+                        activeTab === 'exactDate'
+                            ? 'bg-indigo-500 text-white border-indigo-500'
+                            : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400',
+                    ]"
                 />
             </div>
         </nav>
 
-        <!-- Main Order Display -->
         <main class="flex-1 overflow-y-auto p-4">
             <div v-if="loading" class="text-center py-10 text-gray-600">
                 Loading orders...
@@ -229,7 +247,13 @@
                             <th class="px-4 py-3">Type</th>
                             <th class="px-4 py-3">Amount (GH₵)</th>
                             <th class="px-4 py-3">Address</th>
-                            <th v-if="activeTab !== 'all'" class="px-4 py-3">
+                            <th
+                                v-if="
+                                    activeTab === 'pending' ||
+                                    activeTab === 'processing'
+                                "
+                                class="px-4 py-3"
+                            >
                                 Action
                             </th>
                         </tr>
@@ -307,12 +331,10 @@
                                     Delivered
                                 </button>
                             </td>
-                            <td v-else class="px-4 py-3"></td>
                         </tr>
                     </tbody>
                 </table>
 
-                <!-- Pagination Controls -->
                 <div
                     class="flex justify-between items-center p-4 border-t bg-gray-50 text-gray-600"
                 >
@@ -338,5 +360,5 @@
 </template>
 
 <style scoped>
-    /* Add any custom styles if needed */
+    /* Add custom styles if needed */
 </style>

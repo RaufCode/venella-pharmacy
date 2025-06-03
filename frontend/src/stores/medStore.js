@@ -8,7 +8,7 @@ export const useMedStore = defineStore('medStore', {
     showModal: false,
     isSubmitting: false,
     editingProductId: null,
-    searchResults: [], // ✅ For search result storage
+    searchResults: [],
     form: {
       name: '',
       stock: null,
@@ -57,13 +57,13 @@ export const useMedStore = defineStore('medStore', {
     async fetchProducts() {
       try {
         const res = await axios.get('/api/products/')
-        this.products = res.data
+        // Only include products with stock greater than 0
+        this.products = res.data.filter(product => product.stock > 0)
       } catch (error) {
         console.error('Error fetching products:', error)
       }
     },
 
-    // ✅ NEW: Search Functionality
     async searchProducts(query) {
       if (!query.trim()) {
         this.searchResults = []
@@ -72,7 +72,8 @@ export const useMedStore = defineStore('medStore', {
 
       try {
         const res = await axios.get(`/api/products/search/?query=${encodeURIComponent(query)}`)
-        this.searchResults = res.data
+        // Only include search results with stock greater than 0
+        this.searchResults = res.data.filter(product => product.stock > 0)
       } catch (error) {
         console.error('Error searching products:', error)
         this.searchResults = []
@@ -104,7 +105,13 @@ export const useMedStore = defineStore('medStore', {
 
           const updatedProduct = response.data
           const index = this.products.findIndex(p => p.id === updatedProduct.id)
-          if (index !== -1) this.products[index] = updatedProduct
+          if (index !== -1) {
+            if (updatedProduct.stock > 0) {
+              this.products[index] = updatedProduct
+            } else {
+              this.products.splice(index, 1)
+            }
+          }
 
           alert('Medication updated successfully!')
         } else {
@@ -113,7 +120,9 @@ export const useMedStore = defineStore('medStore', {
           })
 
           const newProduct = response.data
-          this.products.unshift(newProduct)
+          if (newProduct.stock > 0) {
+            this.products.unshift(newProduct)
+          }
 
           alert('Medication added successfully!')
         }
