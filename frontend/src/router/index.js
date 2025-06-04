@@ -80,7 +80,7 @@ router.beforeEach(async (to, from, next) => {
 
   // Ensure the auth store is initialized
   if (!auth.ready) {
-    await auth.initializeAuth()
+    auth.initializeAuth()
   }
 
   const isAuthRequired = to.meta.requiresAuth
