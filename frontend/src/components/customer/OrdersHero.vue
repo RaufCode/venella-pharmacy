@@ -164,4 +164,7 @@
     .font-styleScript {
         font-family: "Satisfy", cursive;
     }
+    h1 {
+        @apply text-center;
+    }
 </style>
