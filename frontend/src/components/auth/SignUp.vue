@@ -1,6 +1,6 @@
 <script setup>
     import InputField from "@/components/ui/InputField.vue";
-    import Btn from "../ui/Btn.vue";
+    import Btn from "@/components/ui/Btn.vue";
     import { ref, reactive } from "vue";
     import { useAuthStore } from "@/stores/auth"; // Import Pinia store
     import { useRouter } from "vue-router"; // Import router
