@@ -2,6 +2,7 @@
     import { onMounted } from "vue";
     import { useRouter } from "vue-router";
     import { useOrderStore } from "@/stores/orderStore";
+    import { useAuthStore } from "@/stores/auth";
 
     // Grab 'id' from route props
     const props = defineProps({
@@ -10,6 +11,7 @@
 
     const router = useRouter();
     const orderStore = useOrderStore();
+    const authStore = useAuthStore();
 
     const orderId = props.id; // 👈 use the prop, not route.params
 
@@ -19,6 +21,9 @@
 
     const goBack = () => {
         router.push({ path: "/salesperson", query: { tab: "orders" } });
+    };
+    const goBack2 = () => {
+        router.back();
     };
 
     const handleStatusUpdate = async (newStatus) => {
@@ -37,7 +42,15 @@
                     Order Details
                 </h1>
                 <button
+                    v-if="authStore.getUserRole === 'salesperson'"
                     @click="goBack"
+                    class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-full flex justify-center items-center gap-3"
+                >
+                    <i class="pi pi-arrow-left"></i> Back
+                </button>
+                <button
+                    v-else
+                    @click="goBack2"
                     class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-full flex justify-center items-center gap-3"
                 >
                     <i class="pi pi-arrow-left"></i> Back
@@ -144,7 +157,10 @@
                 </div>
             </div>
             <!-- Customer Details Section -->
-            <div class="mb-4 rounded p-4 bg-white shadow space-y-2">
+            <div
+                v-if="authStore.getUserRole === 'salesperson'"
+                class="mb-4 rounded p-4 bg-white shadow space-y-2"
+            >
                 <h2 class="font-medium mb-2 text-orange-600">
                     Customer Details
                 </h2>

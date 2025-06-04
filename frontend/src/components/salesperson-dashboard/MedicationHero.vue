@@ -48,9 +48,9 @@
         </div>
 
         <!-- Main Content -->
-        <div class="p-4 overflow-y-auto flex-grow">
+        <div class="p-4 overflow-y-auto flex-grow container mx-auto">
             <div
-                class="p-0 lg:p-4 lg:shadow lg:bg-gray-50 lg:rounded-lg lg:h-full overflow-y-auto"
+                class="p-0 lg:p-4 lg:shadow lg:bg-gray-50 lg:rounded-lg lg:h-full 2lg:bg-inherit 2lg:shadow-none 2lg:h-auto overflow-y-auto"
             >
                 <!-- Medication Table -->
                 <div class="overflow-x-auto rounded-lg border bg-white">

@@ -117,87 +117,90 @@
 </script>
 
 <template>
-    <div class="">
+    <div class="w-full h-screen">
         <div class="hidden md:block p-4 shadow font-semibold">
             <h1 class="text-3xl font-medium text-gray-600 font-styleScript">
                 Sales Hub
             </h1>
         </div>
-
-        <div
-            class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-800"
-        >
-            <div class="p-8 shadow-md rounded-xl">
-                <h3 class="font-semibold text-green-600">Total Revenue</h3>
-                <p class="font-semibold text-gray-700 mt-2">
-                    ₵{{ totalRevenue.toFixed(2) }}
-                </p>
-            </div>
-            <div class="p-8 shadow-md rounded-xl">
-                <h3 class="font-semibold text-yellow-500">Monthly Revenue</h3>
-                <p class="font-semibold text-gray-700 mt-2">
-                    ₵{{ monthlyRevenue.toFixed(2) }}
-                </p>
-            </div>
-            <div class="p-8 shadow-md rounded-xl">
-                <h3 class="font-semibold text-orange-500">
-                    {{ currentDay }}
-                </h3>
-                <p class="font-semibold text-gray-700 mt-2">
-                    ₵{{ dailyRevenue.toFixed(2) }}
-                </p>
-            </div>
-        </div>
-
-        <div class="overflow-x-auto p-4 pt-0">
-            <h1
-                class="md:text-base text-center pb-4 font-medium text-orange-600"
+        <div class="container mx-auto">
+            <div
+                class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-800"
             >
-                ORDER SUMMARY
-            </h1>
-            <div class="overflow-x-auto rounded-lg border bg-white">
-                <table class="min-w-full text-sm text-gray-600 rounded-lg">
-                    <thead class="bg-gray-100 font-medium">
-                        <tr>
-                            <th class="py-3 px-4 text-left">Status</th>
-                            <th class="py-3 px-4 text-left">Number</th>
-                        </tr>
-                    </thead>
-                    <tbody
-                        class="divide-y divide-gray-100 text-gray-600 font-medium"
-                    >
-                        <tr>
-                            <td class="py-3 px-4">Total Items Ordered</td>
-                            <td class="py-3 px-4">
-                                {{ totalItemsOrdered }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-4">Pending</td>
-                            <td class="py-3 px-4">
-                                {{ pendingItems }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-4">Processing</td>
-                            <td class="py-3 px-4">
-                                {{ processingItems }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-4">Delivered</td>
-                            <td class="py-3 px-4">
-                                {{ deliveredItems }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 px-4 font-medium">Cancelled</td>
-                            <td class="py-3 px-4 font-bold">
-                                {{ cancelledItems }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="p-8 shadow-md rounded-xl">
+                    <h3 class="font-semibold text-green-600">Total Revenue</h3>
+                    <p class="font-semibold text-gray-700 mt-2">
+                        ₵{{ totalRevenue.toFixed(2) }}
+                    </p>
+                </div>
+                <div class="p-8 shadow-md rounded-xl">
+                    <h3 class="font-semibold text-yellow-500">
+                        Monthly Revenue
+                    </h3>
+                    <p class="font-semibold text-gray-700 mt-2">
+                        ₵{{ monthlyRevenue.toFixed(2) }}
+                    </p>
+                </div>
+                <div class="p-8 shadow-md rounded-xl">
+                    <h3 class="font-semibold text-orange-500">
+                        {{ currentDay }}
+                    </h3>
+                    <p class="font-semibold text-gray-700 mt-2">
+                        ₵{{ dailyRevenue.toFixed(2) }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto p-4 pt-0">
+                <h1
+                    class="md:text-base text-center pb-4 font-medium text-orange-600"
+                >
+                    ORDER SUMMARY
+                </h1>
+                <div class="overflow-x-auto rounded-lg border bg-white">
+                    <table class="min-w-full text-sm text-gray-600 rounded-lg">
+                        <thead class="bg-gray-100 font-medium">
+                            <tr>
+                                <th class="py-3 px-4 text-left">Status</th>
+                                <th class="py-3 px-4 text-left">Number</th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            class="divide-y divide-gray-100 text-gray-600 font-medium"
+                        >
+                            <tr>
+                                <td class="py-3 px-4">Total Items Ordered</td>
+                                <td class="py-3 px-4">
+                                    {{ totalItemsOrdered }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">Pending</td>
+                                <td class="py-3 px-4">
+                                    {{ pendingItems }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">Processing</td>
+                                <td class="py-3 px-4">
+                                    {{ processingItems }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">Delivered</td>
+                                <td class="py-3 px-4">
+                                    {{ deliveredItems }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4 font-medium">Cancelled</td>
+                                <td class="py-3 px-4 font-bold">
+                                    {{ cancelledItems }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
