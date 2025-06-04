@@ -1,17 +1,29 @@
 <script setup>
-    import { ref, computed, onMounted, onUnmounted } from "vue";
-    import { useOrderStore } from "@/stores/orderStore"; // Update path if different
+    import { ref, computed, onUnmounted, watch } from "vue";
+    import { useRoute, useRouter } from "vue-router";
+    import { useOrderStore } from "@/stores/orderStore"; // Adjust path if needed
     import OverView from "./OverView.vue";
     import MedicationHero from "./MedicationHero.vue";
     import OrdersHero from "./OrdersHero.vue";
     import SalesHero from "./SalesHero.vue";
 
-    // 👇 Import your Pinia order store
+    const route = useRoute();
+    const router = useRouter();
     const orderStore = useOrderStore();
-
-    const activeTab = ref("overview");
     const hamburger = ref(false);
 
+    // Initialize activeTab from query param or default to 'overview'
+    const activeTab = ref(route.query.tab || "overview");
+
+    // Watch route query changes to update activeTab
+    watch(
+        () => route.query.tab,
+        (newTab) => {
+            if (newTab) activeTab.value = newTab;
+        }
+    );
+
+    // Tab label based on activeTab
     const tabLabel = computed(() => {
         switch (activeTab.value) {
             case "overview":
@@ -29,25 +41,12 @@
         }
     });
 
-    // 👇 Use the store
-
-    // 👇 Interval setup for background polling
     let pollingInterval;
-
-    // onMounted(() => {
-    //     // Fetch orders immediately
-    //     orderStore.fetchAllOrders();
-
-    //     // Then fetch orders every 15 seconds (adjust as needed)
-    //     pollingInterval = setInterval(() => {
-    //         orderStore.fetchAllOrders();
-    //     }, 15000);
-    // });
-
     onUnmounted(() => {
         clearInterval(pollingInterval);
     });
 </script>
+
 <template>
     <div class="mt-14 md:mt-0 md:flex h-screen w-screen">
         <header class="min-w-[220px] max-w-[220px]">
@@ -64,8 +63,7 @@
                     <i class="pi pi-sign-out"></i>
                 </RouterLink>
             </div>
-            <!-- Sidebar for tablet view -->
-            <div class="">
+            <div>
                 <aside
                     :class="[
                         'fixed md:block top-0 z-50 md:min-w-[220px] shadow w-full md:max-w-[220px] bg-white h-screen text-gray-800 transition-all duration-500 ease-in-out transform',
@@ -95,8 +93,11 @@
                     <nav class="md:flex flex-col">
                         <button
                             @click="
-                                activeTab = 'overview';
-                                hamburger = false;
+                                () => {
+                                    activeTab = 'overview';
+                                    hamburger = false;
+                                    router.push({ query: { tab: 'overview' } });
+                                }
                             "
                             class="a-dashboard-navs"
                             :class="{
@@ -106,10 +107,16 @@
                         >
                             <i class="pi pi-home"></i> Overview
                         </button>
+
                         <button
                             @click="
-                                activeTab = 'medication';
-                                hamburger = false;
+                                () => {
+                                    activeTab = 'medication';
+                                    hamburger = false;
+                                    router.push({
+                                        query: { tab: 'medication' },
+                                    });
+                                }
                             "
                             class="a-dashboard-navs"
                             :class="{
@@ -119,10 +126,14 @@
                         >
                             <i class="pi pi-shield"></i> Medications
                         </button>
+
                         <button
                             @click="
-                                activeTab = 'orders';
-                                hamburger = false;
+                                () => {
+                                    activeTab = 'orders';
+                                    hamburger = false;
+                                    router.push({ query: { tab: 'orders' } });
+                                }
                             "
                             class="a-dashboard-navs"
                             :class="{
@@ -132,10 +143,14 @@
                         >
                             <i class="pi pi-cart-plus"></i> Orders
                         </button>
+
                         <button
                             @click="
-                                activeTab = 'sales';
-                                hamburger = false;
+                                () => {
+                                    activeTab = 'sales';
+                                    hamburger = false;
+                                    router.push({ query: { tab: 'sales' } });
+                                }
                             "
                             class="a-dashboard-navs"
                             :class="{
@@ -145,10 +160,12 @@
                         >
                             <i class="pi pi-file"></i> Sales
                         </button>
+
                         <button class="a-dashboard-navs">
                             <i class="pi pi-info-circle"></i> Notifications
                         </button>
-                        <!-- Logout Button -->
+
+                        <!-- Logout -->
                         <RouterLink to="/login" class="block mt-16 md:mt-20">
                             <button
                                 class="py-2 w-full pl-3 rounded font-medium text-sm flex items-center gap-4 text-gray-800 md:pl-5 hover:bg-gray-100 focus:bg-orange-600 focus:text-white"
@@ -160,13 +177,12 @@
                 </aside>
             </div>
         </header>
+
         <main class="w-full h-screen overflow-auto">
-            <div class="">
-                <OverView v-if="activeTab === 'overview'" />
-                <MedicationHero v-if="activeTab === 'medication'" />
-                <OrdersHero v-if="activeTab === 'orders'" />
-                <SalesHero v-if="activeTab === 'sales'" />
-            </div>
+            <OverView v-if="activeTab === 'overview'" />
+            <MedicationHero v-if="activeTab === 'medication'" />
+            <OrdersHero v-if="activeTab === 'orders'" />
+            <SalesHero v-if="activeTab === 'sales'" />
         </main>
     </div>
 </template>

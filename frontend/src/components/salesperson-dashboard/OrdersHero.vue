@@ -2,6 +2,9 @@
     import { ref, onMounted, watch, computed } from "vue";
     import { useOrderStore } from "@/stores/orderStore";
     import { storeToRefs } from "pinia";
+    import { useRouter } from "vue-router";
+
+    const router = useRouter();
 
     const orderStore = useOrderStore();
     const { orders, loading, error } = storeToRefs(orderStore);
@@ -129,6 +132,10 @@
 
     const markAsDelivered = (orderId) =>
         updateStatusAndRefresh(orderId, "delivered");
+
+    const goToOrderDetails = (orderId) => {
+        router.push(`order/${orderId}`);
+    };
 </script>
 
 <template>
@@ -261,7 +268,8 @@
                             <tr
                                 v-for="order in paginatedOrders"
                                 :key="order.id"
-                                class="hover:bg-gray-50 transition"
+                                class="hover:bg-gray-50 transition cursor-pointer"
+                                @click="goToOrderDetails(order.id)"
                             >
                                 <td class="px-4 py-3">
                                     {{ order.order_items.length }} item{{
@@ -303,6 +311,7 @@
                                 <td
                                     v-if="activeTab === 'pending'"
                                     class="px-4 py-3"
+                                    @click.stop
                                 >
                                     <button
                                         @click="markAsProcessing(order.id)"
@@ -314,6 +323,7 @@
                                 <td
                                     v-else-if="activeTab === 'processing'"
                                     class="px-4 py-3"
+                                    @click.stop
                                 >
                                     <button
                                         @click="markAsDelivered(order.id)"

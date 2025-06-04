@@ -8,6 +8,7 @@ import OrdersView from '../views/OrdersView.vue'
 import ProductDetailsView from '../views/ProductDetailsView.vue'
 import SalesPersonView from '../views/SalesPersonView.vue'
 import CheckoutView from '../views/CheckOutView.vue'
+import OrderDetailsView from '../views/OrderDetailsView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -56,6 +57,12 @@ const router = createRouter({
       path: '/product/:id',
       name: 'product-details',
       component: ProductDetailsView,
+      props: true,
+    },
+    {
+      path: '/order/:id',
+      name: 'order-details',
+      component: OrderDetailsView,
       props: true,
     },
     {
