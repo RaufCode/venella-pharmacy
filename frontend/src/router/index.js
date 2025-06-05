@@ -64,6 +64,7 @@ const router = createRouter({
       name: 'order-details',
       component: OrderDetailsView,
       props: true,
+      meta: { requiresAuth: true },
     },
     {
       path: '/salesperson',

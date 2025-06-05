@@ -1,6 +1,7 @@
 <script setup>
     import InputField from "@/components/ui/InputField.vue";
-    import Btn from "@/components/ui/Btn.vue";
+    import Btn from "@/components/ui/Btn.vue"; // Fix casing issue in Btn import
+
     import { ref, reactive } from "vue";
     import { useAuthStore } from "@/stores/auth"; // Import Pinia store
     import { useRouter } from "vue-router"; // Import router

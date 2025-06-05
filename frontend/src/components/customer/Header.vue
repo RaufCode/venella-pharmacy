@@ -216,10 +216,10 @@
                     v-if="isAuthenticated"
                     to="/"
                     :class="[
-                        'block text-gray-700 border-r-4 pr-2',
+                        'block text-gray-700 ',
                         route.path === '/'
                             ? 'border-orange-600 text-orange-600'
-                            : 'border-white hover:border-orange-600 hover:text-orange-600',
+                            : ' hover:text-orange-600',
                     ]"
                     @click="toggleMobileNav"
                 >
@@ -229,7 +229,7 @@
                 <router-link
                     v-if="isAuthenticated"
                     to="/carts"
-                    class="block text-gray-700 border-r-4 pr-2"
+                    class="block text-gray-700"
                     @click="toggleMobileNav"
                 >
                     Carts
@@ -238,12 +238,7 @@
                 <router-link
                     v-if="isAuthenticated"
                     to="/orders"
-                    :class="[
-                        'block text-gray-700 border-r-4 pr-2',
-                        route.path === '/orders'
-                            ? 'border-orange-600 text-orange-600'
-                            : 'border-white hover:border-orange-600 hover:text-orange-600',
-                    ]"
+                    :class="['block text-gray-700', route.path === '/orders']"
                     @click="toggleMobileNav"
                 >
                     Orders

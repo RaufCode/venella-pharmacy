@@ -128,8 +128,8 @@
                             <i class="pi pi-times"></i>
                         </button>
                     </div>
-                    <!-- Name & Category -->
-                    <div class="flex gap-3">
+                    <!-- Name & Stock -->
+                    <div class="flex gap-3 flex-col sm:flex-row">
                         <label class="block flex-1 text-sm text-gray-700">
                             Name
                             <input
@@ -140,28 +140,17 @@
                             />
                         </label>
                         <label class="block flex-1 text-sm text-gray-700">
-                            Category
-                            <select
-                                v-model="medStore.form.category"
+                            Brand
+                            <input
+                                v-model="medStore.form.brand"
                                 required
                                 class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-orange-600"
-                            >
-                                <option value="" disabled>
-                                    Select category
-                                </option>
-                                <option
-                                    v-for="cat in medStore.categories"
-                                    :key="cat.id"
-                                    :value="cat.id"
-                                >
-                                    {{ cat.name }}
-                                </option>
-                            </select>
+                            />
                         </label>
                     </div>
 
                     <!-- Stock & Price -->
-                    <div class="flex gap-3">
+                    <div class="flex gap-3 flex-col sm:flex-row">
                         <label class="block flex-1 text-sm text-gray-700">
                             Stock
                             <input
@@ -183,6 +172,24 @@
                             />
                         </label>
                     </div>
+                    <!-- Category -->
+                    <label class="block flex-1 text-sm text-gray-700">
+                        Category
+                        <select
+                            v-model="medStore.form.category"
+                            required
+                            class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-orange-600"
+                        >
+                            <option value="" disabled>Select category</option>
+                            <option
+                                v-for="cat in medStore.categories"
+                                :key="cat.id"
+                                :value="cat.id"
+                            >
+                                {{ cat.name }}
+                            </option>
+                        </select>
+                    </label>
                     <!-- Description -->
                     <label class="block text-sm text-gray-700">
                         Description
@@ -193,20 +200,23 @@
                             class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-orange-600 resize-none"
                         ></textarea>
                     </label>
+
                     <!-- Images (only show if NOT editing) -->
-                    <label
-                        v-if="!medStore.isEditing"
-                        class="block text-sm text-gray-700"
-                    >
-                        Product Images
-                        <input
-                            type="file"
-                            multiple
-                            @change="medStore.handleImageUpload"
-                            class="mt-1 w-full border border-gray-300 rounded px-3 py-2 bg-white"
-                            accept="image/*"
-                        />
-                    </label>
+                    <div class="flex gap-3 flex-col sm:flex-row">
+                        <label
+                            v-if="!medStore.isEditing"
+                            class="block text-sm text-gray-700"
+                        >
+                            Product Images
+                            <input
+                                type="file"
+                                multiple
+                                @change="medStore.handleImageUpload"
+                                class="mt-1 w-full border border-gray-300 rounded px-3 py-2 bg-white"
+                                accept="image/*"
+                            />
+                        </label>
+                    </div>
                     <!-- Submit -->
                     <div>
                         <button

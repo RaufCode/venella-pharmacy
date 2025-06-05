@@ -22,17 +22,6 @@
     const isLoadingProducts = ref(false);
     const isCartLoaded = ref(false);
 
-    // Show 8 products initially and load more on "See More"
-    const visibleCount = ref(4);
-
-    const visibleProducts = computed(() =>
-        products.value.slice(0, visibleCount.value)
-    );
-
-    const showMore = () => {
-        visibleCount.value += 4;
-    };
-
     // Lifecycle
     onMounted(async () => {
         isLoadingProducts.value = true;
@@ -77,7 +66,6 @@
     };
 
     const navigateToProduct = (productId) => {
-        // Allow all users to navigate to the product detail page
         router.push(`/product/${productId}`);
     };
 </script>
@@ -85,9 +73,10 @@
 <template>
     <main class="min-h-screen bg-gray-50">
         <section class="container mx-auto px-4 lg:px-10 pt-32 pb-10">
-            <h1 class="text-2xl font-semibold mb-6">Products Available</h1>
+            <h1 class="text-xl font-semibold text-gray-700 mb-6">
+                Products Available
+            </h1>
 
-            <!-- Loading Spinner -->
             <div
                 v-if="isLoadingProducts"
                 class="flex justify-center items-center py-10"
@@ -96,18 +85,16 @@
                 <span class="ml-3 text-gray-600">Loading products...</span>
             </div>
 
-            <!-- Product Grid -->
             <div
                 v-else
                 class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
             >
                 <article
-                    v-for="product in visibleProducts"
+                    v-for="product in products"
                     :key="product.id"
                     @click="() => navigateToProduct(product.id)"
                     class="bg-white rounded-2xl border shadow-sm hover:shadow-md transition p-4 flex flex-col cursor-pointer"
                 >
-                    <!-- Product Image and Info -->
                     <div
                         class="h-40 bg-gray-100 rounded-xl overflow-hidden mb-3"
                     >
@@ -120,6 +107,13 @@
                             "
                         />
                     </div>
+
+                    <p
+                        class="text-xs bg-gray-600 px-3 py-1 mb-2 text-white rounded-full w-max"
+                    >
+                        {{ product.brand || "No brand name" }}
+                    </p>
+
                     <h3
                         class="font-semibold text-lg text-gray-800 truncate mb-1"
                     >
@@ -128,7 +122,7 @@
                     <p class="text-gray-600 text-sm flex-grow truncate">
                         {{ product.description || "No description available" }}
                     </p>
-                    <!-- Price & Cart Button -->
+
                     <div class="mt-4 flex justify-between items-center">
                         <p class="text-orange-600 font-bold text-lg">
                             ₵{{ product.price }}
@@ -136,7 +130,6 @@
                         <div class="relative flex items-center">
                             <template v-if="isCartLoaded">
                                 <template v-if="!isInCart(product.id)">
-                                    <!-- Show Add to Cart Button Always -->
                                     <button
                                         class="py-2 px-3 rounded-full bg-orange-600 flex items-center justify-center text-white"
                                         :disabled="
@@ -166,7 +159,6 @@
                                     </button>
                                 </template>
 
-                                <!-- Quantity Controls for Authenticated -->
                                 <template v-else>
                                     <div
                                         v-if="isAuthenticated"
@@ -204,6 +196,7 @@
                                     </div>
                                 </template>
                             </template>
+
                             <template v-else>
                                 <div
                                     class="w-24 h-8 bg-gray-200 rounded animate-pulse"
@@ -212,19 +205,6 @@
                         </div>
                     </div>
                 </article>
-            </div>
-
-            <!-- See More Button -->
-            <div
-                v-if="visibleCount < products.length"
-                class="flex justify-center mt-8"
-            >
-                <button
-                    @click="showMore"
-                    class="bg-orange-600 hover:bg-orange-700 text-white text-sm px-6 py-2 rounded-full shadow transition"
-                >
-                    See More
-                </button>
             </div>
         </section>
     </main>
