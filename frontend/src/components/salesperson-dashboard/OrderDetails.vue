@@ -172,20 +172,20 @@
                     <span class="text-gray-900 font-medium">{{
                         orderStore.orderDetails?.customer?.profile
                             ? `${orderStore.orderDetails.customer.profile.first_name} ${orderStore.orderDetails.customer.profile.last_name}`
-                            : "N/A"
+                            : "No Name"
                     }}</span>
                 </p>
                 <p>
                     Email:
                     <span class="text-gray-900 font-medium">{{
-                        orderStore.orderDetails?.customer?.email || "N/A"
+                        orderStore.orderDetails?.customer?.email || "No Email"
                     }}</span>
                 </p>
                 <p>
                     Phone:
                     <span class="text-gray-900 font-medium">{{
                         orderStore.orderDetails?.customer?.profile?.phone ||
-                        "N/A"
+                        "No Phone"
                     }}</span>
                 </p>
             </div>

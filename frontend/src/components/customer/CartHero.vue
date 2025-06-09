@@ -53,7 +53,7 @@
     <div class="min-h-screen flex flex-col bg-gray-50">
         <!-- Header -->
         <header
-            class="bg-gray-white bg-white text-white p-4 flex shadow items-center justify-between gap-4 sticky top-0 z-50"
+            class="bg-gray-white text-white p-4 flex shadow items-center justify-between gap-4 sticky top-0 z-50"
         >
             <h1 class="text-gray-700 font-styleScript text-lg md:text-2xl">
                 Your Cart<span
