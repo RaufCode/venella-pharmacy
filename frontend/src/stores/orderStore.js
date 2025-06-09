@@ -14,10 +14,14 @@ export const useOrderStore = defineStore('orderStore', {
   }),
 
   getters: {
-    pendingOrders: (state) => Array.isArray(state.orders) ? state.orders.filter(order => order.status === 'pending') : [],
-    processingOrders: (state) => Array.isArray(state.orders) ? state.orders.filter(order => order.status === 'processing') : [],
-    completedOrders: (state) => Array.isArray(state.orders) ? state.orders.filter(order => order.status === 'completed') : [],
-    cancelledOrders: (state) => Array.isArray(state.orders) ? state.orders.filter(order => order.status === 'cancelled') : [],
+    pendingOrders: (state) =>
+      Array.isArray(state.orders) ? state.orders.filter(order => order.status === 'pending') : [],
+    processingOrders: (state) =>
+      Array.isArray(state.orders) ? state.orders.filter(order => order.status === 'processing') : [],
+    completedOrders: (state) =>
+      Array.isArray(state.orders) ? state.orders.filter(order => order.status === 'completed') : [],
+    cancelledOrders: (state) =>
+      Array.isArray(state.orders) ? state.orders.filter(order => order.status === 'cancelled') : [],
 
     sumOrdersAmount: () => (ordersList) =>
       Array.isArray(ordersList)

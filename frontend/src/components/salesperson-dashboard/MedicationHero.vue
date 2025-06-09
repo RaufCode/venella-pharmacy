@@ -16,7 +16,7 @@
 
     // Pagination logic
     const currentPage = ref(1);
-    const productsPerPage = 3;
+    const productsPerPage = 6;
 
     const paginatedProducts = computed(() => {
         const start = (currentPage.value - 1) * productsPerPage;
@@ -39,78 +39,88 @@
 </script>
 
 <template>
-    <div class="h-screen w-full relative flex flex-col">
+    <div class="h-screen w-full flex flex-col">
         <!-- Top Bar -->
         <div
-            class="hidden md:flex justify-between items-center bg-gray-900 p-4 shadow-md"
+            class="hidden md:block p-4 shadow font-semibold w-full bg-gray-50 static top-0 z-50"
         >
-            <h1 class="text-white text-xl">Medication Management</h1>
+            <h1 class="text-3xl font-medium text-gray-600 font-styleScript">
+                Medications Hub
+            </h1>
         </div>
 
         <!-- Main Content -->
-        <div class="p-4 overflow-y-auto flex-grow">
-            <!-- Medication Table -->
-            <div class="overflow-x-auto rounded-lg shadow border bg-white">
-                <table
-                    v-if="medStore.hasProducts"
-                    class="min-w-full divide-y divide-gray-200"
-                >
-                    <thead class="bg-gray-800 text-white text-sm">
-                        <tr>
-                            <th class="px-6 py-3 text-left">Name</th>
-                            <th class="px-6 py-3 text-left">Price</th>
-                            <th class="px-6 py-3 text-left">Stock</th>
-                            <th class="px-6 py-3 text-left">Category</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 text-sm">
-                        <tr
-                            v-for="product in paginatedProducts"
-                            :key="product.id"
-                            class="hover:bg-gray-100 transition"
+        <div class="p-4 overflow-y-auto flex-grow container mx-auto">
+            <div class="mt-3">
+                <!-- Medication Table -->
+                <div class="overflow-x-auto bg-white">
+                    <table
+                        v-if="medStore.hasProducts"
+                        class="min-w-full divide-y divide-gray-200"
+                    >
+                        <thead class="bg-gray-200 text-gray-600 text-sm">
+                            <tr>
+                                <th class="px-6 py-3 text-left">Name</th>
+                                <th class="px-6 py-3 text-left">Price(₵)</th>
+                                <th class="px-6 py-3 text-left">Stock</th>
+                                <th class="px-6 py-3 text-left">Category</th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            class="divide-y divide-gray-100 text-sm font-medium"
                         >
-                            <td class="px-6 py-3">{{ product.name }}</td>
-                            <td class="px-6 py-3 text-green-600 font-bold">
-                                ₵{{ product.price }}
-                            </td>
-                            <td class="px-6 py-3">{{ product.stock }}</td>
-                            <td class="px-6 py-3">
-                                {{ product.category.name }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            <tr
+                                v-for="product in paginatedProducts"
+                                :key="product.id"
+                                class="hover:bg-gray-50 transition hover:shadow-lg"
+                            >
+                                <td class="px-6 py-3 text-gray-700 truncate">
+                                    {{ product.name }}
+                                </td>
+                                <td class="px-6 py-3 text-red-600">
+                                    {{ product.price }}
+                                </td>
+                                <td class="px-6 py-3 text-blue-600">
+                                    {{ product.stock }}
+                                </td>
+                                <td class="px-6 py-3 text-gray-600">
+                                    {{ product.brand || "No Brand Name" }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                <div v-else class="text-center p-10 text-gray-500">
-                    <i class="pi pi-box text-4xl mb-2"></i>
-                    <p>No medications found.</p>
+                    <div v-else class="text-center p-10 text-gray-500">
+                        <i class="pi pi-box text-4xl mb-2"></i>
+                        <p>No medications found.</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Pagination -->
-            <div
-                v-if="totalPages > 1"
-                class="flex justify-center items-center gap-4 mt-6"
-            >
-                <button
-                    @click="prevPage"
-                    :disabled="currentPage === 1"
-                    class="px-4 py-2 text-sm border rounded disabled:opacity-50"
+                <!-- Pagination -->
+                <div
+                    v-if="totalPages > 1"
+                    class="flex justify-center items-center gap-4 my-4"
                 >
-                    Previous
-                </button>
+                    <button
+                        @click="prevPage"
+                        :disabled="currentPage === 1"
+                        class="px-4 py-2 text-sm border rounded disabled:opacity-50 bg-white"
+                    >
+                        <i class="pi pi-angle-double-left"></i>
+                    </button>
 
-                <span class="text-sm font-medium">
-                    {{ currentPage }} of {{ totalPages }}
-                </span>
+                    <span class="text-sm font-medium">
+                        {{ currentPage }} of {{ totalPages }}
+                    </span>
 
-                <button
-                    @click="nextPage"
-                    :disabled="currentPage === totalPages"
-                    class="px-4 py-2 text-sm border rounded disabled:opacity-50"
-                >
-                    Next
-                </button>
+                    <button
+                        @click="nextPage"
+                        :disabled="currentPage === totalPages"
+                        class="px-4 py-2 text-sm border rounded disabled:opacity-50 bg-white"
+                    >
+                        <i class="pi pi-angle-double-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

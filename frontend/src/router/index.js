@@ -8,6 +8,7 @@ import OrdersView from '../views/OrdersView.vue'
 import ProductDetailsView from '../views/ProductDetailsView.vue'
 import SalesPersonView from '../views/SalesPersonView.vue'
 import CheckoutView from '../views/CheckOutView.vue'
+import OrderDetailsView from '../views/OrderDetailsView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -59,6 +60,13 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/order/:id',
+      name: 'order-details',
+      component: OrderDetailsView,
+      props: true,
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/salesperson',
       name: 'salesperson',
       component: SalesPersonView,
@@ -73,7 +81,7 @@ router.beforeEach(async (to, from, next) => {
 
   // Ensure the auth store is initialized
   if (!auth.ready) {
-    await auth.initializeAuth()
+    auth.initializeAuth()
   }
 
   const isAuthRequired = to.meta.requiresAuth

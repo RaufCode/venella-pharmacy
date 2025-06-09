@@ -17,17 +17,19 @@
 </script>
 
 <template>
-    <div class="h-screen w-full relative flex flex-col">
+    <div class="h-screen w-full flex flex-col">
         <!-- Top Bar -->
         <div
-            class="hidden md:flex justify-between items-center bg-gray-900 p-4 shadow-md"
+            class="hidden md:flex justify-between items-center bg-gray-50 w-full p-4 shadow static top-0 z-50"
         >
-            <h1 class="text-white text-xl">Medication Management</h1>
+            <h1 class="text-gray-700 text-3xl font-styleScript">
+                Medications Hub
+            </h1>
             <button
                 @click="medStore.showModal = true"
-                class="bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 text-sm"
+                class="bg-orange-600 hover:bg-orange-500 rounded-lg font-semibold text-white px-4 py-2"
             >
-                Add Medication
+                Add Product
             </button>
         </div>
 
@@ -38,38 +40,40 @@
                 @click="medStore.showModal = true"
                 class="md:hidden mb-4 bg-orange-600 hover:bg-orange-500 text-white px-4 py-2 text-sm"
             >
-                Add Medication
+                Add Product
             </button>
 
             <!-- Medication Table -->
-            <div class="overflow-x-auto rounded-lg shadow border bg-white">
+            <div class="overflow-x-auto bg-white">
                 <table
                     v-if="medStore.hasProducts"
                     class="min-w-full divide-y divide-gray-200"
                 >
-                    <thead class="bg-gray-800 text-white text-sm">
+                    <thead class="bg-gray-200 text-gray-600 text-sm">
                         <tr>
                             <th class="px-6 py-3 text-left">Name</th>
-                            <th class="px-6 py-3 text-left">Price</th>
+                            <th class="px-6 py-3 text-left">Price(₵)</th>
                             <th class="px-6 py-3 text-left">Stock</th>
-                            <th class="px-6 py-3 text-left">Category</th>
+                            <th class="px-6 py-3 text-left">Brand</th>
                             <th class="px-6 py-3 text-center">Edit</th>
                             <th class="px-6 py-3 text-center">Delete</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 text-sm">
+                    <tbody class="divide-y divide-gray-100 text-sm font-medium">
                         <tr
                             v-for="product in medStore.products"
                             :key="product.id"
-                            class="hover:bg-gray-100 transition"
+                            class="hover:bg-gray-50 transition hover:shadow-lg"
                         >
-                            <td class="px-6 py-3">{{ product.name }}</td>
+                            <td class="px-6 py-3 text-gray-700 truncate">
+                                {{ product.name }}
+                            </td>
                             <td class="px-6 py-3 text-green-600 font-bold">
-                                ₵{{ product.price }}
+                                {{ product.price }}
                             </td>
                             <td class="px-6 py-3">{{ product.stock }}</td>
-                            <td class="px-6 py-3">
-                                {{ product.category.name }}
+                            <td class="px-6 py-3 text-gray-600 truncate">
+                                {{ product.brand || "No Brand Name" }}
                             </td>
                             <td class="px-6 py-3 text-center">
                                 <button
@@ -128,8 +132,8 @@
                             <i class="pi pi-times"></i>
                         </button>
                     </div>
-                    <!-- Name & Category -->
-                    <div class="flex gap-3">
+                    <!-- Name & Stock -->
+                    <div class="flex gap-3 flex-col sm:flex-row">
                         <label class="block flex-1 text-sm text-gray-700">
                             Name
                             <input
@@ -140,28 +144,17 @@
                             />
                         </label>
                         <label class="block flex-1 text-sm text-gray-700">
-                            Category
-                            <select
-                                v-model="medStore.form.category"
+                            Brand
+                            <input
+                                v-model="medStore.form.brand"
                                 required
                                 class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-orange-600"
-                            >
-                                <option value="" disabled>
-                                    Select category
-                                </option>
-                                <option
-                                    v-for="cat in medStore.categories"
-                                    :key="cat.id"
-                                    :value="cat.id"
-                                >
-                                    {{ cat.name }}
-                                </option>
-                            </select>
+                            />
                         </label>
                     </div>
 
                     <!-- Stock & Price -->
-                    <div class="flex gap-3">
+                    <div class="flex gap-3 flex-col sm:flex-row">
                         <label class="block flex-1 text-sm text-gray-700">
                             Stock
                             <input
@@ -183,6 +176,24 @@
                             />
                         </label>
                     </div>
+                    <!-- Category -->
+                    <label class="block flex-1 text-sm text-gray-700">
+                        Category
+                        <select
+                            v-model="medStore.form.category"
+                            required
+                            class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-orange-600"
+                        >
+                            <option value="" disabled>Select category</option>
+                            <option
+                                v-for="cat in medStore.categories"
+                                :key="cat.id"
+                                :value="cat.id"
+                            >
+                                {{ cat.name }}
+                            </option>
+                        </select>
+                    </label>
                     <!-- Description -->
                     <label class="block text-sm text-gray-700">
                         Description
@@ -193,20 +204,23 @@
                             class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-orange-600 resize-none"
                         ></textarea>
                     </label>
+
                     <!-- Images (only show if NOT editing) -->
-                    <label
-                        v-if="!medStore.isEditing"
-                        class="block text-sm text-gray-700"
-                    >
-                        Product Images
-                        <input
-                            type="file"
-                            multiple
-                            @change="medStore.handleImageUpload"
-                            class="mt-1 w-full border border-gray-300 rounded px-3 py-2 bg-white"
-                            accept="image/*"
-                        />
-                    </label>
+                    <div class="flex gap-3 flex-col sm:flex-row">
+                        <label
+                            v-if="!medStore.isEditing"
+                            class="block text-sm text-gray-700"
+                        >
+                            Product Images
+                            <input
+                                type="file"
+                                multiple
+                                @change="medStore.handleImageUpload"
+                                class="mt-1 w-full border border-gray-300 rounded px-3 py-2 bg-white"
+                                accept="image/*"
+                            />
+                        </label>
+                    </div>
                     <!-- Submit -->
                     <div>
                         <button

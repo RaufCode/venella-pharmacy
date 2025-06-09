@@ -165,11 +165,8 @@
                                             class="text-sm text-gray-500 truncate"
                                         >
                                             {{
-                                                cartStore.truncate(
-                                                    item.product?.description ||
-                                                        "No description",
-                                                    40
-                                                )
+                                                item.product?.description ||
+                                                "No description"
                                             }}
                                         </p>
                                     </div>

@@ -11,6 +11,7 @@ export const useMedStore = defineStore('medStore', {
     searchResults: [],
     form: {
       name: '',
+      brand: '',
       stock: null,
       price: null,
       category: '',
@@ -32,6 +33,7 @@ export const useMedStore = defineStore('medStore', {
     resetForm() {
       this.form = {
         name: '',
+        brand: '',
         stock: null,
         price: null,
         category: '',
@@ -57,7 +59,6 @@ export const useMedStore = defineStore('medStore', {
     async fetchProducts() {
       try {
         const res = await axios.get('/api/products/')
-        // Only include products with stock greater than 0
         this.products = res.data.filter(product => product.stock > 0)
       } catch (error) {
         console.error('Error fetching products:', error)
@@ -72,7 +73,6 @@ export const useMedStore = defineStore('medStore', {
 
       try {
         const res = await axios.get(`/api/products/search/?query=${encodeURIComponent(query)}`)
-        // Only include search results with stock greater than 0
         this.searchResults = res.data.filter(product => product.stock > 0)
       } catch (error) {
         console.error('Error searching products:', error)
@@ -87,6 +87,7 @@ export const useMedStore = defineStore('medStore', {
       try {
         const formData = new FormData()
         formData.append('name', this.form.name)
+        formData.append('brand', this.form.brand)
         formData.append('stock', this.form.stock)
         formData.append('price', this.form.price)
         formData.append('category', this.form.category)
@@ -146,6 +147,7 @@ export const useMedStore = defineStore('medStore', {
         const product = res.data
 
         this.form.name = product.name
+        this.form.brand = product.brand || ''
         this.form.stock = product.stock
         this.form.price = product.price
         this.form.category = product.category.id

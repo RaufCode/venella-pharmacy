@@ -28,7 +28,7 @@ export const useCartStore = defineStore("cart", {
       this.isLoading = true;
       this.error = null;
       try {
-        const response = await axios.get("/api/carts/cart-items/");
+        const response = await axios.get("/api/carts/customer/cart-items/");
         this.carts = response.data || [];
       } catch (err) {
         console.error("Fetch error:", err);

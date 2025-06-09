@@ -147,69 +147,67 @@
 </script>
 
 <template>
-    <div class="h-screen w-full relative flex flex-col flex-1 overflow-hidden">
+    <div class="h-screen w-full relative flex flex-col">
         <!-- Top Bar -->
         <div
-            class="hidden w-full md:absolute top-0 z-40 bg-gray-900 shadow-md md:flex justify-between items-center p-3"
+            class="hidden md:flex justify-between items-center bg-white w-full p-4 shadow static top-0 z-50"
         >
-            <h1 class="text-gray-300 font-styleScript text-lg md:text-2xl">
-                Staff Hub
-            </h1>
+            <h1 class="text-gray-700 font-styleScript text-3xl">Staff Hub</h1>
             <button
                 @click="showModal = true"
-                class="py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
+                class="py-2 px-4 rounded-lg bg-orange-600 text-sm text-white font-medium hover:bg-orange-500"
             >
                 Add Staff
             </button>
         </div>
 
         <!-- Main Content -->
-        <div class="overflow-y-auto overscroll-contain w-full pt-6">
+        <div class="overflow-y-auto overscroll-contain w-full">
             <div class="mx-auto container p-3">
                 <!-- Button (Mobile) -->
                 <button
                     @click="showModal = true"
-                    class="py-2 px-4 bg-orange-600 text-sm text-white font-medium hover:bg-orange-500 md:hidden"
+                    class="py-2 px-4 mt-4 rounded-lg bg-orange-600 text-sm text-white font-medium hover:bg-orange-500 md:hidden"
                 >
                     Add Staff
                 </button>
 
                 <!-- Staff Table -->
                 <div
-                    class="max-h-[80vh] overflow-x-auto overscroll-contain mt-2 md:mt-14 mx-auto rounded-lg shadow-lg border border-gray-200 bg-white"
+                    class="overflow-x-auto overscroll-contain mt-2 md:mt-0 mx-auto bg-white"
                 >
                     <table
                         v-if="staffList.length > 0"
                         class="min-w-full divide-y divide-gray-200 table-auto"
                     >
-                        <thead class="bg-gray-800 sticky top-0 z-10">
+                        <thead class="bg-gray-200 text-gray-600 text-sm">
                             <tr>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider truncate"
+                                    class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider truncate"
                                     scope="col"
                                 >
                                     Name
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-semibold text-indigo-400 uppercase tracking-wider truncate"
+                                    class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider truncate"
                                     scope="col"
                                 >
                                     Email
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-semibold text-orange-400 uppercase tracking-wider truncate"
+                                    class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider truncate"
                                     scope="col"
                                 >
                                     Phone
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider"
+                                    class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider"
                                     scope="col"
                                 >
                                     Update
                                 </th>
                                 <th
-                                    class="px-6 py-3 text-center text-xs font-semibold text-gray-300 uppercase tracking-wider"
+                                    class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider"
                                     scope="col"
                                 >
                                     Delete
@@ -220,7 +218,7 @@
                             <tr
                                 v-for="staff in staffList"
                                 :key="staff.id"
-                                class="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                                class="hover:bg-gray-50 hover:shadow-lg transition-colors duration-150 cursor-pointer"
                                 :title="`${staff.profile.first_name} ${staff.profile.last_name}`"
                             >
                                 <td
