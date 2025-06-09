@@ -99,7 +99,7 @@
             class="min-h-screen md:flex items-center justify-center bg-gray-100 p-4 mb-0"
         >
             <div
-                class="max-w-3xl w-full bg-gray-100 rounded-xl shadow-md overflow-hidden mx-auto"
+                class="max-w-3xl w-full bg-gray-100 rounded-xl shadow overflow-hidden mx-auto"
             >
                 <div class="p-2 md:p-6">
                     <button
@@ -145,7 +145,7 @@
                                 Order Summary
                             </h2>
                             <ul
-                                class="space-y-4 max-h-60 overflow-y-auto overscroll-contain"
+                                class="space-y-4 h-60 overflow-y-auto overscroll-contain"
                             >
                                 <li
                                     v-for="item in cartStore.carts"
@@ -165,11 +165,8 @@
                                             class="text-sm text-gray-500 truncate"
                                         >
                                             {{
-                                                cartStore.truncate(
-                                                    item.product?.description ||
-                                                        "No description",
-                                                    40
-                                                )
+                                                item.product?.description ||
+                                                "No description"
                                             }}
                                         </p>
                                     </div>

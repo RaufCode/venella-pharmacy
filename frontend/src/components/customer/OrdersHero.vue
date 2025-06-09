@@ -1,8 +1,9 @@
 <script setup>
-    import { onMounted } from "vue";
+    import { onMounted, ref, computed } from "vue";
     import { useRouter } from "vue-router";
     import { useOrderStore } from "@/stores/orderStore";
     import { storeToRefs } from "pinia";
+    import Spinner from "../ui/Spinner.vue";
 
     const orderStore = useOrderStore();
     const { customerOrders, loading, error } = storeToRefs(orderStore);
@@ -56,16 +57,25 @@
     function goToOrderDetails(orderId) {
         router.push(`order/${orderId}`);
     }
+
+    // 🟧 Sort orders: Pending → Processing → Delivered → Others
+    const sortedOrders = computed(() => {
+        const priority = { pending: 1, processing: 2, delivered: 3 };
+        return [...customerOrders.value].sort((a, b) => {
+            const aStatus = a.status?.toLowerCase();
+            const bStatus = b.status?.toLowerCase();
+            return (priority[aStatus] || 99) - (priority[bStatus] || 99);
+        });
+    });
 </script>
+
 <template>
     <div class="min-h-screen w-full">
         <!-- Header Bar -->
         <div
-            class="flex items-center justify-between gap-4 w-full p-4 lg:px-10 fixed top-0 shadow-sm bg-white"
+            class="flex items-center justify-between gap-4 w-full p-4 lg:px-10 fixed top-0 shadow bg-white"
         >
-            <h1
-                class="text-gray-700 font-styleScript text-center text-lg md:text-2xl"
-            >
+            <h1 class="text-gray-700 font-styleScript text-lg md:text-2xl">
                 Order Hub
             </h1>
             <button
@@ -78,8 +88,8 @@
         <div class="container mx-auto">
             <!-- Content -->
             <div class="w-full">
-                <div v-if="loading" class="text-center py-10 text-gray-600">
-                    Loading your orders...
+                <div v-if="loading" class="py-20">
+                    <Spinner />
                 </div>
 
                 <div v-else-if="error" class="text-center text-red-500 py-10">
@@ -90,7 +100,7 @@
                     v-else-if="customerOrders.length === 0"
                     class="text-center py-10 text-gray-600"
                 >
-                    No orders found.
+                    No orders found
                 </div>
 
                 <!-- Order Cards -->
@@ -99,10 +109,10 @@
                     v-else
                 >
                     <div
-                        v-for="order in customerOrders"
+                        v-for="order in sortedOrders"
                         :key="order.id"
                         @click="goToOrderDetails(order.id)"
-                        class="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition cursor-pointer"
+                        class="bg-white rounded-xl shadow p-5 hover:shadow-md transition cursor-pointer"
                     >
                         <!-- Top Section -->
                         <div class="mb-3">
@@ -147,8 +157,8 @@
                             class="mt-2 text-right"
                         >
                             <button
-                                @click="deleteOrder(order.id)"
-                                class="text-red-600 text-sm"
+                                @click.stop="deleteOrder(order.id)"
+                                class="text-red-500 text-sm font-semibold"
                             >
                                 Cancel
                             </button>
@@ -159,12 +169,3 @@
         </div>
     </div>
 </template>
-
-<style scoped>
-    .font-styleScript {
-        font-family: "Satisfy", cursive;
-    }
-    h1 {
-        @apply text-center;
-    }
-</style>

@@ -5,6 +5,7 @@
     import { useMedStore } from "@/stores/medStore";
     import { useAuthStore } from "@/stores/auth";
     import { storeToRefs } from "pinia";
+    import Spinner from "../ui/Spinner.vue";
 
     const router = useRouter();
 
@@ -77,27 +78,19 @@
                 Products Available
             </h1>
 
-            <div
-                v-if="isLoadingProducts"
-                class="flex justify-center items-center py-10"
-            >
-                <i class="pi pi-spinner pi-spin text-3xl text-orange-600"></i>
-                <span class="ml-3 text-gray-600">Loading products...</span>
-            </div>
+            <Spinner v-if="isLoadingProducts" />
 
             <div
                 v-else
-                class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
             >
                 <article
                     v-for="product in products"
                     :key="product.id"
                     @click="() => navigateToProduct(product.id)"
-                    class="bg-white rounded-2xl border shadow-sm hover:shadow-md transition p-4 flex flex-col cursor-pointer"
+                    class="bg-white rounded-2xl hover:shadow-md transition p-4 flex flex-col cursor-pointer"
                 >
-                    <div
-                        class="h-40 bg-gray-100 rounded-xl overflow-hidden mb-3"
-                    >
+                    <div class="h-40 bg-gray-100 overflow-hidden mb-3">
                         <img
                             :src="`https://techrems.pythonanywhere.com${product.images?.[0]?.image}`"
                             :alt="product.name"
@@ -109,17 +102,19 @@
                     </div>
 
                     <p
-                        class="text-xs bg-gray-600 px-3 py-1 mb-2 text-white rounded-full w-max"
+                        class="text-xs bg-orange-600 px-3 py-1 mb-2 text-white rounded-full w-max"
                     >
                         {{ product.brand || "No brand name" }}
                     </p>
 
                     <h3
-                        class="font-semibold text-lg text-gray-800 truncate mb-1"
+                        class="font-semibold text-sm text-gray-800 truncate mb-1"
                     >
                         {{ product.name }}
                     </h3>
-                    <p class="text-gray-600 text-sm flex-grow truncate">
+                    <p
+                        class="text-gray-600 text-xs font-medium flex-grow truncate"
+                    >
                         {{ product.description || "No description available" }}
                     </p>
 
@@ -131,7 +126,7 @@
                             <template v-if="isCartLoaded">
                                 <template v-if="!isInCart(product.id)">
                                     <button
-                                        class="py-2 px-3 rounded-full bg-orange-600 flex items-center justify-center text-white"
+                                        class="py-2 px-3 rounded-full bg-green-600 flex items-center justify-center text-white"
                                         :disabled="
                                             isAuthenticated &&
                                             isAddingToCart(product.id)
@@ -171,7 +166,7 @@
                                                     product.id
                                                 )
                                             "
-                                            class="bg-orange-700 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                                            class="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
                                             title="Decrease quantity"
                                         >
                                             &minus;
@@ -188,7 +183,7 @@
                                                     product.id
                                                 )
                                             "
-                                            class="bg-orange-700 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                                            class="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
                                             title="Increase quantity"
                                         >
                                             +
@@ -198,9 +193,7 @@
                             </template>
 
                             <template v-else>
-                                <div
-                                    class="w-24 h-8 bg-gray-200 rounded animate-pulse"
-                                ></div>
+                                <Spinner />
                             </template>
                         </div>
                     </div>

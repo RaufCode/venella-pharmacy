@@ -46,7 +46,7 @@
                             10
                         </p>
                     </div>
-                    <i class="pi pi-info-circle text-red-500 text-2xl"></i>
+                    <i class="pi pi-bell text-red-500 text-2xl"></i>
                 </div>
 
                 <div

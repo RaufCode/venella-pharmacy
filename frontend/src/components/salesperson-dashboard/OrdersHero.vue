@@ -3,6 +3,7 @@
     import { useOrderStore } from "@/stores/orderStore";
     import { storeToRefs } from "pinia";
     import { useRouter } from "vue-router";
+    import Spinner from "../ui/Spinner.vue";
 
     const router = useRouter();
 
@@ -14,28 +15,32 @@
     const itemsPerPage = 7;
 
     const selectedDate = ref(null);
-    const filterMode = ref("all");
 
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
 
+    // Fixed date comparison function
     const getLocalDateString = (dateStr) => {
         const date = new Date(dateStr);
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate())
-            .toISOString()
-            .split("T")[0];
+        // Create date in local timezone to avoid UTC conversion issues
+        const localDate = new Date(
+            date.getTime() + date.getTimezoneOffset() * 60000
+        );
+        return localDate.toISOString().split("T")[0];
     };
 
-    const today = getLocalDateString(new Date());
+    const today = new Date().toISOString().split("T")[0];
 
     const fetchOrdersByTab = async (tab) => {
-        selectedDate.value = null;
-        filterMode.value = "all";
+        // Reset page when changing tabs
+        currentPage.value = 1;
+
         if (tab === "pending") {
             await orderStore.fetchPendingOrders();
         } else if (tab === "processing") {
             await orderStore.fetchProcessingOrders();
         } else {
+            // For all other tabs (all, today, thisMonth, exactDate), fetch all orders
             await orderStore.fetchAllOrders();
         }
     };
@@ -43,38 +48,39 @@
     onMounted(() => fetchOrdersByTab(activeTab.value));
 
     watch(activeTab, async (newTab) => {
-        currentPage.value = 1;
-        if (["all", "pending", "processing"].includes(newTab)) {
-            await fetchOrdersByTab(newTab);
+        // Clear date selection when switching away from exactDate
+        if (newTab !== "exactDate") {
+            selectedDate.value = null;
         }
+        await fetchOrdersByTab(newTab);
     });
 
+    // Fixed filtering logic
     const filteredOrders = computed(() => {
-        if (filterMode.value === "today") {
-            return orders.value.filter((order) => {
+        let filtered = [...orders.value];
+
+        if (activeTab.value === "today") {
+            filtered = filtered.filter((order) => {
                 return getLocalDateString(order.created_at) === today;
             });
-        }
-
-        if (filterMode.value === "thisMonth") {
-            return orders.value.filter((order) => {
+        } else if (activeTab.value === "thisMonth") {
+            filtered = filtered.filter((order) => {
                 const date = new Date(order.created_at);
                 return (
                     date.getMonth() === currentMonth &&
                     date.getFullYear() === currentYear
                 );
             });
-        }
-
-        if (filterMode.value === "exactDate" && selectedDate.value) {
-            return orders.value.filter((order) => {
+        } else if (activeTab.value === "exactDate" && selectedDate.value) {
+            filtered = filtered.filter((order) => {
                 return (
                     getLocalDateString(order.created_at) === selectedDate.value
                 );
             });
         }
+        // For 'all', 'pending', 'processing' tabs, return all orders (already filtered by API)
 
-        return orders.value;
+        return filtered;
     });
 
     const paginatedOrders = computed(() => {
@@ -103,23 +109,18 @@
         activeTab.value = tab;
     };
 
-    const filterToday = async () => {
+    // Simplified filter functions
+    const filterToday = () => {
         activeTab.value = "today";
-        filterMode.value = "today";
-        await orderStore.fetchAllOrders();
     };
 
-    const filterThisMonth = async () => {
+    const filterThisMonth = () => {
         activeTab.value = "thisMonth";
-        filterMode.value = "thisMonth";
-        await orderStore.fetchAllOrders();
     };
 
-    const filterByDate = async (e) => {
-        activeTab.value = "exactDate";
+    const filterByDate = (e) => {
         selectedDate.value = e.target.value;
-        filterMode.value = "exactDate";
-        await orderStore.fetchAllOrders();
+        activeTab.value = "exactDate";
     };
 
     const updateStatusAndRefresh = async (orderId, newStatus) => {
@@ -136,27 +137,34 @@
     const goToOrderDetails = (orderId) => {
         router.push(`order/${orderId}`);
     };
+
+    // Reset to first page when filtered results change
+    watch(filteredOrders, () => {
+        if (currentPage.value > totalPages.value && totalPages.value > 0) {
+            currentPage.value = 1;
+        }
+    });
 </script>
 
 <template>
     <div class="h-screen w-full flex flex-col">
         <header
-            class="bg-white px-6 py-4 shadow w-full hidden md:block font-semibold"
+            class="bg-gray-50 px-6 py-4 shadow w-full hidden md:block font-semibold fixed top-0 z-50"
         >
             <h1 class="text-3xl font-medium text-gray-600 font-styleScript">
                 Orders Hub
             </h1>
         </header>
-        <div class="container mx-auto">
-            <nav class="p-4 overflow-x-auto mb-4">
-                <div class="flex gap-3 flex-nowrap w-full">
+        <div class="container mx-auto mt-3 md:mt-16">
+            <nav class="p-4 overflow-x-auto">
+                <div class="flex gap-6 justify-between flex-nowrap w-full">
                     <button
                         @click="setTab('all')"
                         :class="[
-                            'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                            'py-2 font-semibold text-sm border-b-2 transition-colors duration-200 ease-in-out whitespace-nowrap',
                             activeTab === 'all'
-                                ? 'bg-orange-600 text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                                ? 'text-orange-600 border-orange-600'
+                                : 'text-gray-500 border-transparent hover:text-orange-500',
                         ]"
                     >
                         All Orders
@@ -165,10 +173,10 @@
                     <button
                         @click="setTab('pending')"
                         :class="[
-                            'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                            'py-2 font-semibold text-sm border-b-2 transition-colors duration-200 ease-in-out whitespace-nowrap',
                             activeTab === 'pending'
-                                ? 'bg-yellow-500 text-white'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+                                ? 'text-yellow-500 border-yellow-500'
+                                : 'text-gray-500 border-transparent hover:text-yellow-400',
                         ]"
                     >
                         Pending
@@ -177,42 +185,43 @@
                     <button
                         @click="setTab('processing')"
                         :class="[
-                            'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                            'py-2 font-semibold text-sm border-b-2 transition-colors duration-200 ease-in-out whitespace-nowrap',
                             activeTab === 'processing'
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                                ? 'text-green-500 border-green-500'
+                                : 'text-gray-500 border-transparent hover:text-green-400',
                         ]"
                     >
                         Processing
                     </button>
 
                     <button
-                        @click="filterToday"
-                        :class="[
-                            'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
-                            activeTab === 'today'
-                                ? 'bg-green-500 text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-                        ]"
-                    >
-                        Today
-                    </button>
-
-                    <button
                         @click="filterThisMonth"
                         :class="[
-                            'px-4 py-2 rounded-full font-medium text-sm transition whitespace-nowrap',
+                            'py-2 font-semibold text-sm border-b-2 transition-colors duration-200 ease-in-out whitespace-nowrap',
                             activeTab === 'thisMonth'
-                                ? 'bg-emerald-700 text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                                ? 'text-emerald-500 border-emerald-500'
+                                : 'text-gray-500 border-transparent hover:text-emerald-400',
                         ]"
                     >
                         This Month
                     </button>
 
+                    <button
+                        @click="filterToday"
+                        :class="[
+                            'py-2 font-semibold text-sm border-b-2 transition-colors duration-200 ease-in-out whitespace-nowrap',
+                            activeTab === 'today'
+                                ? 'text-blue-500 border-blue-500'
+                                : 'text-gray-500 border-transparent hover:text-blue-400',
+                        ]"
+                    >
+                        Today
+                    </button>
+
                     <input
                         type="date"
                         @change="filterByDate"
+                        v-model="selectedDate"
                         :class="[
                             'px-3 py-2 rounded-full text-sm outline-none whitespace-nowrap transition',
                             activeTab === 'exactDate'
@@ -225,7 +234,7 @@
 
             <main class="flex-1 overflow-y-auto px-4 pb-4 h-full">
                 <div v-if="loading" class="text-center py-10 text-gray-600">
-                    Loading orders...
+                    <Spinner />
                 </div>
                 <div v-else-if="error" class="text-center py-10 text-red-600">
                     {{ error }}
@@ -237,11 +246,8 @@
                     No orders found for this filter.
                 </div>
 
-                <div
-                    v-else
-                    class="p-0 lg:p-4 lg:shadow lg:bg-gray-50 lg:rounded-lg lg:h-full 2lg:bg-inherit 2lg:shadow-none 2lg:h-auto overflow-y-auto"
-                >
-                    <div class="overflow-x-auto rounded-lg border bg-white">
+                <div v-else class="">
+                    <div class="overflow-x-auto bg-white">
                         <table
                             class="min-w-full divide-y divide-gray-200 shadow text-sm"
                         >
@@ -268,7 +274,7 @@
                                 <tr
                                     v-for="order in paginatedOrders"
                                     :key="order.id"
-                                    class="hover:bg-gray-50 transition cursor-pointer"
+                                    class="hover:bg-gray-50 transition cursor-pointer hover:shadow-lg"
                                     @click="goToOrderDetails(order.id)"
                                 >
                                     <td class="px-4 py-3">

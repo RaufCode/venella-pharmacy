@@ -41,7 +41,9 @@
 <template>
     <div class="h-screen w-full flex flex-col">
         <!-- Top Bar -->
-        <div class="hidden md:block p-4 shadow font-semibold">
+        <div
+            class="hidden md:block p-4 shadow font-semibold w-full bg-gray-50 static top-0 z-50"
+        >
             <h1 class="text-3xl font-medium text-gray-600 font-styleScript">
                 Medications Hub
             </h1>
@@ -49,11 +51,9 @@
 
         <!-- Main Content -->
         <div class="p-4 overflow-y-auto flex-grow container mx-auto">
-            <div
-                class="p-0 lg:p-4 lg:shadow lg:bg-gray-50 lg:rounded-lg lg:h-full 2lg:bg-inherit 2lg:shadow-none 2lg:h-auto overflow-y-auto"
-            >
+            <div class="mt-3">
                 <!-- Medication Table -->
-                <div class="overflow-x-auto rounded-lg border bg-white">
+                <div class="overflow-x-auto bg-white">
                     <table
                         v-if="medStore.hasProducts"
                         class="min-w-full divide-y divide-gray-200"
@@ -72,7 +72,7 @@
                             <tr
                                 v-for="product in paginatedProducts"
                                 :key="product.id"
-                                class="hover:bg-gray-100 transition"
+                                class="hover:bg-gray-50 transition hover:shadow-lg"
                             >
                                 <td class="px-6 py-3 text-gray-700 truncate">
                                     {{ product.name }}
@@ -84,7 +84,7 @@
                                     {{ product.stock }}
                                 </td>
                                 <td class="px-6 py-3 text-gray-600">
-                                    {{ product.category.name }}
+                                    {{ product.brand || "No Brand Name" }}
                                 </td>
                             </tr>
                         </tbody>

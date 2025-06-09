@@ -91,7 +91,10 @@
                 </p>
 
                 <!-- Status-based Action Button -->
-                <div class="mt-4">
+                <div
+                    v-if="authStore.getUserRole === 'salesperson'"
+                    class="mt-4"
+                >
                     <button
                         v-if="orderStore.orderDetails?.status === 'PENDING'"
                         @click="handleStatusUpdate('PROCESSING')"
@@ -111,7 +114,7 @@
             </div>
             <div class="bg-white shadow rounded p-4 mb-4">
                 <h2 class="font-medium mb-2 text-orange-600">
-                    Items in this Order
+                    Item(s) in this Order
                 </h2>
                 <div class="overflow-x-auto">
                     <table

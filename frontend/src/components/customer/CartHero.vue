@@ -3,6 +3,7 @@
     import { useCartStore } from "@/stores/cartStore";
     import { storeToRefs } from "pinia";
     import { useRouter } from "vue-router";
+    import Spinner from "../ui/Spinner.vue";
 
     const router = useRouter();
     const cartStore = useCartStore();
@@ -52,12 +53,21 @@
     <div class="min-h-screen flex flex-col bg-gray-50">
         <!-- Header -->
         <header
-            class="bg-gray-900 text-white p-4 flex items-center gap-4 sticky top-0 z-50"
+            class="bg-gray-white bg-white text-white p-4 flex shadow items-center justify-between gap-4 sticky top-0 z-50"
         >
-            <button @click="goBack" class="hover:text-orange-400 transition">
-                <i class="pi pi-arrow-left text-lg"></i>
+            <h1 class="text-gray-700 font-styleScript text-lg md:text-2xl">
+                Your Cart<span
+                    v-if="carts.length > 1"
+                    class="text-gray-700 font-styleScript text-lg md:text-2xl"
+                    >s</span
+                >
+            </h1>
+            <button
+                @click="goBack"
+                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-full flex justify-center items-center gap-3"
+            >
+                <i class="pi pi-arrow-left"></i> Back
             </button>
-            <h1 class="text-base md:text-xl font-semibold">Your Cart</h1>
         </header>
 
         <!-- Error Message -->
@@ -72,8 +82,8 @@
         </div>
 
         <!-- Loading State -->
-        <div v-if="isLoading" class="flex justify-center items-center py-10">
-            <div class="text-gray-600">Loading cart items...</div>
+        <div v-if="isLoading" class="flex justify-center items-center py-20">
+            <Spinner />
         </div>
 
         <!-- Main Content -->
@@ -97,20 +107,15 @@
 
                     <div class="flex-1">
                         <h2
-                            class="font-medium text-gray-800 text-sm md:text-base"
+                            class="font-medium text-gray-800 text-sm md:text-base w-20 md:w-auto truncate"
                         >
-                            {{ truncate(cart.product?.name, 25) }}
+                            {{ cart.product.name }}
                         </h2>
-                        <p class="text-xs md:text-sm text-gray-500 mt-1">
-                            {{
-                                truncate(
-                                    cart.product?.description ||
-                                        cart.product?.name,
-                                    40
-                                )
-                            }}
+                        <p
+                            class="text-xs md:text-sm text-gray-500 mt-1 w-24 md:w-auto truncate"
+                        >
+                            {{ cart.product.description }}
                         </p>
-
                         <div class="mt-2 flex items-center gap-2 md:gap-3">
                             <button
                                 @click="onDecreaseQty(cart.id, cart.quantity)"
@@ -122,7 +127,7 @@
                             <span
                                 class="font-semibold text-sm md:text-base min-w-[2rem] text-center"
                             >
-                                {{ cart.quantity || 0 }}
+                                {{ cart.quantity }}
                             </span>
                             <button
                                 @click="onIncreaseQty(cart.id, cart.quantity)"

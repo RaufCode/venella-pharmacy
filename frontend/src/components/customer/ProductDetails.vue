@@ -5,6 +5,7 @@
     import { useCartStore } from "@/stores/cartStore";
     import { useAuthStore } from "@/stores/auth"; // <-- import auth store
     import { storeToRefs } from "pinia";
+    import Spinner from "../ui/Spinner.vue";
 
     const route = useRoute();
     const router = useRouter();
@@ -93,10 +94,7 @@
             </button>
 
             <!-- Loading Spinner -->
-            <div v-if="loading" class="flex justify-center items-center py-10">
-                <i class="pi pi-spinner pi-spin text-3xl text-orange-600"></i>
-                <span class="ml-3 text-gray-600">Loading product...</span>
-            </div>
+            <Spinner v-if="loading" />
 
             <!-- Product Details -->
             <div
@@ -137,10 +135,10 @@
                     </div>
 
                     <!-- Name & Description -->
-                    <h1 class="font-semibold text-gray-800 text-xl">
+                    <h1 class="font-semibold text-gray-700 text-xl">
                         {{ product.name }}
                     </h1>
-                    <p class="text-gray-800 text-justify">
+                    <p class="text-gray-700 text-justify">
                         {{ product.description }}
                     </p>
 
