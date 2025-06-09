@@ -21,15 +21,31 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.get_type_display()} - {'Read' if self.read else 'Unread'}"
-    
+
     def get_type_display(self):
         return dict(self.NOTIFICATION_TYPE_CHOICES).get(self.type, 'Unknown Type')
-    
 
-class CustomerNotification(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name='notifications')
-    customer = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='customer_notifications')
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class CustomerNotification(Notification):
+    customer = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name="customer_notifications",
+        null=True,
+    )
 
     def __str__(self):
-        return f"Notification for {self.user.profile.first_name}: {self.notification.get_type_display()} - {'Read' if self.notification.read else 'Unread'}"
+        return f"Notification for {self.customer.profile.first_name}: {self.get_type_display()} - {'Read' if self.read else 'Unread'}"
+
+
+class SalesPersonNotification(Notification):
+    """
+    Notification intended for all sales persons.
+    Not linked to a specific user account.
+    """
+
+    def __str__(self):
+        return f"SalesPerson Notification: {self.get_type_display()} - {'Read' if self.read else 'Unread'}"

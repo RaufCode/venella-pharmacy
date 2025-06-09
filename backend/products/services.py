@@ -8,6 +8,25 @@ from products.selectors import get_product_by_id
 from core.utils.general import InMemoryUploadedFileHandler
 
 
+def check_and_send_low_stock_notification(product: Product):
+    """
+    Check if product stock is 10 or less and send notification to salespersons
+    """
+    if product.stock <= 10:
+        from notifications.services import create_salesperson_notification
+
+        try:
+            create_salesperson_notification(
+                {
+                    "type": "PRODUCT_STOCK_ALERT",
+                    "content": f"Low Stock Alert: {product.name} has only {product.stock} units remaining. Please restock soon.",
+                }
+            )
+        except Exception as e:
+            # Log the error but don't fail the main operation
+            print(f"Failed to send low stock notification: {e}")
+
+
 def create_product(data: dict):
     product_images = data.pop("product_images", None)
     if not product_images:
@@ -82,6 +101,9 @@ def update_product(product: Product, data: dict):
             image_serializer.save()
         else:
             return None, image_serializer.errors
+
+    # Check for low stock after product update
+    check_and_send_low_stock_notification(product)
 
     return product, None
 

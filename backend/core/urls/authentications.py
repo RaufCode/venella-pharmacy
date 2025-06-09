@@ -30,6 +30,6 @@ AUTH_URLS = [
     ),
     path(
         "auth/password/change/<str:user_id>/",
-        PasswordViewSet.as_view({"post": "change_password"}),
+        PasswordViewSet.as_view({"put": "change_password"}),
     ),
 ]

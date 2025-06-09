@@ -20,6 +20,15 @@ sales_person_notifications_schema = extend_schema(
     tags=["Notifications"],
 )
 
+customer_notifications_schema = extend_schema(
+    summary="Notifications for Customer",
+    description="This retrieves notifications for a specific customer.",
+    responses={
+        200: NotificationSerializer(many=True),
+    },
+    tags=["Notifications"],
+)
+
 mark_as_read_schema = extend_schema(
     summary="Mark Notification as Read",
     description="Marks a specific notification as read.",

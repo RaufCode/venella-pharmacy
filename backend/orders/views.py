@@ -1,10 +1,14 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from core.utils.general import get_user_from_jwttoken, validate_posted_data
 from orders.selectors import *
 from orders.services import *
 from carts.selectors import *
 from carts.services import clear_cart
-from core.utils.general import get_user_from_jwttoken, validate_posted_data
+from notifications.services import (
+    create_customer_notification,
+    create_salesperson_notification,
+)
 from documentations.orders import *
 
 
@@ -116,8 +120,27 @@ class OrderViewSet(viewsets.ViewSet):
                 product.stock -= item["quantity"]
                 product.save()
 
+                # Check for low stock after reducing inventory
+                from products.services import check_and_send_low_stock_notification
+
+                check_and_send_low_stock_notification(product)
+
         # Clear the cart after order creation
         clear_cart(cart.id)
+
+        create_customer_notification(
+            {
+                "customer": user.id,
+                "type": "NEW_ORDER",
+                "content": f"Your order #{order.id} has been placed successfully and waiting to be processed. Thank you for shopping with us!",
+            }
+        )
+        create_salesperson_notification(
+            {
+                "type": "NEW_ORDER",
+                "content": f"A new order #{order.id} has been placed by {user.email}.",
+            }
+        )
 
         context = order_representation(request, order, many=False)
         return Response(context, status=status.HTTP_201_CREATED)
@@ -148,6 +171,11 @@ class OrderViewSet(viewsets.ViewSet):
             if product:
                 product.stock -= item["quantity"]
                 product.save()
+
+                # Check for low stock after reducing inventory
+                from products.services import check_and_send_low_stock_notification
+
+                check_and_send_low_stock_notification(product)
 
         context = {
             "detail": "Sale processed successfully.",
@@ -195,6 +223,49 @@ class OrderViewSet(viewsets.ViewSet):
 
         order.status = new_status
         order.save()
+
+        if new_status == "PROCESSING":
+            create_salesperson_notification(
+                {
+                    "type": "ORDER_STATUS_UPDATE",
+                    "content": f"Order #{order.id} is now being processed.",
+                }
+            )
+            create_customer_notification(
+                {
+                    "customer": order.customer.id,
+                    "type": "ORDER_STATUS_UPDATE",
+                    "content": f"Your order #{order.id} is now being processed.",
+                }
+            )
+        elif new_status == "DELIVERED":
+            create_salesperson_notification(
+                {
+                    "type": "ORDER_STATUS_UPDATE",
+                    "content": f"Order #{order.id} has been delivered.",
+                }
+            )
+            create_customer_notification(
+                {
+                    "customer": order.customer.id,
+                    "type": "ORDER_STATUS_UPDATE",
+                    "content": f"Your order #{order.id} has been delivered. Thank you for shopping with us!",
+                }
+            )
+        elif new_status == "CANCELLED":
+            create_salesperson_notification(
+                {
+                    "type": "ORDER_STATUS_UPDATE",
+                    "content": f"Order #{order.id} has been cancelled.",
+                }
+            )
+            create_customer_notification(
+                {
+                    "customer": order.customer.id,
+                    "type": "ORDER_STATUS_UPDATE",
+                    "content": f"Your order #{order.id} has been cancelled. We apologize for the inconvenience.",
+                }
+            )
 
         context = order_representation(request, order)
         return Response(context, status=status.HTTP_200_OK)
