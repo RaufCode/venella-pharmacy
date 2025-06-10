@@ -171,7 +171,7 @@ export const useOrderStore = defineStore('orderStore', {
       this.loading = true
       this.error = null
       try {
-        await axios.post(`/api/orders/${orderId}/update-status/`, { status: newStatus })
+        await axios.put(`/api/orders/${orderId}/update-status/`, { status: newStatus })
         this.successMessage = 'Order status updated.'
         await this.fetchAllOrders()
         await this.fetchCustomerOrders()

@@ -7,7 +7,10 @@
     onMounted(() => {
         medStore.fetchProducts();
         medStore.fetchCategories();
+        console.log("Fetched categories:", medStore.categories);
     });
+
+    console.log(medStore.categories);
 
     // Close modal handler
     function closeAddModal() {

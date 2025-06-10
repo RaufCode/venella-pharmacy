@@ -85,9 +85,8 @@
         >
             <h1 class="text-gray-600 font-styleScript text-3xl">
                 {{ timeBasedGreeting }}
-                <span class="font-serif">
-                    {{ authStore.user.profile.first_name || "Salesperson" }}!
-                    {{ authStore.user.profile.last_name || "Salesperson" }}!
+                <span class="text-gray-700 font-semibold font-styleScript">
+                    {{ authStore.user.profile.first_name || "Salesperson" }}
                 </span>
             </h1>
         </div>
