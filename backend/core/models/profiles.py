@@ -10,9 +10,6 @@ class Profile(models.Model):
     other_names = models.CharField(max_length=100, blank=True, null=True)
     phone = PhoneNumberField(blank=True, null=True, region=None)
     address = models.TextField(blank=True, null=True)
-    image = models.ImageField(
-        upload_to="venella/profiles/images/", blank=True, null=True
-    )
 
     @property
     def full_name(self):

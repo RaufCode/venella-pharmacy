@@ -1,4 +1,8 @@
-from notifications.models import Notification, CustomerNotification
+from notifications.models import (
+    Notification,
+    CustomerNotification,
+    SalesPersonNotification,
+)
 from rest_framework import serializers
 from core.serializers.accounts import UserAccountSerializer
 
@@ -8,21 +12,30 @@ class NotificationSerializer(serializers.ModelSerializer):
         model= Notification
         fields = "__all__"
 
-
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['type'] = instance.get_type_display()
         return data
-    
+
 
 class CustomerNotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomerNotification
         fields = "__all__"
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["customer"] = UserAccountSerializer(
+            instance.customer, context={"request": self.context.get("request")}
+        ).data
+        return data
+
+
+class SalesPersonNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesPersonNotification
+        fields = "__all__"
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['notification'] = NotificationSerializer(instance.notification, context={'request': self.context.get('request')}).data
-        data['customer'] = UserAccountSerializer(instance.user, context={'request': self.context.get('request')}).data
         return data

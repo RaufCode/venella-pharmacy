@@ -5,9 +5,6 @@ from products.models import Product
 from products.selectors import get_product_by_id
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
-IN_STORE_USER = User.objects.get(email="customer@venella.com")
-
 
 def create_order(data: dict):
     serializer = OrderSerializer(data=data)
@@ -66,6 +63,8 @@ def sell_product(data: list):
         product_data["amount"] = product.price
         total_amount += product_data["quantity"] * product.price
 
+    User = get_user_model()
+    IN_STORE_USER = User.objects.get(email="customer@venella.com")
     order_serializer = OrderSerializer(
         data={
             "customer": IN_STORE_USER.id,

@@ -1,5 +1,7 @@
 import uuid
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class ProductCategory(models.Model):
@@ -35,3 +37,21 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.product.name}"
+
+
+@receiver(post_save, sender=Product)
+def check_low_stock(sender, instance, created, **kwargs):
+    """
+    Signal handler to check for low stock and send notifications
+    when product stock is 10 or less
+    """
+    if instance.stock <= 10:
+        from notifications.services import create_salesperson_notification
+
+        # Send notification to all salespersons about low stock
+        create_salesperson_notification(
+            {
+                "type": "PRODUCT_STOCK_ALERT",
+                "content": f"Low Stock Alert: {instance.name} has only {instance.stock} units remaining. Please restock soon.",
+            }
+        )
