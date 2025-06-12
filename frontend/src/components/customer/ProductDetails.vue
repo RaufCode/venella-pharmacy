@@ -126,7 +126,7 @@
                     <div class="flex items-center gap-2">
                         <span
                             class="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs font-medium truncate"
-                            >Official Store</span
+                            >Brand Name</span
                         >
                         <span
                             class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs font-medium truncate"

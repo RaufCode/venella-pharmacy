@@ -1,13 +1,16 @@
+// stores/cart.js
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "@/router";
+import { useNotificationStore } from "./notification";
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
     carts: [],
     isLoading: false,
     error: null,
-    cartLoading: {}, // Track loading state per productId
+    cartLoading: {},
+    stockAlerts: {},
   }),
 
   getters: {
@@ -29,7 +32,16 @@ export const useCartStore = defineStore("cart", {
       this.error = null;
       try {
         const response = await axios.get("/api/carts/customer/cart-items/");
-        this.carts = response.data || [];
+        const cartItems = response.data || [];
+        
+        // Set the carts immediately with the fetched data
+        this.carts = cartItems;
+        
+        // Validate and adjust quantities in the background (non-blocking)
+        // This prevents the cart from appearing empty while validation happens
+        this.validateAndAdjustCartQuantities(cartItems).catch(error => {
+          console.error("Validation error (non-critical):", error);
+        });
       } catch (err) {
         console.error("Fetch error:", err);
         this.error = "Failed to load cart items.";
@@ -39,18 +51,92 @@ export const useCartStore = defineStore("cart", {
       }
     },
 
+    async validateAndAdjustCartQuantities(cartItems) {
+      const adjustedItems = [];
+      let hasAdjustments = false;
+
+      for (const item of cartItems) {
+        try {
+          const stockResponse = await axios.get(`/api/products/${item.product.id}/retrieve/`);
+          const currentStock = stockResponse.data.stock || 0;
+
+          if (item.quantity > currentStock) {
+            if (currentStock > 0) {
+              const adjustedItem = { ...item, quantity: currentStock };
+              adjustedItems.push(adjustedItem);
+              await this.updateQuantity(item.id, currentStock);
+              hasAdjustments = true;
+            } else {
+              await this.deleteItem(item.id);
+              hasAdjustments = true;
+              continue;
+            }
+          } else {
+            adjustedItems.push(item);
+          }
+        } catch (error) {
+          console.error(`Error checking stock for product ${item.product.id}:`, error);
+          adjustedItems.push(item);
+        }
+      }
+
+      this.carts = adjustedItems;
+      if (hasAdjustments) {
+        this.showStockAdjustmentAlert();
+      }
+    },
+
+    async checkProductStock(productId) {
+      try {
+        const response = await axios.get(`/api/products/${productId}/retrieve/`);
+        return response.data.stock || 0;
+      } catch (error) {
+        console.error(`Error fetching stock for product ${productId}:`, error);
+        return 0;
+      }
+    },
+
     async addToCart(productId) {
       if (this.cartLoading[productId]) return;
+
+      const notificationStore = useNotificationStore();
       this.cartLoading = { ...this.cartLoading, [productId]: true };
       this.error = null;
+      this.clearStockAlert(productId);
 
       try {
+        const availableStock = await this.checkProductStock(productId);
+
+        if (availableStock <= 0) {
+          this.showStockAlert(productId, "This item is out of stock.");
+          return;
+        }
+
+        const existingItem = this.carts.find(c => c.product.id === productId);
+        const currentCartQuantity = existingItem ? existingItem.quantity : 0;
+
+        if (currentCartQuantity >= availableStock) {
+          this.showStockAlert(productId, `Cannot add more. Only ${availableStock} items available in stock.`);
+          return;
+        }
+
         await axios.post('/api/carts/cart-items/add/', {
           product: productId,
           quantity: 1,
         });
-        // Instead of push, always refetch the cart!
+
         await this.fetchCartItems();
+
+        const addedProduct = this.carts.find(c => c.product.id === productId)?.product;
+        if (addedProduct) {
+          notificationStore.addNotification({
+            id: Date.now(),
+            type: "CART_ADD",
+            message: `${addedProduct.name} added to cart.`,
+            read: false,
+            created_at: new Date().toISOString(),
+          });
+        }
       } catch (error) {
         console.error('Add to cart error:', error);
         this.error = "Failed to add to cart.";
@@ -60,18 +146,27 @@ export const useCartStore = defineStore("cart", {
     },
 
     async incrementQuantity(productId) {
+      if (this.cartLoading[productId]) return;
+
       const item = this.carts.find((c) => c.product.id === productId);
       if (!item) return;
 
-      if (this.cartLoading[productId]) return;
       this.cartLoading = { ...this.cartLoading, [productId]: true };
       this.error = null;
+      this.clearStockAlert(productId);
 
       try {
+        const availableStock = await this.checkProductStock(productId);
+        if (item.quantity >= availableStock) {
+          this.showStockAlert(productId, `Cannot add more. Only ${availableStock} items available in stock.`);
+          return;
+        }
+
         const newQuantity = item.quantity + 1;
         const response = await axios.put(`/api/carts/cart-item/${item.id}/update/`, {
           quantity: newQuantity,
         });
+
         item.quantity = response.data.quantity || newQuantity;
       } catch (err) {
         console.error("Increment error:", err);
@@ -82,20 +177,21 @@ export const useCartStore = defineStore("cart", {
     },
 
     async decrementQuantity(productId) {
+      if (this.cartLoading[productId]) return;
+
       const item = this.carts.find((c) => c.product.id === productId);
       if (!item) return;
 
-      if (this.cartLoading[productId]) return;
+      const notificationStore = useNotificationStore();
       this.cartLoading = { ...this.cartLoading, [productId]: true };
       this.error = null;
+      this.clearStockAlert(productId);
 
       try {
         if (item.quantity > 1) {
           await this.updateQuantity(item.id, item.quantity - 1);
         } else {
           await this.deleteItem(item.id);
-          // Remove item from carts immediately
-          this.carts = this.carts.filter((c) => c.id !== item.id);
         }
       } catch (error) {
         console.error("Decrement error:", error);
@@ -105,29 +201,15 @@ export const useCartStore = defineStore("cart", {
       }
     },
 
-    async deleteItem(itemId) {
+    async updateQuantity(itemId, quantity) {
       try {
-        await axios.delete(`/api/carts/cart-item/${itemId}/delete/`);
-        this.carts = this.carts.filter((item) => item.id !== itemId);
-      } catch (err) {
-        console.error("Delete error:", err);
-        this.error = "Failed to delete item.";
-      }
-    },
-
-    async updateQuantity(cartId, newQuantity) {
-      if (!cartId || newQuantity < 1) return;
-
-      try {
-        const res = await axios.put(`/api/carts/cart-item/${cartId}/update/`, {
-          quantity: newQuantity,
+        const response = await axios.put(`/api/carts/cart-item/${itemId}/update/`, {
+          quantity,
         });
-        const index = this.carts.findIndex((c) => c.id === cartId);
+
+        const index = this.carts.findIndex((c) => c.id === itemId);
         if (index !== -1) {
-          this.carts[index] = {
-            ...this.carts[index],
-            quantity: res.data.quantity || newQuantity,
-          };
+          this.carts[index].quantity = response.data.quantity || quantity;
         }
       } catch (err) {
         console.error("Update error:", err);
@@ -135,12 +217,29 @@ export const useCartStore = defineStore("cart", {
       }
     },
 
-    getItemTotal(item) {
-      const price = parseFloat(item?.product?.price || 0);
-      const qty = parseInt(item?.quantity || 0);
-      return (isNaN(price) || isNaN(qty) ? 0 : price * qty).toFixed(2);
-    },
+    async deleteItem(itemId) {
+      const item = this.carts.find(c => c.id === itemId);
+      const notificationStore = useNotificationStore();
 
+      try {
+        await axios.delete(`/api/carts/cart-item/${itemId}/delete/`);
+        this.carts = this.carts.filter((c) => c.id !== itemId);
+
+        if (item) {
+          notificationStore.addNotification({
+            id: Date.now(),
+            type: "CART_REMOVE",
+            message: `${item.product.name} removed from cart.`,
+            read: false,
+            created_at: new Date().toISOString(),
+          });
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        this.error = "Failed to remove item.";
+      }
+    },
+    
     getImage(product) {
       if (
         !product?.images ||
@@ -152,16 +251,16 @@ export const useCartStore = defineStore("cart", {
       return `https://techrems.pythonanywhere.com${product.images[0].image}`;
     },
 
-    truncate(text, max = 30) {
-      return !text ? "" : text.length > max ? text.slice(0, max) + "..." : text;
+    showStockAlert(productId, message) {
+      this.stockAlerts[productId] = message;
     },
 
-    goBack() {
-      router.back();
+    clearStockAlert(productId) {
+      delete this.stockAlerts[productId];
     },
 
-    checkout() {
-      router.push("/checkout");
+    showStockAdjustmentAlert() {
+      alert("Some items in your cart were adjusted due to stock changes.");
     },
   },
 });

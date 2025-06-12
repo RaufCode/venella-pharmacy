@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, computed } from "vue";
+    import { ref, computed, onMounted, onUnmounted } from "vue";
     import {
         Bell,
         Package,
@@ -12,132 +12,225 @@
         Search,
         ChevronDown,
     } from "lucide-vue-next";
+    import { useNotificationStore } from "@/stores/notification";
 
+    // Initialize the notification store
+    const notificationStore = useNotificationStore();
+
+    // Component state
     const activeFilter = ref("all");
     const searchTerm = ref("");
     const showMobileFilters = ref(false);
 
-    const notifications = ref([
-        {
-            id: 1,
-            type: "order",
-            title: "Order Confirmed",
-            message:
-                "Your order #PH-2024-001 has been confirmed and is being prepared.",
-            time: "2 mins ago",
-            read: false,
-            icon: Package,
-            color: "text-blue-500",
-            bgColor: "bg-blue-50",
-        },
-        {
-            id: 2,
-            type: "delivery",
-            title: "Out for Delivery",
-            message:
-                "Your medication order is out for delivery. Expected arrival: 3:00 PM",
-            time: "15 mins ago",
-            read: false,
-            icon: Truck,
-            color: "text-orange-500",
-            bgColor: "bg-orange-50",
-        },
-        {
-            id: 3,
-            type: "completed",
-            title: "Order Delivered",
-            message: "Order #PH-2024-002 has been successfully delivered.",
-            time: "1 hour ago",
-            read: true,
-            icon: CheckCircle,
-            color: "text-green-500",
-            bgColor: "bg-green-50",
-        },
-        {
-            id: 4,
-            type: "reminder",
-            title: "Prescription Reminder",
-            message: "Time to take your evening medication - Metformin 500mg",
-            time: "2 hours ago",
-            read: false,
-            icon: Clock,
-            color: "text-purple-500",
-            bgColor: "bg-purple-50",
-        },
-        {
-            id: 5,
-            type: "alert",
-            title: "Low Stock Alert",
-            message:
-                "Your prescribed medication is running low. Consider reordering.",
-            time: "3 hours ago",
-            read: true,
-            icon: AlertCircle,
-            color: "text-red-500",
-            bgColor: "bg-red-50",
-        },
-    ]);
-
-    const unreadCount = computed(
-        () => notifications.value.filter((n) => !n.read).length
-    );
-
-    const filterOptions = computed(() => [
-        { key: "all", label: "All", count: notifications.value.length },
-        {
-            key: "order",
-            label: "Orders",
-            count: notifications.value.filter((n) => n.type === "order").length,
-        },
-        {
-            key: "delivery",
-            label: "Delivery",
-            count: notifications.value.filter((n) => n.type === "delivery")
-                .length,
-        },
-        {
-            key: "reminder",
-            label: "Reminders",
-            count: notifications.value.filter((n) => n.type === "reminder")
-                .length,
-        },
-        {
-            key: "alert",
-            label: "Alerts",
-            count: notifications.value.filter((n) => n.type === "alert").length,
-        },
-    ]);
-
-    const filteredNotifications = computed(() =>
-        notifications.value.filter(
-            (n) =>
-                (activeFilter.value === "all" ||
-                    n.type === activeFilter.value) &&
-                (n.title
-                    .toLowerCase()
-                    .includes(searchTerm.value.toLowerCase()) ||
-                    n.message
-                        .toLowerCase()
-                        .includes(searchTerm.value.toLowerCase()))
-        )
-    );
-
-    const markAsRead = (id) => {
-        const n = notifications.value.find((n) => n.id === id);
-        if (n) n.read = true;
+    // Icon mapping for notification types
+    const iconMap = {
+        NEW_ORDER: Package,
+        ORDER_PROCESSING: Clock,
+        ORDER_DELIVERED: CheckCircle,
+        ORDER_CANCELLED: X,
+        PAYMENT_RECEIVED: CheckCircle,
+        STOCK_ALERT: AlertCircle,
+        SYSTEM_UPDATE: Bell,
+        PROMOTION: Bell,
+        order: Package,
+        delivery: Truck,
+        completed: CheckCircle,
+        reminder: Clock,
+        alert: AlertCircle,
     };
 
-    const markAllAsRead = () => {
-        notifications.value.forEach((n) => (n.read = true));
+    // Color mapping for notification types
+    const colorMap = {
+        NEW_ORDER: { text: "text-blue-500", bg: "bg-blue-50" },
+        ORDER_PROCESSING: { text: "text-orange-500", bg: "bg-orange-50" },
+        ORDER_DELIVERED: { text: "text-green-500", bg: "bg-green-50" },
+        ORDER_CANCELLED: { text: "text-red-500", bg: "bg-red-50" },
+        PAYMENT_RECEIVED: { text: "text-purple-500", bg: "bg-purple-50" },
+        STOCK_ALERT: { text: "text-yellow-500", bg: "bg-yellow-50" },
+        SYSTEM_UPDATE: { text: "text-gray-500", bg: "bg-gray-50" },
+        PROMOTION: { text: "text-pink-500", bg: "bg-pink-50" },
+        order: { text: "text-blue-500", bg: "bg-blue-50" },
+        delivery: { text: "text-orange-500", bg: "bg-orange-50" },
+        completed: { text: "text-green-500", bg: "bg-green-50" },
+        reminder: { text: "text-purple-500", bg: "bg-purple-50" },
+        alert: { text: "text-red-500", bg: "bg-red-50" },
     };
 
-    const deleteNotification = (id) => {
-        notifications.value = notifications.value.filter((n) => n.id !== id);
+    // Computed properties using the store
+    const notifications = computed(() => notificationStore.allNotifications);
+    const unreadCount = computed(() => notificationStore.unreadCount);
+    const isLoading = computed(() => notificationStore.isLoading);
+    const error = computed(() => notificationStore.error);
+
+    // Helper function to get notification icon
+    const getNotificationIcon = (type) => {
+        return iconMap[type] || Bell;
     };
+
+    // Helper function to get notification colors
+    const getNotificationColors = (type) => {
+        return colorMap[type] || { text: "text-gray-500", bg: "bg-gray-50" };
+    };
+
+    // Helper function to format notification for display
+    const formatNotification = (notification) => {
+        const colors = getNotificationColors(notification.type);
+        return {
+            ...notification,
+            icon: getNotificationIcon(notification.type),
+            color: colors.text,
+            bgColor: colors.bg,
+            time: notificationStore.formatNotificationDate(
+                notification.created_at
+            ),
+        };
+    };
+
+    // Filter options computed property
+    const filterOptions = computed(() => {
+        const typeFilters = [
+            { key: "NEW_ORDER", label: "Orders" },
+            { key: "ORDER_PROCESSING", label: "Processing" },
+            { key: "ORDER_DELIVERED", label: "Delivered" },
+            { key: "STOCK_ALERT", label: "Alerts" },
+            { key: "PROMOTION", label: "Promotions" },
+        ];
+
+        const options = [
+            { key: "all", label: "All", count: notifications.value.length },
+        ];
+
+        typeFilters.forEach((filter) => {
+            const count = notificationStore.getNotificationsByType(
+                filter.key
+            ).length;
+            if (count > 0) {
+                options.push({ ...filter, count });
+            }
+        });
+
+        return options;
+    });
+
+    // Filtered notifications computed property
+    const filteredNotifications = computed(() => {
+        let filtered = notifications.value;
+
+        // Filter by type
+        if (activeFilter.value !== "all") {
+            filtered = notificationStore.getNotificationsByType(
+                activeFilter.value
+            );
+        }
+
+        // Filter by search term
+        if (searchTerm.value) {
+            const searchLower = searchTerm.value.toLowerCase();
+            filtered = filtered.filter(
+                (n) =>
+                    n.title?.toLowerCase().includes(searchLower) ||
+                    n.message?.toLowerCase().includes(searchLower)
+            );
+        }
+
+        // Format notifications for display
+        return filtered.map(formatNotification);
+    });
+
+    // Methods
+    const markAsRead = async (id) => {
+        try {
+            await notificationStore.markAsRead(id);
+        } catch (error) {
+            console.error("Failed to mark notification as read:", error);
+        }
+    };
+
+    const markAllAsRead = async () => {
+        try {
+            await notificationStore.markAllAsRead();
+        } catch (error) {
+            console.error("Failed to mark all notifications as read:", error);
+        }
+    };
+
+    const deleteNotification = async (id) => {
+        try {
+            await notificationStore.deleteNotification(id);
+        } catch (error) {
+            console.error("Failed to delete notification:", error);
+        }
+    };
+
+    const clearError = () => {
+        notificationStore.clearError();
+    };
+
+    // Lifecycle hooks
+    onMounted(() => {
+        // Initialize the store - you might want to pass role and userId from props or auth store
+        // For example: notificationStore.initialize('customer', userId);
+        // For now, we'll just fetch notifications if store is already initialized
+        if (notificationStore.role) {
+            notificationStore.fetchNotifications();
+        }
+    });
+
+    onUnmounted(() => {
+        // Clean up polling when component is destroyed
+        notificationStore.stopPolling();
+    });
+
+    // Props (optional - for initialization)
+    const props = defineProps({
+        role: {
+            type: String,
+            default: null,
+            validator: (value) =>
+                ["customer", "salesperson", null].includes(value),
+        },
+        userId: {
+            type: [String, Number],
+            default: null,
+        },
+    });
+
+    // Initialize store if props are provided
+    if (props.role) {
+        notificationStore.initialize(props.role, props.userId);
+    }
 </script>
 
 <template>
     <div class="min-h-screen">
+        <!-- Error Message -->
+        <div
+            v-if="error"
+            class="bg-red-50 border border-red-200 rounded-md p-4 mb-4"
+        >
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <AlertCircle class="h-5 w-5 text-red-400" />
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-red-800">{{ error }}</p>
+                    <button
+                        @click="clearError"
+                        class="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                    >
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div v-if="isLoading" class="flex justify-center items-center py-8">
+            <div
+                class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+            ></div>
+        </div>
+
         <!-- Topbar -->
         <div
             class="bg-white shadow-sm border-b sticky top-0 z-40 hidden md:block"
@@ -155,6 +248,7 @@
                         v-if="unreadCount > 0"
                         @click="markAllAsRead"
                         class="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                        :disabled="isLoading"
                     >
                         Mark all as read
                     </button>
@@ -273,7 +367,7 @@
                 <!-- Notification List -->
                 <div class="flex-1">
                     <div
-                        v-if="filteredNotifications.length === 0"
+                        v-if="filteredNotifications.length === 0 && !isLoading"
                         class="bg-white rounded-lg shadow-sm border p-8 text-center"
                     >
                         <Bell class="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -301,7 +395,7 @@
                                     class="flex gap-4 items-start sm:items-center sm:space-x-4 space-y-2 sm:space-y-0"
                                 >
                                     <div
-                                        :class="` flex-shrink-0 w-10 h-10 rounded-full ${n.bgColor} flex items-center justify-center`"
+                                        :class="`flex-shrink-0 w-10 h-10 rounded-full ${n.bgColor} flex items-center justify-center`"
                                     >
                                         <component
                                             :is="n.icon"
@@ -337,8 +431,17 @@
                                                     v-if="!n.read"
                                                     @click="markAsRead(n.id)"
                                                     class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                                                    :disabled="
+                                                        notificationStore
+                                                            .markingAsRead[n.id]
+                                                    "
                                                 >
-                                                    Mark read
+                                                    {{
+                                                        notificationStore
+                                                            .markingAsRead[n.id]
+                                                            ? "Marking..."
+                                                            : "Mark read"
+                                                    }}
                                                 </button>
                                                 <button
                                                     @click="
