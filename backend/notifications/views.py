@@ -51,3 +51,17 @@ class NotificationViewSet(viewsets.ViewSet):
             context = salesperson_notification_representation(request, notification)
 
         return Response(context, status=status.HTTP_200_OK)
+
+    @delete_notification_schema
+    def delete_notification(self, request, notification_id):
+        notification = get_notification_by_id(notification_id)
+        if not notification:
+            return Response(
+                {"detail": "Notification not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        notification.delete()
+        return Response(
+            {"detail": "Notification deleted successfully"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
