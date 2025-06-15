@@ -25,6 +25,10 @@ class Notification(models.Model):
     def get_type_display(self):
         return dict(self.NOTIFICATION_TYPE_CHOICES).get(self.type, 'Unknown Type')
 
+    @property
+    def type_display(self):
+        return self.get_type_display()
+
     class Meta:
         ordering = ["-created_at"]
 
