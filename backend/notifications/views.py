@@ -45,9 +45,9 @@ class NotificationViewSet(viewsets.ViewSet):
         notification.read = True
         notification.save()
 
-        context = (
-            customer_notification_representation(request, notification)
-            if hasattr(notification, "customer")
-            else salesperson_notification_representation(request, notification)
-        )
+        if hasattr(notification, "customer"):
+            context = customer_notification_representation(request, notification)
+        else:
+            context = salesperson_notification_representation(request, notification)
+
         return Response(context, status=status.HTTP_200_OK)
