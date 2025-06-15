@@ -14,7 +14,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['type'] = instance.get_type_display()
+        data["type"] = instance.type_display
         return data
 
 
@@ -28,6 +28,7 @@ class CustomerNotificationSerializer(serializers.ModelSerializer):
         data["customer"] = UserAccountSerializer(
             instance.customer, context={"request": self.context.get("request")}
         ).data
+        data["type"] = instance.type_display
         return data
 
 
@@ -38,4 +39,5 @@ class SalesPersonNotificationSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data["type"] = instance.type_display
         return data
