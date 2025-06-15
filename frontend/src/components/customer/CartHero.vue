@@ -4,49 +4,55 @@
     import { storeToRefs } from "pinia";
     import { useRouter } from "vue-router";
     import Spinner from "../ui/Spinner.vue";
+    import { Trash2, Plus, Minus, ArrowLeft } from "lucide-vue-next";
 
     const router = useRouter();
     const cartStore = useCartStore();
-    const { carts, isLoading, error, subtotal } = storeToRefs(cartStore);
+    const { carts, isLoading, error, subtotal, stockAlerts } =
+        storeToRefs(cartStore);
 
     const {
         fetchCartItems,
         deleteItem,
         updateQuantity,
-        getItemTotal,
+        clearStockAlert,
+        checkProductStock,
+        showStockAlert,
         getImage,
-        truncate,
-        clearError,
     } = cartStore;
 
-    onMounted(() => {
-        fetchCartItems();
-    });
+    onMounted(fetchCartItems);
 
-    const goBack = () => {
-        if (window.history.length > 1) {
-            router.back();
-        } else {
-            router.push("/");
-        }
-    };
+    const goBack = () =>
+        window.history.length > 1 ? router.back() : router.push("/");
 
-    const onErrorImage = (event) => {
-        event.target.src = "/placeholder-image.jpg";
-    };
+    const truncate = (text, len = 60) =>
+        text?.length > len ? text.slice(0, len) + "..." : text || "";
 
-    const onDecreaseQty = (id, qty) => {
-        if (qty > 1) updateQuantity(id, qty - 1);
-    };
+    const getItemTotal = (item) =>
+        ((+item?.product?.price || 0) * (+item?.quantity || 0)).toFixed(2);
 
-    const onIncreaseQty = (id, qty) => {
-        updateQuantity(id, qty + 1);
+    const getStockAlert = (id) => stockAlerts.value[id] || null;
+
+    const onErrorImage = (e) => (e.target.src = "/placeholder-image.jpg");
+
+    const onDecreaseQty = (id, qty) => qty > 1 && updateQuantity(id, qty - 1);
+
+    const onIncreaseQty = async (item) => {
+        const stock = await checkProductStock(item.product.id);
+        item.quantity >= stock
+            ? showStockAlert(
+                  item.product.id,
+                  `Cannot add more. Only ${stock} items available.`
+              )
+            : updateQuantity(item.id, item.quantity + 1);
     };
 
     const proceedCheckout = () => {
-        if (carts.value.length === 0) return;
-        cartStore.checkout(); // Assuming this is defined in your store
+        if (carts.value.length > 0) router.push("/checkout");
     };
+
+    const clearError = () => (cartStore.error = null);
 </script>
 
 <template>
@@ -56,17 +62,13 @@
             class="bg-gray-white text-white p-4 flex shadow items-center justify-between gap-4 sticky top-0 z-50"
         >
             <h1 class="text-gray-700 font-styleScript text-lg md:text-2xl">
-                Your Cart<span
-                    v-if="carts.length > 1"
-                    class="text-gray-700 font-styleScript text-lg md:text-2xl"
-                    >s</span
-                >
+                Your Cart<span v-if="carts.length > 1">s</span>
             </h1>
             <button
                 @click="goBack"
-                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-full flex justify-center items-center gap-3"
+                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-full flex justify-center items-center gap-2"
             >
-                <i class="pi pi-arrow-left"></i> Back
+                <ArrowLeft class="w-4 h-4" /> Back
             </button>
         </header>
 
@@ -81,7 +83,7 @@
             </button>
         </div>
 
-        <!-- Loading State -->
+        <!-- Loading Spinner -->
         <div v-if="isLoading" class="flex justify-center items-center py-20">
             <Spinner />
         </div>
@@ -122,7 +124,7 @@
                                 :disabled="cart.quantity <= 1"
                                 class="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300 text-xs md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                −
+                                <Minus class="w-4 h-4" />
                             </button>
                             <span
                                 class="font-semibold text-sm md:text-base min-w-[2rem] text-center"
@@ -130,10 +132,10 @@
                                 {{ cart.quantity }}
                             </span>
                             <button
-                                @click="onIncreaseQty(cart.id, cart.quantity)"
+                                @click="onIncreaseQty(cart)"
                                 class="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300 text-xs md:text-base"
                             >
-                                +
+                                <Plus class="w-4 h-4" />
                             </button>
                         </div>
                     </div>
@@ -149,7 +151,7 @@
                             class="text-red-500 hover:text-red-700 transition-colors"
                             title="Remove item"
                         >
-                            <i class="pi pi-trash"></i>
+                            <Trash2 class="w-4 h-4" />
                         </button>
                     </div>
                 </div>
@@ -185,9 +187,9 @@
                 </h2>
 
                 <div class="flex justify-between items-center">
-                    <span class="text-gray-600 text-sm">
-                        Subtotal ({{ carts.length }} items)
-                    </span>
+                    <span class="text-gray-600 text-sm"
+                        >Subtotal ({{ carts.length }} items)</span
+                    >
                     <span class="font-semibold text-orange-600"
                         >GH₵ {{ subtotal }}</span
                     >

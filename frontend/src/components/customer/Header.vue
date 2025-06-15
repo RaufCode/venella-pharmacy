@@ -3,18 +3,23 @@
     import { useRoute, useRouter } from "vue-router";
     import { useAuthStore } from "@/stores/auth";
     import { useMedStore } from "@/stores/medStore";
+    import { useNotificationStore } from "@/stores/notification";
 
     const route = useRoute();
     const router = useRouter();
 
     const auth = useAuthStore();
     const medStore = useMedStore();
+    const notificationStore = useNotificationStore();
 
     const isAuthenticated = computed(() => auth.isAuthenticated);
     const showMobileNav = ref(false);
     const searchTerm = ref("");
     const isSearching = ref(false);
     const searchResults = computed(() => medStore.searchResults);
+    const unreadCount = computed(
+        () => notificationStore.notifications.filter((n) => !n.read).length
+    );
 
     function toggleMobileNav() {
         showMobileNav.value = !showMobileNav.value;
@@ -99,6 +104,18 @@
             <nav class="hidden lg:flex items-center gap-6">
                 <router-link
                     v-if="isAuthenticated"
+                    to="/notification"
+                    class="relative text-gray-700 hover:text-orange-600 block"
+                >
+                    <i class="pi pi-bell text-xl"></i>
+                    <span
+                        v-if="unreadCount > 0"
+                        class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-500 rounded-full"
+                    ></span>
+                </router-link>
+
+                <router-link
+                    v-if="isAuthenticated"
                     to="/"
                     :class="[
                         'text-gray-700 border-b-2 transition-all duration-500',
@@ -151,17 +168,33 @@
                 </router-link>
             </nav>
 
-            <!-- Mobile Nav Toggle -->
-            <button
-                @click="toggleMobileNav"
-                class="lg:hidden text-2xl text-orange-600 focus:outline-none"
-                aria-label="Toggle mobile navigation"
-            >
-                <i :class="showMobileNav ? 'pi pi-times' : 'pi pi-bars'"></i>
-            </button>
+            <!-- Mobile Right: Notification + Hamburger -->
+            <div class="flex items-center gap-4 lg:hidden">
+                <router-link
+                    v-if="isAuthenticated"
+                    to="/notification"
+                    class="relative text-orange-600"
+                >
+                    <i class="pi pi-bell text-xl"></i>
+                    <span
+                        v-if="unreadCount > 0"
+                        class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-500 rounded-full"
+                    ></span>
+                </router-link>
+
+                <button
+                    @click="toggleMobileNav"
+                    class="text-2xl text-orange-600 focus:outline-none"
+                    aria-label="Toggle mobile navigation"
+                >
+                    <i
+                        :class="showMobileNav ? 'pi pi-times' : 'pi pi-bars'"
+                    ></i>
+                </button>
+            </div>
         </div>
 
-        <!-- Mobile Search Bar (shows only when mobile nav is closed) -->
+        <!-- Mobile Search Bar -->
         <div
             v-if="!showMobileNav"
             class="md:hidden fixed top-[64px] inset-x-0 px-4 py-2 z-40"
@@ -206,7 +239,7 @@
             </div>
         </div>
 
-        <!-- Mobile Nav (shows only when mobile nav is open) -->
+        <!-- Mobile Nav -->
         <transition name="fade">
             <nav
                 v-if="showMobileNav"
@@ -216,10 +249,10 @@
                     v-if="isAuthenticated"
                     to="/"
                     :class="[
-                        'block text-gray-700 ',
+                        'block text-gray-700',
                         route.path === '/'
-                            ? 'border-orange-600 text-orange-600'
-                            : ' hover:text-orange-600',
+                            ? 'text-orange-600'
+                            : 'hover:text-orange-600',
                     ]"
                     @click="toggleMobileNav"
                 >
@@ -238,10 +271,19 @@
                 <router-link
                     v-if="isAuthenticated"
                     to="/orders"
-                    :class="['block text-gray-700', route.path === '/orders']"
+                    class="block text-gray-700"
                     @click="toggleMobileNav"
                 >
                     Orders
+                </router-link>
+
+                <router-link
+                    v-if="isAuthenticated"
+                    to="/notifications"
+                    class="block text-gray-700"
+                    @click="toggleMobileNav"
+                >
+                    Notifications
                 </router-link>
 
                 <button

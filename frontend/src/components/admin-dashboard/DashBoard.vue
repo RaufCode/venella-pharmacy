@@ -100,10 +100,7 @@
                 </div>
 
                 <!-- Navigation Buttons -->
-                <nav
-                    class="md:flex flex-col gap-6"
-                    aria-label="Main navigation"
-                >
+                <nav class="md:flex flex-col" aria-label="Main navigation">
                     <button
                         v-for="tab in [
                             {

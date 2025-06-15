@@ -9,6 +9,7 @@ import ProductDetailsView from '../views/ProductDetailsView.vue'
 import SalesPersonView from '../views/SalesPersonView.vue'
 import CheckoutView from '../views/CheckOutView.vue'
 import OrderDetailsView from '../views/OrderDetailsView.vue'
+import CusNotificationView from '../views/CusNotificationView.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -71,6 +72,12 @@ const router = createRouter({
       name: 'salesperson',
       component: SalesPersonView,
       meta: { requiresAuth: true, requiresRole: 'salesperson' },
+    },
+    {
+      path: '/notification',
+      name: 'notifications',
+      component: CusNotificationView,
+      meta: { requiresAuth: true },
     },
   ],
 })
