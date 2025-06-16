@@ -38,3 +38,14 @@ mark_as_read_schema = extend_schema(
     },
     tags=["Notifications"],
 )
+
+
+delete_notification_schema = extend_schema(
+    summary="Delete Notification",
+    description="Deletes a specific notification.",
+    request=None,
+    responses={
+        204: None,
+    },
+    tags=["Notifications"],
+)

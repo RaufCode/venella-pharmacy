@@ -46,7 +46,9 @@ def get_salesperson_notifications():
 
 
 def salesperson_notification_representation(
-    request: HttpRequest, salesperson_notification: SalesPersonNotification, many: bool
+    request: HttpRequest,
+    salesperson_notification: SalesPersonNotification,
+    many: bool = False,
 ):
     serializer = SalesPersonNotificationSerializer(
         salesperson_notification, many=many, context={"request": request}

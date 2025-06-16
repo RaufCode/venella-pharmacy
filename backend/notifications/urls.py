@@ -15,4 +15,8 @@ urlpatterns = [
         "<str:notification_id>/mark-as-read/",
         NotificationViewSet.as_view({"put": "mark_as_read"}),
     ),
+    path(
+        "<str:notification_id>/delete/",
+        NotificationViewSet.as_view({"delete": "delete_notification"}),
+    ),
 ]
