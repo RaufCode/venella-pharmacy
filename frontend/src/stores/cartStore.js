@@ -2,7 +2,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "@/router";
-import { useNotificationStore } from "./notification";
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
@@ -15,15 +14,14 @@ export const useCartStore = defineStore("cart", {
 
   getters: {
     cartCount: (state) => state.carts.length,
-    subtotal: (state) => {
-      return state.carts
+    subtotal: (state) =>
+      state.carts
         .reduce((total, item) => {
           const price = parseFloat(item?.product?.price || 0);
           const qty = parseInt(item?.quantity || 0);
           return total + (isNaN(price) || isNaN(qty) ? 0 : price * qty);
         }, 0)
-        .toFixed(2);
-    },
+        .toFixed(2),
   },
 
   actions: {
@@ -33,15 +31,8 @@ export const useCartStore = defineStore("cart", {
       try {
         const response = await axios.get("/api/carts/customer/cart-items/");
         const cartItems = response.data || [];
-        
-        // Set the carts immediately with the fetched data
         this.carts = cartItems;
-        
-        // Validate and adjust quantities in the background (non-blocking)
-        // This prevents the cart from appearing empty while validation happens
-        this.validateAndAdjustCartQuantities(cartItems).catch(error => {
-          console.error("Validation error (non-critical):", error);
-        });
+        await this.validateAndAdjustCartQuantities(cartItems);
       } catch (err) {
         console.error("Fetch error:", err);
         this.error = "Failed to load cart items.";
@@ -62,20 +53,18 @@ export const useCartStore = defineStore("cart", {
 
           if (item.quantity > currentStock) {
             if (currentStock > 0) {
-              const adjustedItem = { ...item, quantity: currentStock };
-              adjustedItems.push(adjustedItem);
               await this.updateQuantity(item.id, currentStock);
+              adjustedItems.push({ ...item, quantity: currentStock });
               hasAdjustments = true;
             } else {
               await this.deleteItem(item.id);
               hasAdjustments = true;
-              continue;
             }
           } else {
             adjustedItems.push(item);
           }
         } catch (error) {
-          console.error(`Error checking stock for product ${item.product.id}:`, error);
+          console.error(`Stock check failed for product ${item.product.id}:`, error);
           adjustedItems.push(item);
         }
       }
@@ -99,46 +88,33 @@ export const useCartStore = defineStore("cart", {
     async addToCart(productId) {
       if (this.cartLoading[productId]) return;
 
-      const notificationStore = useNotificationStore();
       this.cartLoading = { ...this.cartLoading, [productId]: true };
       this.error = null;
       this.clearStockAlert(productId);
 
       try {
-        const availableStock = await this.checkProductStock(productId);
-
-        if (availableStock <= 0) {
+        const stock = await this.checkProductStock(productId);
+        if (stock <= 0) {
           this.showStockAlert(productId, "This item is out of stock.");
           return;
         }
 
         const existingItem = this.carts.find(c => c.product.id === productId);
-        const currentCartQuantity = existingItem ? existingItem.quantity : 0;
+        const currentQty = existingItem ? existingItem.quantity : 0;
 
-        if (currentCartQuantity >= availableStock) {
-          this.showStockAlert(productId, `Cannot add more. Only ${availableStock} items available in stock.`);
+        if (currentQty >= stock) {
+          this.showStockAlert(productId, `Cannot add more. Only ${stock} in stock.`);
           return;
         }
 
-        await axios.post('/api/carts/cart-items/add/', {
+        await axios.post("/api/carts/cart-items/add/", {
           product: productId,
           quantity: 1,
         });
 
         await this.fetchCartItems();
-
-        const addedProduct = this.carts.find(c => c.product.id === productId)?.product;
-        if (addedProduct) {
-          notificationStore.addNotification({
-            id: Date.now(),
-            type: "CART_ADD",
-            message: `${addedProduct.name} added to cart.`,
-            read: false,
-            created_at: new Date().toISOString(),
-          });
-        }
       } catch (error) {
-        console.error('Add to cart error:', error);
+        console.error("Add to cart error:", error);
         this.error = "Failed to add to cart.";
       } finally {
         this.cartLoading = { ...this.cartLoading, [productId]: false };
@@ -148,7 +124,7 @@ export const useCartStore = defineStore("cart", {
     async incrementQuantity(productId) {
       if (this.cartLoading[productId]) return;
 
-      const item = this.carts.find((c) => c.product.id === productId);
+      const item = this.carts.find(c => c.product.id === productId);
       if (!item) return;
 
       this.cartLoading = { ...this.cartLoading, [productId]: true };
@@ -156,20 +132,20 @@ export const useCartStore = defineStore("cart", {
       this.clearStockAlert(productId);
 
       try {
-        const availableStock = await this.checkProductStock(productId);
-        if (item.quantity >= availableStock) {
-          this.showStockAlert(productId, `Cannot add more. Only ${availableStock} items available in stock.`);
+        const stock = await this.checkProductStock(productId);
+        if (item.quantity >= stock) {
+          this.showStockAlert(productId, `Cannot add more. Only ${stock} in stock.`);
           return;
         }
 
-        const newQuantity = item.quantity + 1;
+        const newQty = item.quantity + 1;
         const response = await axios.put(`/api/carts/cart-item/${item.id}/update/`, {
-          quantity: newQuantity,
+          quantity: newQty,
         });
 
-        item.quantity = response.data.quantity || newQuantity;
-      } catch (err) {
-        console.error("Increment error:", err);
+        item.quantity = response.data.quantity || newQty;
+      } catch (error) {
+        console.error("Increment error:", error);
         this.error = "Failed to increment quantity.";
       } finally {
         this.cartLoading = { ...this.cartLoading, [productId]: false };
@@ -179,10 +155,9 @@ export const useCartStore = defineStore("cart", {
     async decrementQuantity(productId) {
       if (this.cartLoading[productId]) return;
 
-      const item = this.carts.find((c) => c.product.id === productId);
+      const item = this.carts.find(c => c.product.id === productId);
       if (!item) return;
 
-      const notificationStore = useNotificationStore();
       this.cartLoading = { ...this.cartLoading, [productId]: true };
       this.error = null;
       this.clearStockAlert(productId);
@@ -203,43 +178,27 @@ export const useCartStore = defineStore("cart", {
 
     async updateQuantity(itemId, quantity) {
       try {
-        const response = await axios.put(`/api/carts/cart-item/${itemId}/update/`, {
-          quantity,
-        });
-
-        const index = this.carts.findIndex((c) => c.id === itemId);
+        const response = await axios.put(`/api/carts/cart-item/${itemId}/update/`, { quantity });
+        const index = this.carts.findIndex(c => c.id === itemId);
         if (index !== -1) {
           this.carts[index].quantity = response.data.quantity || quantity;
         }
-      } catch (err) {
-        console.error("Update error:", err);
+      } catch (error) {
+        console.error("Update quantity error:", error);
         this.error = "Failed to update quantity.";
       }
     },
 
     async deleteItem(itemId) {
-      const item = this.carts.find(c => c.id === itemId);
-      const notificationStore = useNotificationStore();
-
       try {
         await axios.delete(`/api/carts/cart-item/${itemId}/delete/`);
-        this.carts = this.carts.filter((c) => c.id !== itemId);
-
-        if (item) {
-          notificationStore.addNotification({
-            id: Date.now(),
-            type: "CART_REMOVE",
-            message: `${item.product.name} removed from cart.`,
-            read: false,
-            created_at: new Date().toISOString(),
-          });
-        }
+        this.carts = this.carts.filter(c => c.id !== itemId);
       } catch (error) {
-        console.error("Delete error:", error);
+        console.error("Delete item error:", error);
         this.error = "Failed to remove item.";
       }
     },
-    
+
     getImage(product) {
       if (
         !product?.images ||

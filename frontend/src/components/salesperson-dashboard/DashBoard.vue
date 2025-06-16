@@ -1,13 +1,15 @@
 <script setup>
-    import { ref, computed, onUnmounted, watch } from "vue";
+    import { ref, computed, onMounted, onUnmounted, watch } from "vue";
     import { useRoute, useRouter } from "vue-router";
+
     import { useOrderStore } from "@/stores/orderStore";
+    import { useNotificationStore } from "@/stores/notification"; // ✅ Import notification store
 
     import OverView from "./OverView.vue";
     import MedicationHero from "./MedicationHero.vue";
     import OrdersHero from "./OrdersHero.vue";
     import SalesHero from "./SalesHero.vue";
-    import Notifications from "./Notifications.vue"; // Add this if not already
+    import Notifications from "./Notifications.vue";
 
     import {
         Menu,
@@ -22,14 +24,17 @@
 
     const route = useRoute();
     const router = useRouter();
+
     const orderStore = useOrderStore();
+    const notificationStore = useNotificationStore(); // ✅ Initialize store
 
     const activeTab = ref(route.query.tab || "overview");
     const hamburger = ref(false);
 
-    // Notification count (replace this with dynamic value if needed)
-    const notificationCount = ref(3);
+    // ✅ Computed unread notifications from store
+    const notificationCount = computed(() => notificationStore.unreadCount);
 
+    // Watch for tab changes
     watch(
         () => route.query.tab,
         (newTab) => {
@@ -37,6 +42,7 @@
         }
     );
 
+    // Get label for top title
     const tabLabel = computed(() => {
         switch (activeTab.value) {
             case "overview":
@@ -54,9 +60,12 @@
         }
     });
 
-    let pollingInterval;
+    onMounted(() => {
+        notificationStore.startPolling(); // ✅ Start notification polling
+    });
+
     onUnmounted(() => {
-        clearInterval(pollingInterval);
+        notificationStore.stopPolling(); // ✅ Stop polling to clean up
     });
 
     function navigate(tabKey) {
@@ -181,7 +190,7 @@
                         <Bell class="w-5 h-5 mr-2" />
                         Notifications
 
-                        <!-- Notification badge -->
+                        <!-- ✅ Real-Time Notification Badge -->
                         <span
                             v-if="notificationCount > 0"
                             class="absolute top-0 right-[95px] md:right-12 lg:right-20 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full"

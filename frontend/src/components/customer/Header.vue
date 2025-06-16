@@ -1,22 +1,32 @@
 <script setup>
-    import { ref, computed } from "vue";
+    import { ref, computed, onMounted } from "vue";
     import { useRoute, useRouter } from "vue-router";
     import { useAuthStore } from "@/stores/auth";
     import { useMedStore } from "@/stores/medStore";
-    import { useNotificationStore } from "@/stores/notification";
+    import { useNotificationStore } from "@/stores/notification"; // ✅ Import
 
     const route = useRoute();
     const router = useRouter();
 
     const auth = useAuthStore();
     const medStore = useMedStore();
-    const notificationStore = useNotificationStore();
+    const notificationStore = useNotificationStore(); // ✅ Init notification store
 
     const isAuthenticated = computed(() => auth.isAuthenticated);
     const showMobileNav = ref(false);
     const searchTerm = ref("");
     const isSearching = ref(false);
     const searchResults = computed(() => medStore.searchResults);
+
+    // ✅ Fetch notifications when authenticated and mounted
+    onMounted(() => {
+        if (isAuthenticated.value) {
+            notificationStore.fetchNotifications();
+            notificationStore.startPolling();
+        }
+    });
+
+    // ✅ Computed unread count
     const unreadCount = computed(
         () => notificationStore.notifications.filter((n) => !n.read).length
     );
@@ -173,7 +183,7 @@
                 <router-link
                     v-if="isAuthenticated"
                     to="/notification"
-                    class="relative text-orange-600"
+                    class="relative"
                 >
                     <i class="pi pi-bell text-xl"></i>
                     <span
@@ -276,16 +286,6 @@
                 >
                     Orders
                 </router-link>
-
-                <router-link
-                    v-if="isAuthenticated"
-                    to="/notifications"
-                    class="block text-gray-700"
-                    @click="toggleMobileNav"
-                >
-                    Notifications
-                </router-link>
-
                 <button
                     v-if="isAuthenticated"
                     @click="

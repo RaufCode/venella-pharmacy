@@ -75,7 +75,7 @@ const router = createRouter({
     },
     {
       path: '/notification',
-      name: 'notifications',
+      name: 'notification',
       component: CusNotificationView,
       meta: { requiresAuth: true },
     },

@@ -3,6 +3,8 @@
     import { useOrderStore } from "@/stores/orderStore";
     import { useAuthStore } from "@/stores/auth";
     import { useMedStore } from "@/stores/medStore";
+    import { useNotificationStore } from "@/stores/notification"; // ✅ Import store
+
     import {
         ChartSpline,
         Bell,
@@ -13,12 +15,16 @@
     const orderStore = useOrderStore();
     const authStore = useAuthStore();
     const medStore = useMedStore();
+    const notificationStore = useNotificationStore(); // ✅ Store instance
 
     onMounted(() => {
         orderStore.fetchAllOrders();
         medStore.fetchProducts(); // Fetch meds to calculate stock
-        console.log("Orders fetched:", orderStore.orders);
+        notificationStore.startPolling(); // ✅ Optional: Start real-time updates
     });
+
+    // ✅ Real notification count
+    const notificationCount = computed(() => notificationStore.unreadCount);
 
     const totalSales = computed(() => {
         return orderStore.orders
@@ -113,7 +119,7 @@
                     <ChartSpline class="text-green-500 w-6 h-6" />
                 </div>
 
-                <!-- Notifications -->
+                <!-- Notifications (real-time count) -->
                 <div
                     class="flex items-center justify-between rounded-lg shadow hover:shadow-md transition-shadow p-6 bg-white"
                 >
@@ -124,7 +130,7 @@
                         <p
                             class="text-2xl font-semibold font-poppins text-red-500"
                         >
-                            10
+                            {{ notificationCount }}
                         </p>
                     </div>
                     <Bell class="text-red-500 w-6 h-6" />

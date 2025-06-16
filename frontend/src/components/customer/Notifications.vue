@@ -1,113 +1,170 @@
+<script setup>
+    import { ArrowLeft, Bell, Search, Trash2 } from "lucide-vue-next";
+    import { computed, ref, onMounted, onUnmounted } from "vue";
+    import { useNotificationStore } from "@/stores/notification";
+
+    const goBack = () => {
+        window.history.back();
+    };
+
+    const notificationStore = useNotificationStore();
+    const searchTerm = ref("");
+
+    // Unread count for red bubble
+    const unreadCount = computed(() => notificationStore.unreadCount);
+
+    // Filtered notifications based on search
+    const filteredNotifications = computed(() => {
+        const term = searchTerm.value.toLowerCase();
+        return notificationStore.notifications.filter((n) =>
+            n.content.toLowerCase().includes(term)
+        );
+    });
+
+    // Mark all visible notifications as read
+    const markAll = () => {
+        filteredNotifications.value.forEach((notif) => {
+            if (!notif.read) {
+                notificationStore.markAsRead(notif.id);
+            }
+        });
+    };
+
+    // Delete handler
+    const deleteNotification = async (id) => {
+        const confirmDelete = confirm("Delete this notification?");
+        if (!confirmDelete) return;
+
+        try {
+            await notificationStore.deleteNotification(id);
+        } catch (error) {
+            console.error("Failed to delete notification", error);
+        }
+    };
+
+    // Format date and time
+    function formatDateTime(datetime) {
+        const date = new Date(datetime);
+        return {
+            date: date.toLocaleDateString(),
+            time: date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+            }),
+        };
+    }
+
+    // Start/stop polling
+    onMounted(() => {
+        notificationStore.startPolling();
+    });
+    onUnmounted(() => {
+        notificationStore.stopPolling();
+    });
+</script>
+
 <template>
-    <div
-        class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100"
-    >
-        <!-- Topbar -->
+    <div class="relative w-full min-h-screen bg-gray-100">
+        <!-- Header -->
         <div
-            class="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20 sticky top-0 z-40"
+            class="flex items-center p-4 justify-between shadow fixed top-0 z-50 w-full bg-white"
         >
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-20">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-3">
-                            <div
-                                class="w-10 h-10 rounded-xl flex items-center justify-center"
-                            >
-                                <i class="pi pi-bell text-2xl text-gray-700">
-                                </i>
-                            </div>
-                            <div>
-                                <h1 class="text-2xl font-bold text-orange-600">
-                                    Notifications
-                                </h1>
-                                <p class="text-sm text-gray-600">
-                                    Stay updated with your activities
-                                </p>
-                            </div>
-                        </div>
-                        <div class="hidden sm:flex items-center space-x-2">
-                            <span
-                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800"
-                            >
-                                <!-- Placeholder for unread count -->
-                                unreadCount
-                            </span>
-                        </div>
-                    </div>
-                    <button
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    >
-                        Mark all as read
-                    </button>
+            <button><ArrowLeft @click="goBack" /></button>
+
+            <!-- Title and Bell with Bubble -->
+            <div class="relative flex items-center space-x-2">
+                <h1 class="font-medium">Notifications</h1>
+                <div class="relative">
+                    <Bell class="w-5 h-5 text-gray-600" />
+                    <span
+                        v-if="unreadCount > 0"
+                        class="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"
+                    ></span>
                 </div>
             </div>
+
+            <!-- Mark All -->
+            <h1
+                class="text-xs py-2 px-3 rounded-full bg-blue-500 text-white cursor-pointer"
+                @click="markAll"
+            >
+                Mark all
+            </h1>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="flex flex-col lg:flex-row gap-8">
-                <!-- Filters Sidebar (desktop) -->
-                <div class="lg:w-72 flex-shrink-0 hidden lg:block">
-                    <div
-                        class="bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 sticky top-28"
-                    >
-                        <h3
-                            class="font-bold text-gray-800 mb-6 flex items-center text-lg"
+        <!-- Main Content -->
+        <div
+            class="flex flex-col items-center justify-center pt-20 container mx-auto p-4"
+        >
+            <!-- Search Input -->
+            <div class="w-full max-w-xl">
+                <div class="relative mb-4">
+                    <Search
+                        class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
+                    />
+                    <input
+                        v-model="searchTerm"
+                        placeholder="Search notifications..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-orange-700"
+                    />
+                </div>
+            </div>
+
+            <!-- Notifications List -->
+            <div
+                v-for="notification in filteredNotifications"
+                :key="notification.id"
+                class="max-w-xl text-justify shadow p-4 mb-2 bg-white rounded w-full"
+            >
+                <div class="flex items-center mb-4 justify-between">
+                    <div class="flex items-center space-x-2">
+                        <Bell class="w-4 h-4 text-gray-500" />
+                        <h1
+                            class="font-semibold capitalize text-gray-700 text-sm"
                         >
-                            <i class="pi pi-bell h-5 w-5 mr-3 text-blue-500">
-                            </i>
-                            Filters
-                        </h3>
-                        <div class="relative mb-6">
-                            <i
-                                class="pi pi-bell h-5 w-5 mr-3 text-blue-500"
-                            ></i>
-                            <input
-                                placeholder="Search notifications..."
-                                class="w-full pl-12 pr-4 py-3 bg-white/70 border border-gray-200 rounded-xl focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm"
-                            />
-                        </div>
-                        <div class="space-y-2">
-                            <!-- Filter options placeholder -->
-                        </div>
+                            {{ notification.type }}
+                        </h1>
                     </div>
+                    <span
+                        v-if="!notification.read"
+                        class="text-xs py-1 px-2 rounded-full bg-red-500 text-white"
+                    >
+                        new
+                    </span>
                 </div>
 
-                <!-- Accordion Filter (mobile/tablet) -->
-                <div class="lg:hidden">
-                    <button
-                        class="flex items-center justify-between w-full px-5 py-4 bg-white/60 backdrop-blur-sm border border-white/20 rounded-2xl shadow-lg text-sm font-medium text-gray-700"
-                    >
-                        <span class="flex items-center">
-                            <i
-                                class="pi pi-bell h-5 w-5 mr-3 text-blue-500"
-                            ></i>
-                            Filters & Search
-                        </span>
-                        <i class="pi pi-bell h-5 w-5 mr-3 text-blue-500"></i>
-                    </button>
-                </div>
-
-                <!-- Notification List -->
-                <div class="flex-1">
-                    <div
-                        class="bg-white/60 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-12 text-center"
-                    >
-                        <div
-                            class="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6"
+                <div>
+                    <p class="text-gray-600 text-sm">
+                        {{ notification.content }}
+                    </p>
+                    <p class="text-xs mt-1 text-gray-400 flex space-x-2">
+                        <span>{{
+                            formatDateTime(notification.created_at).date
+                        }}</span>
+                        <span>{{
+                            formatDateTime(notification.created_at).time
+                        }}</span>
+                    </p>
+                    <div>
+                        <button
+                            v-if="!notification.read"
+                            class="mt-2 p-1 text-sm text-blue-500 hover:underline"
+                            @click="
+                                notificationStore.markAsRead(notification.id)
+                            "
                         >
-                            <i
-                                class="pi pi-bell h-5 w-5 mr-3 text-blue-500"
-                            ></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-3">
-                            No notifications found
-                        </h3>
-                        <p class="text-gray-600 text-lg">
-                            You're all caught up! Check back later for updates.
-                        </p>
+                            Mark as read
+                        </button>
+                        <button
+                            class="mt-2 p-1 text-sm text-red-500 hover:underline"
+                            @click="deleteNotification(notification.id)"
+                        >
+                            <Trash2 class="h-4 w-4" />
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+>

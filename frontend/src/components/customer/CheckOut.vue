@@ -4,6 +4,7 @@
     import router from "@/router";
     import { useCartStore } from "@/stores/cartStore";
     import { useOrderStore } from "@/stores/orderStore";
+    import { ArrowLeft } from "lucide-vue-next";
 
     const cartStore = useCartStore();
     const orderStore = useOrderStore();
@@ -103,14 +104,11 @@
             >
                 <div class="p-2 md:p-6">
                     <button
-                        type="button"
                         @click="goBack"
-                        aria-label="Go back"
-                        class="flex items-center text-gray-600 hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-600 transition mb-4"
+                        class="px-4 py-2 mb-4 bg-orange-600 hover:bg-orange-700 text-white rounded-full flex justify-center items-center gap-2"
                     >
-                        <i class="pi pi-arrow-left mr-2"></i> Go Back
+                        <ArrowLeft class="w-4 h-4" /> Back
                     </button>
-
                     <div v-if="cartStore.isLoading" class="text-center py-8">
                         <p class="text-gray-600">Loading cart items...</p>
                     </div>
@@ -176,9 +174,6 @@
                                         >
                                             ₵{{ item.product?.price || 0 }} x
                                             {{ item.quantity || 0 }}
-                                        </p>
-                                        <p class="text-sm text-gray-600">
-                                            ₵{{ cartStore.getItemTotal(item) }}
                                         </p>
                                     </div>
                                 </li>
