@@ -72,69 +72,94 @@
 </script>
 
 <template>
-    <main class="min-h-screen bg-gray-50">
-        <section class="container mx-auto px-4 lg:px-10 pt-32 pb-10">
-            <h1 class="text-xl font-semibold text-gray-700 mb-6">
-                Products Available
-            </h1>
+    <main class="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-32 pb-10">
+        <section class="container mx-auto px-4 lg:px-10">
+            <!-- Header Section -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
+                    Available <span class="text-orange-600">Medications</span>
+                </h1>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                    Browse through our carefully curated selection of quality medications and health products
+                </p>
+            </div>
 
             <Spinner v-if="isLoadingProducts" />
 
+            <!-- Products Grid -->
             <div
-                v-else
-                class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                v-else-if="products.length > 0"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
                 <article
                     v-for="product in products"
                     :key="product.id"
                     @click="() => navigateToProduct(product.id)"
-                    class="bg-white rounded-2xl hover:shadow-md transition p-4 flex flex-col cursor-pointer"
+                    class="group bg-white rounded-2xl hover:shadow-xl transition-all duration-300 p-6 flex flex-col cursor-pointer border border-gray-100 hover:border-orange-200 hover:-translate-y-1"
                 >
-                    <div class="h-40 bg-gray-100 overflow-hidden mb-3">
+                    <!-- Product Image -->
+                    <div class="relative h-48 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden mb-4">
                         <img
                             :src="`https://techrems.pythonanywhere.com${product.images?.[0]?.image}`"
                             :alt="product.name"
-                            class="w-full h-full object-cover"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             @error="
                                 $event.target.src = '/placeholder-image.jpg'
                             "
                         />
+                        <!-- Stock indicator -->
+                        <div class="absolute top-3 left-3">
+                            <span 
+                                :class="[
+                                    'px-2 py-1 text-xs font-medium rounded-full',
+                                    product.stock > 10 
+                                        ? 'bg-green-100 text-green-700' 
+                                        : product.stock > 0 
+                                            ? 'bg-yellow-100 text-yellow-700' 
+                                            : 'bg-red-100 text-red-700'
+                                ]"
+                            >
+                                {{ product.stock > 0 ? `${product.stock} left` : 'Out of stock' }}
+                            </span>
+                        </div>
                     </div>
 
-                    <p
-                        class="text-xs bg-orange-600 px-3 py-1 mb-2 text-white rounded-full w-max"
-                    >
-                        {{ product.brand || "No brand name" }}
-                    </p>
+                    <!-- Brand Badge -->
+                    <div class="mb-3">
+                        <span class="inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1 text-xs font-medium rounded-full">
+                            {{ product.brand || "Generic" }}
+                        </span>
+                    </div>
 
-                    <h3
-                        class="font-semibold text-sm text-gray-800 truncate mb-1"
-                    >
-                        {{ product.name }}
-                    </h3>
-                    <p
-                        class="text-gray-600 text-xs font-medium flex-grow truncate"
-                    >
-                        {{ product.description || "No description available" }}
-                    </p>
-
-                    <div class="mt-4 flex justify-between items-center">
-                        <p class="text-orange-600 font-bold text-lg">
-                            ₵{{ product.price }}
+                    <!-- Product Info -->
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-lg text-gray-800 mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                            {{ product.name }}
+                        </h3>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
+                            {{ product.description || "High-quality medication for your health needs" }}
                         </p>
-                        <div class="relative flex items-center">
-                            <template v-if="isCartLoaded">
+                    </div>
+
+                    <!-- Price and Actions -->
+                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
+                        <div>
+                            <p class="text-2xl font-bold text-orange-600">
+                                ₵{{ product.price }}
+                            </p>
+                            <p class="text-xs text-gray-500">per unit</p>
+                        </div>
+                        
+                        <div class="flex items-center" @click.stop>
+                            <template v-if="isCartLoaded && product.stock > 0">
                                 <template v-if="!isInCart(product.id)">
                                     <button
-                                        class="py-2 px-3 rounded-full bg-green-600 flex items-center justify-center text-white"
+                                        class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md flex items-center gap-2"
                                         :disabled="
                                             isAuthenticated &&
                                             isAddingToCart(product.id)
                                         "
-                                        @click.stop="
-                                            () =>
-                                                handleAddOrIncrement(product.id)
-                                        "
+                                        @click="handleAddOrIncrement(product.id)"
                                         title="Add to cart"
                                     >
                                         <span
@@ -143,13 +168,11 @@
                                                 isAddingToCart(product.id)
                                             "
                                         >
-                                            <i
-                                                class="pi pi-spinner pi-spin text-white"
-                                                style="font-size: 1.2rem"
-                                            ></i>
+                                            <i class="pi pi-spinner pi-spin"></i>
                                         </span>
-                                        <span v-else>
+                                        <span v-else class="flex items-center gap-2">
                                             <i class="pi pi-shopping-cart"></i>
+                                            <span class="hidden sm:inline">Add</span>
                                         </span>
                                     </button>
                                 </template>
@@ -157,47 +180,62 @@
                                 <template v-else>
                                     <div
                                         v-if="isAuthenticated"
-                                        class="flex items-center relative"
+                                        class="flex items-center bg-white rounded-lg border-2 border-orange-200 shadow-sm"
                                     >
                                         <button
                                             type="button"
-                                            @click.stop="
-                                                cartStore.decrementQuantity(
-                                                    product.id
-                                                )
-                                            "
-                                            class="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                                            @click="cartStore.decrementQuantity(product.id)"
+                                            class="p-2 text-orange-600 hover:bg-orange-50 rounded-l-lg transition-colors"
                                             title="Decrease quantity"
                                         >
-                                            &minus;
+                                            <i class="pi pi-minus text-sm"></i>
                                         </button>
-                                        <span
-                                            class="mx-4 font-semibold select-none"
-                                        >
+                                        <span class="px-3 py-2 font-bold text-gray-700 border-x border-orange-200">
                                             {{ getProductQuantity(product.id) }}
                                         </span>
                                         <button
                                             type="button"
-                                            @click.stop="
-                                                cartStore.incrementQuantity(
-                                                    product.id
-                                                )
-                                            "
-                                            class="bg-orange-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                                            @click="cartStore.incrementQuantity(product.id)"
+                                            class="p-2 text-orange-600 hover:bg-orange-50 rounded-r-lg transition-colors"
                                             title="Increase quantity"
                                         >
-                                            +
+                                            <i class="pi pi-plus text-sm"></i>
                                         </button>
                                     </div>
                                 </template>
                             </template>
 
+                            <template v-else-if="product.stock === 0">
+                                <span class="px-4 py-2 bg-gray-100 text-gray-500 rounded-lg font-medium cursor-not-allowed">
+                                    Out of Stock
+                                </span>
+                            </template>
+
                             <template v-else>
-                                <Spinner />
+                                <div class="w-20 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
                             </template>
                         </div>
                     </div>
                 </article>
+            </div>
+
+            <!-- Empty State -->
+            <div v-else class="text-center py-20">
+                <div class="max-w-md mx-auto">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="pi pi-box text-3xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3">No Medications Available</h3>
+                    <p class="text-gray-500 mb-6">
+                        We're currently updating our inventory. Please check back soon for available medications.
+                    </p>
+                    <button 
+                        @click="() => window.location.reload()"
+                        class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md"
+                    >
+                        Refresh Page
+                    </button>
+                </div>
             </div>
         </section>
     </main>

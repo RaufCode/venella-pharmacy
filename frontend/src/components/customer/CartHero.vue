@@ -59,16 +59,25 @@
     <div class="min-h-screen flex flex-col bg-gray-50">
         <!-- Header -->
         <header
-            class="bg-gray-white text-white p-4 flex shadow items-center justify-between gap-4 sticky top-0 z-50"
+            class="bg-white border-b border-gray-200 p-4 flex shadow-sm items-center justify-between gap-4 sticky top-0 z-50"
         >
-            <h1 class="text-gray-700 font-styleScript text-lg md:text-2xl">
-                Your Cart<span v-if="carts.length > 1">s</span>
-            </h1>
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <i class="pi pi-shopping-cart text-white text-sm"></i>
+                </div>
+                <h1 class="text-gray-800 font-bold text-lg md:text-xl">
+                    Shopping Cart
+                    <span v-if="carts.length > 0" class="text-orange-600 font-normal text-sm ml-2">
+                        ({{ carts.length }} item{{ carts.length !== 1 ? 's' : '' }})
+                    </span>
+                </h1>
+            </div>
             <button
                 @click="goBack"
-                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-full flex justify-center items-center gap-2"
+                class="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-lg flex items-center gap-2 font-medium transition-all duration-200 shadow-md"
             >
-                <ArrowLeft class="w-4 h-4" /> Back
+                <ArrowLeft class="w-4 h-4" /> 
+                <span class="hidden sm:inline">Back</span>
             </button>
         </header>
 

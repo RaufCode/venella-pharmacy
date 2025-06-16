@@ -80,23 +80,11 @@ export const useMedStore = defineStore('medStore', {
       }
     },
 
-    async submitForm() {
+    async addProduct(formData) {
       if (this.isSubmitting) return
       this.isSubmitting = true
 
       try {
-        const formData = new FormData()
-        formData.append('name', this.form.name)
-        formData.append('brand', this.form.brand)
-        formData.append('stock', this.form.stock)
-        formData.append('price', this.form.price)
-        formData.append('category', this.form.category)
-        formData.append('description', this.form.description)
-
-        this.form.product_images.forEach(file => {
-          formData.append('product_images', file)
-        })
-
         if (this.editingProductId) {
           const response = await axios.put(
             `/api/products/${this.editingProductId}/update/`,
@@ -130,6 +118,9 @@ export const useMedStore = defineStore('medStore', {
 
         this.resetForm()
         this.showModal = false
+        
+        // Refresh products list to ensure latest data
+        await this.fetchProducts()
       } catch (error) {
         console.error('Error submitting form:', error.response?.data || error)
         alert(
@@ -139,6 +130,29 @@ export const useMedStore = defineStore('medStore', {
       } finally {
         this.isSubmitting = false
       }
+    },
+
+    // Separate method for updating products (for compatibility with modal)
+    async updateProduct(id, formData) {
+      this.editingProductId = id
+      return this.addProduct(formData)
+    },
+
+    // Submit form method for compatibility with existing components
+    async submitForm() {
+      const formData = new FormData()
+      formData.append('name', this.form.name)
+      formData.append('brand', this.form.brand)
+      formData.append('stock', this.form.stock)
+      formData.append('price', this.form.price)
+      formData.append('category', this.form.category)
+      formData.append('description', this.form.description)
+
+      this.form.product_images.forEach(file => {
+        formData.append('product_images', file)
+      })
+
+      return this.addProduct(formData)
     },
 
     async editProduct(id) {

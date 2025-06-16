@@ -64,103 +64,222 @@
 </script>
 
 <template>
-    <div class="relative w-full min-h-screen bg-gray-100">
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50">
         <!-- Header -->
-        <div
-            class="flex items-center p-4 justify-between shadow fixed top-0 z-50 w-full bg-white"
-        >
-            <button><ArrowLeft @click="goBack" /></button>
+        <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <button
+                        @click="goBack"
+                        class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm"
+                    >
+                        <ArrowLeft class="w-4 h-4" />
+                        Back
+                    </button>
 
-            <!-- Title and Bell with Bubble -->
-            <div class="relative flex items-center space-x-2">
-                <h1 class="font-medium">Notifications</h1>
-                <div class="relative">
-                    <Bell class="w-5 h-5 text-gray-600" />
-                    <span
-                        v-if="unreadCount > 0"
-                        class="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"
-                    ></span>
+                    <!-- Title and Bell with Bubble -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center relative">
+                            <Bell class="w-5 h-5 text-white" />
+                            <span
+                                v-if="unreadCount > 0"
+                                class="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse"
+                            >
+                                {{ unreadCount > 9 ? '9+' : unreadCount }}
+                            </span>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                                Notifications
+                            </h1>
+                            <p class="text-sm text-gray-600">Stay updated with your orders</p>
+                        </div>
+                    </div>
+
+                    <!-- Mark All Button -->
+                    <button
+                        @click="markAll"
+                        :disabled="unreadCount === 0"
+                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Mark All Read
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Search Input -->
+            <div class="mb-8">
+                <div class="relative max-w-xl mx-auto">
+                    <Search class="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                        v-model="searchTerm"
+                        placeholder="Search your notifications..."
+                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white shadow-sm"
+                    />
                 </div>
             </div>
 
-            <!-- Mark All -->
-            <h1
-                class="text-xs py-2 px-3 rounded-full bg-blue-500 text-white cursor-pointer"
-                @click="markAll"
-            >
-                Mark all
-            </h1>
-        </div>
+            <!-- Loading State -->
+            <div v-if="notificationStore.loading" class="text-center py-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-full mb-4">
+                    <div class="w-8 h-8 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin"></div>
+                </div>
+                <p class="text-gray-600 font-medium">Loading notifications...</p>
+            </div>
 
-        <!-- Main Content -->
-        <div
-            class="flex flex-col items-center justify-center pt-20 container mx-auto p-4"
-        >
-            <!-- Search Input -->
-            <div class="w-full max-w-xl">
-                <div class="relative mb-4">
-                    <Search
-                        class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
-                    />
-                    <input
-                        v-model="searchTerm"
-                        placeholder="Search notifications..."
-                        class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:border-orange-700"
-                    />
+            <!-- Empty State -->
+            <div v-else-if="filteredNotifications.length === 0" class="text-center py-16">
+                <div class="max-w-md mx-auto">
+                    <div class="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Bell class="w-12 h-12 text-gray-400" />
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                        {{ searchTerm ? 'No matching notifications' : 'No notifications yet' }}
+                    </h3>
+                    <p class="text-gray-600 mb-8">
+                        {{ searchTerm 
+                            ? 'Try adjusting your search terms.' 
+                            : 'When you receive notifications, they will appear here.' 
+                        }}
+                    </p>
+                    <button
+                        v-if="searchTerm"
+                        @click="searchTerm = ''"
+                        class="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-3 rounded-xl hover:from-orange-700 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium"
+                    >
+                        Clear Search
+                    </button>
                 </div>
             </div>
 
             <!-- Notifications List -->
-            <div
-                v-for="notification in filteredNotifications"
-                :key="notification.id"
-                class="max-w-xl text-justify shadow p-4 mb-2 bg-white rounded w-full"
-            >
-                <div class="flex items-center mb-4 justify-between">
-                    <div class="flex items-center space-x-2">
-                        <Bell class="w-4 h-4 text-gray-500" />
-                        <h1
-                            class="font-semibold capitalize text-gray-700 text-sm"
-                        >
-                            {{ notification.type }}
-                        </h1>
+            <div v-else class="space-y-4">
+                <!-- Summary Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <Bell class="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-gray-800">{{ notificationStore.notifications.length }}</p>
+                                <p class="text-sm text-gray-600">Total</p>
+                            </div>
+                        </div>
                     </div>
-                    <span
-                        v-if="!notification.read"
-                        class="text-xs py-1 px-2 rounded-full bg-red-500 text-white"
-                    >
-                        new
-                    </span>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                <div class="w-2 h-2 bg-red-600 rounded-full"></div>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-gray-800">{{ unreadCount }}</p>
+                                <p class="text-sm text-gray-600">Unread</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-gray-800">{{ notificationStore.notifications.length - unreadCount }}</p>
+                                <p class="text-sm text-gray-600">Read</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 3v10a2 2 0 002 2h6a2 2 0 002-2V7H7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-gray-800">{{ filteredNotifications.length }}</p>
+                                <p class="text-sm text-gray-600">{{ searchTerm ? 'Found' : 'Showing' }}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <p class="text-gray-600 text-sm">
-                        {{ notification.content }}
-                    </p>
-                    <p class="text-xs mt-1 text-gray-400 flex space-x-2">
-                        <span>{{
-                            formatDateTime(notification.created_at).date
-                        }}</span>
-                        <span>{{
-                            formatDateTime(notification.created_at).time
-                        }}</span>
-                    </p>
-                    <div>
-                        <button
-                            v-if="!notification.read"
-                            class="mt-2 p-1 text-sm text-blue-500 hover:underline"
-                            @click="
-                                notificationStore.markAsRead(notification.id)
-                            "
-                        >
-                            Mark as read
-                        </button>
-                        <button
-                            class="mt-2 p-1 text-sm text-red-500 hover:underline"
-                            @click="deleteNotification(notification.id)"
-                        >
-                            <Trash2 class="h-4 w-4" />
-                        </button>
+                <!-- Notification Cards -->
+                <div class="space-y-3">
+                    <div
+                        v-for="notification in filteredNotifications"
+                        :key="notification.id"
+                        class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-200"
+                        :class="{ 'ring-2 ring-orange-200 border-orange-300': !notification.read }"
+                    >
+                        <div class="p-6">
+                            <!-- Header -->
+                            <div class="flex items-start justify-between gap-4 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-orange-100 to-red-100 rounded-lg flex items-center justify-center">
+                                        <Bell class="w-5 h-5 text-orange-600" />
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800 capitalize">{{ notification.type }}</h3>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span class="text-xs text-gray-500">{{ formatDateTime(notification.created_at).date }}</span>
+                                            <span class="text-xs text-gray-400">•</span>
+                                            <span class="text-xs text-gray-500">{{ formatDateTime(notification.created_at).time }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        v-if="!notification.read"
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 animate-pulse"
+                                    >
+                                        <div class="w-1.5 h-1.5 bg-red-600 rounded-full mr-1.5"></div>
+                                        New
+                                    </span>
+                                    <button
+                                        @click="deleteNotification(notification.id)"
+                                        class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        title="Delete notification"
+                                    >
+                                        <Trash2 class="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="mb-4">
+                                <p class="text-gray-700 leading-relaxed">{{ notification.content }}</p>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <button
+                                        v-if="!notification.read"
+                                        @click="notificationStore.markAsRead(notification.id)"
+                                        class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Mark as read
+                                    </button>
+                                    <span v-else class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-green-600 bg-green-50 rounded-lg">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Read
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

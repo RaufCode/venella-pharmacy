@@ -78,134 +78,221 @@
 </script>
 
 <template>
-    <div
-        class="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-12 flex items-center justify-center"
-    >
-        <div
-            class="max-w-6xl w-full bg-white border-y-2 border-orange-600 rounded-xl"
-        >
-            <!-- Go Back Button -->
-            <button
-                @click="$router.back()"
-                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-full flex justify-center items-center gap-3 text-sm font-medium mt-4 ml-4"
-            >
-                <i class="pi pi-arrow-left mr-2"></i>
-                Go Back
-            </button>
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+        <!-- Loading Spinner -->
+        <div v-if="loading" class="flex items-center justify-center min-h-screen">
+            <div class="text-center">
+                <Spinner />
+                <p class="text-gray-600 mt-4">Loading product details...</p>
+            </div>
+        </div>
 
-            <!-- Loading Spinner -->
-            <Spinner v-if="loading" />
+        <!-- Product Details -->
+        <div v-else-if="product" class="pt-20 pb-10">
+            <div class="container mx-auto px-4 lg:px-10">
+                <!-- Back Button -->
+                <button
+                    @click="$router.back()"
+                    class="mb-6 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-lg flex items-center gap-2 font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                    <i class="pi pi-arrow-left"></i>
+                    <span>Back</span>
+                </button>
 
-            <!-- Product Details -->
-            <div
-                v-else
-                class="flex flex-col lg:flex-row lg:items-center gap-8 p-5"
-            >
-                <!-- Left: Image -->
-                <div>
-                    <!-- Product Details -->
-                    <h1 class="text-gray-700 font-semibold pb-4">
-                        Product Details
-                    </h1>
-                    <div class="flex-1 rounded-xl">
-                        <img
-                            v-if="product?.images?.[0]?.image"
-                            :src="`https://techrems.pythonanywhere.com${product.images[0].image}`"
-                            :alt="product.name"
-                            class="w-full max-h-[400px] md:max-h-full lg:max-h-[400px] object-contain rounded-xl"
-                            @error="
-                                $event.target.src = '/placeholder-image.jpg'
-                            "
-                        />
-                    </div>
-                </div>
+                <!-- Product Content -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
+                        <!-- Left: Product Image -->
+                        <div class="space-y-4">
+                            <h2 class="text-lg font-semibold text-gray-800 lg:hidden">
+                                Product Details
+                            </h2>
+                            <div class="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden aspect-square lg:aspect-auto lg:h-96">
+                                <img
+                                    v-if="product?.images?.[0]?.image"
+                                    :src="`https://techrems.pythonanywhere.com${product.images[0].image}`"
+                                    :alt="product.name"
+                                    class="w-full h-full object-contain p-6"
+                                    @error="$event.target.src = '/placeholder-image.jpg'"
+                                />
+                                <div v-else class="flex items-center justify-center h-full">
+                                    <div class="text-center">
+                                        <i class="pi pi-image text-4xl text-gray-300 mb-2"></i>
+                                        <p class="text-gray-500 text-sm">No image available</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Stock Badge -->
+                                <div class="absolute top-4 left-4">
+                                    <span 
+                                        :class="[
+                                            'px-3 py-1 text-xs font-medium rounded-full',
+                                            product.stock > 20 
+                                                ? 'bg-green-100 text-green-700' 
+                                                : product.stock > 0 
+                                                    ? 'bg-yellow-100 text-yellow-700' 
+                                                    : 'bg-red-100 text-red-700'
+                                        ]"
+                                    >
+                                        {{ 
+                                            product.stock > 20 ? 'In Stock' :
+                                            product.stock > 0 ? `${product.stock} left` : 
+                                            'Out of Stock'
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-                <!-- Right: Info & Actions -->
-                <div class="w-full lg:w-[450px] space-y-4 text-sm sm:text-base">
-                    <!-- Tags -->
-                    <div class="flex items-center gap-2">
-                        <span
-                            class="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs font-medium truncate"
-                            >Brand Name</span
-                        >
-                        <span
-                            class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs font-medium truncate"
-                            >{{ product.brand || "No brand name" }}</span
-                        >
-                    </div>
+                        <!-- Right: Product Info & Actions -->
+                        <div class="space-y-6">
+                            <div class="hidden lg:block">
+                                <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                                    Product Information
+                                </h2>
+                            </div>
 
-                    <!-- Name & Description -->
-                    <h1 class="font-semibold text-gray-700 text-xl">
-                        {{ product.name }}
-                    </h1>
-                    <p class="text-gray-700 text-justify">
-                        {{ product.description }}
-                    </p>
+                            <!-- Brand & Category Tags -->
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                    {{ product.brand || "Generic Brand" }}
+                                </span>
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+                                    {{ product.category?.name || "Medication" }}
+                                </span>
+                            </div>
 
-                    <!-- Add to Cart -->
-                    <div class="flex gap-4 items-center mt-4">
-                        <button
-                            v-if="!isInCart"
-                            @click="handleAddOrIncrement"
-                            class="bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 sm:py-3 sm:px-6 rounded-full w-full text-sm sm:text-base font-medium"
-                            :disabled="cartLoading[product.id]"
-                        >
-                            <span v-if="cartLoading[product.id]">
-                                <i class="pi pi-spinner pi-spin text-white"></i>
-                            </span>
-                            <span v-else>
-                                <i class="pi pi-cart-plus mr-2"></i> Add to Cart
-                            </span>
-                        </button>
+                            <!-- Product Name & Description -->
+                            <div class="space-y-3">
+                                <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 leading-tight">
+                                    {{ product.name }}
+                                </h1>
+                                <p class="text-gray-600 leading-relaxed text-base">
+                                    {{ product.description || "No description available for this medication." }}
+                                </p>
+                            </div>
 
-                        <div v-else class="flex items-center gap-4">
-                            <button
-                                @click="handleDecrement"
-                                class="w-8 h-8 rounded-full bg-orange-700 text-white text-xl flex items-center justify-center"
-                                title="Decrease quantity"
-                            >
-                                &minus;
-                            </button>
-                            <span class="font-semibold">{{
-                                getProductQuantity
-                            }}</span>
-                            <button
-                                @click="handleAddOrIncrement"
-                                class="w-8 h-8 rounded-full bg-orange-700 text-white text-xl flex items-center justify-center"
-                                title="Increase quantity"
-                            >
-                                +
-                            </button>
+                            <!-- Price -->
+                            <div class="py-4 border-y border-gray-200">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-3xl font-bold text-orange-600">
+                                        ₵{{ product.price }}
+                                    </span>
+                                    <span class="text-gray-500 text-sm">per unit</span>
+                                </div>
+                                <p v-if="product.stock < 10 && product.stock > 0" class="text-amber-600 text-sm mt-1 font-medium">
+                                    ⚠️ Limited stock available
+                                </p>
+                            </div>
+
+                            <!-- Add to Cart Section -->
+                            <div class="space-y-4" v-if="product.stock > 0">
+                                <div v-if="!isInCart" class="space-y-3">
+                                    <button
+                                        @click="handleAddOrIncrement"
+                                        class="w-full lg:w-auto px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                                        :disabled="cartLoading[product.id]"
+                                    >
+                                        <span v-if="cartLoading[product.id]">
+                                            <i class="pi pi-spinner pi-spin"></i>
+                                            <span class="ml-2">Adding...</span>
+                                        </span>
+                                        <span v-else class="flex items-center gap-2">
+                                            <i class="pi pi-shopping-cart"></i>
+                                            <span>Add to Cart</span>
+                                        </span>
+                                    </button>
+                                </div>
+
+                                <div v-else class="space-y-3">
+                                    <p class="text-sm text-gray-600 font-medium">
+                                        Quantity in cart:
+                                    </p>
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex items-center bg-white border-2 border-orange-200 rounded-xl shadow-sm">
+                                            <button
+                                                @click="handleDecrement"
+                                                class="p-3 text-orange-600 hover:bg-orange-50 rounded-l-xl transition-colors"
+                                                title="Decrease quantity"
+                                            >
+                                                <i class="pi pi-minus text-sm font-bold"></i>
+                                            </button>
+                                            <span class="px-6 py-3 font-bold text-lg text-gray-700 border-x border-orange-200">
+                                                {{ getProductQuantity }}
+                                            </span>
+                                            <button
+                                                @click="handleAddOrIncrement"
+                                                class="p-3 text-orange-600 hover:bg-orange-50 rounded-r-xl transition-colors"
+                                                title="Increase quantity"
+                                            >
+                                                <i class="pi pi-plus text-sm font-bold"></i>
+                                            </button>
+                                        </div>
+                                        <button
+                                            @click="() => router.push('/carts')"
+                                            class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-medium transition-all duration-200 shadow-md"
+                                        >
+                                            View Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Out of Stock -->
+                            <div v-else class="py-4">
+                                <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+                                    <i class="pi pi-exclamation-triangle text-red-500 text-xl mb-2"></i>
+                                    <p class="text-red-700 font-medium">This item is currently out of stock</p>
+                                    <p class="text-red-600 text-sm mt-1">Check back later for availability</p>
+                                </div>
+                            </div>
+
+                            <!-- Additional Info -->
+                            <div class="space-y-4 pt-4 border-t border-gray-200">
+                                <!-- Delivery Info -->
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="pi pi-truck text-blue-600"></i>
+                                        <span class="font-medium text-blue-900">Delivery Information</span>
+                                    </div>
+                                    <p class="text-blue-700 text-sm">
+                                        Delivery charges apply. Contact us for delivery estimates to your location.
+                                    </p>
+                                </div>
+
+                                <!-- Ratings (placeholder) -->
+                                <div class="flex items-center gap-2">
+                                    <div class="flex items-center text-yellow-500">
+                                        <i class="pi pi-star-fill" v-for="n in 4" :key="n"></i>
+                                        <i class="pi pi-star text-gray-300"></i>
+                                    </div>
+                                    <span class="text-gray-600 text-sm">
+                                        ({{ product.ratings || 12 }} verified ratings)
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Pricing -->
-                    <div>
-                        <p class="text-orange-600 font-bold text-lg">
-                            GH₵ {{ product.price }}
-                        </p>
-
-                        <p class="text-red-600 text-sm">Few units left</p>
-                    </div>
-
-                    <!-- Delivery Info -->
-                    <div class="bg-gray-100 p-3 rounded-md text-sm">
-                        <p class="text-green-700 font-semibold">
-                            Delivery is not free
-                        </p>
-                    </div>
-
-                    <!-- Ratings -->
-                    <div
-                        class="flex items-center text-yellow-500 gap-1 text-sm"
-                    >
-                        <i class="pi pi-star-fill" v-for="n in 4" :key="n"></i>
-                        <i class="pi pi-star"></i>
-                        <span class="text-gray-600 ml-2"
-                            >({{ product.ratings }} verified ratings)</span
-                        >
-                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div v-else class="flex items-center justify-center min-h-screen">
+            <div class="text-center max-w-md mx-auto px-4">
+                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="pi pi-exclamation-triangle text-3xl text-gray-400"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">Product Not Found</h3>
+                <p class="text-gray-500 mb-6">
+                    The product you're looking for doesn't exist or has been removed.
+                </p>
+                <button 
+                    @click="$router.push('/')"
+                    class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md"
+                >
+                    Browse Products
+                </button>
             </div>
         </div>
     </div>

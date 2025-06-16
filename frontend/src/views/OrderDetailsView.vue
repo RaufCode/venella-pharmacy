@@ -1,5 +1,5 @@
 <script setup>
-    import OrderDetails from "@/components/salesperson-dashboard/OrderDetails.vue";
+    import OrderDetails from "@/components/customer/OrderDetails.vue";
 </script>
 
 <template>
