@@ -135,7 +135,7 @@
             <!-- Desktop Nav -->
             <nav class="hidden lg:flex items-center gap-6">
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && requiredRole === 'admin'"
                     to="/notification"
                     class="relative text-gray-600 hover:text-orange-600 transition-colors p-2 rounded-lg hover:bg-orange-50"
                 >
@@ -149,7 +149,7 @@
                 </router-link>
 
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     to="/"
                     :class="[
                         'px-3 py-2 rounded-lg font-medium transition-all duration-200',
@@ -162,7 +162,7 @@
                 </router-link>
 
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     to="/carts"
                     class="px-3 py-2 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                 >
@@ -170,7 +170,7 @@
                 </router-link>
 
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     to="/orders"
                     class="px-3 py-2 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                 >
@@ -178,14 +178,17 @@
                 </router-link>
 
                 <button
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     @click="handleLogout"
                     class="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium transition-all duration-200 border border-gray-200"
                 >
                     Logout
                 </button>
 
-                <div v-if="!isAuthenticated" class="flex items-center gap-3">
+                <div
+                    v-if="!isAuthenticated || auth.user?.role !== 'customer'"
+                    class="flex items-center gap-3"
+                >
                     <router-link
                         to="/login"
                         class="px-4 py-2 text-gray-600 hover:text-orange-600 font-medium transition-colors"
@@ -204,7 +207,7 @@
             <!-- Mobile Right: Notification + Hamburger -->
             <div class="flex items-center gap-4 lg:hidden">
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && requiredRole === 'admin'"
                     to="/notification"
                     class="relative p-2 text-gray-600 hover:text-orange-600 transition-colors"
                 >
@@ -298,7 +301,7 @@
             >
                 <div class="px-4 py-6 space-y-4">
                     <router-link
-                        v-if="isAuthenticated"
+                        v-if="isAuthenticated && requiredRole === 'admin'"
                         to="/"
                         :class="[
                             'flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200',
@@ -313,7 +316,7 @@
                     </router-link>
 
                     <router-link
-                        v-if="isAuthenticated"
+                        v-if="isAuthenticated && auth.user?.role === 'customer'"
                         to="/carts"
                         class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                         @click="toggleMobileNav"
@@ -323,7 +326,7 @@
                     </router-link>
 
                     <router-link
-                        v-if="isAuthenticated"
+                        v-if="isAuthenticated && auth.user?.role === 'customer'"
                         to="/orders"
                         class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                         @click="toggleMobileNav"
@@ -333,7 +336,7 @@
                     </router-link>
 
                     <button
-                        v-if="isAuthenticated"
+                        v-if="isAuthenticated && auth.user?.role === 'customer'"
                         @click="
                             () => {
                                 handleLogout();
@@ -347,7 +350,9 @@
                     </button>
 
                     <div
-                        v-if="!isAuthenticated"
+                        v-if="
+                            !isAuthenticated || auth.user?.role !== 'customer'
+                        "
                         class="space-y-3 pt-4 border-t border-gray-200"
                     >
                         <router-link
