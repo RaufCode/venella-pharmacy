@@ -198,7 +198,6 @@ export const useCartStore = defineStore("cart", {
         if (index !== -1) {
           this.carts[index].quantity = response.data.quantity || quantity;
         }
-        toast.success("Cart updated.");
       } catch (error) {
         this.error = "Failed to update quantity.";
         toast.error(this.error);
@@ -219,7 +218,11 @@ export const useCartStore = defineStore("cart", {
 
     showStockAdjustmentAlert() {
       const toast = useToast();
-      toast.info("Some items in your cart were adjusted due to stock changes.");
+      toast.info("Cart items adjusted due to stock changes.");
+    },
+
+    clearStockAlert(productId) {
+      this.stockAlerts = { ...this.stockAlerts, [productId]: null };
     },
   },
 });

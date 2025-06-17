@@ -54,8 +54,11 @@
         !isInCart(productId);
 
     const handleAddOrIncrement = async (productId) => {
-        if (!isAuthenticated.value) {
-            alert("Please log in to add products to cart.");
+        if (!isAuthenticated.value || authStore.user?.role !== "customer") {
+            router.push({
+                path: "/login",
+                query: { redirect: `/product/${productId}` },
+            });
             return;
         }
 
