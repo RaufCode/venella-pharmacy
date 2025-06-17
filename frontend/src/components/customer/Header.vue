@@ -135,7 +135,7 @@
             <!-- Desktop Nav -->
             <nav class="hidden lg:flex items-center gap-6">
                 <router-link
-                    v-if="isAuthenticated && requiredRole === 'admin'"
+                    v-if="isAuthenticated && requiredRole === 'customer'"
                     to="/notification"
                     class="relative text-gray-600 hover:text-orange-600 transition-colors p-2 rounded-lg hover:bg-orange-50"
                 >
@@ -301,7 +301,7 @@
             >
                 <div class="px-4 py-6 space-y-4">
                     <router-link
-                        v-if="isAuthenticated && requiredRole === 'admin'"
+                        v-if="isAuthenticated && requiredRole === 'customer'"
                         to="/"
                         :class="[
                             'flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200',
