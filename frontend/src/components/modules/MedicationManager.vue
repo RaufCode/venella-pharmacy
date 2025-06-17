@@ -242,15 +242,14 @@
                                         <span
                                             :class="[
                                                 'text-sm font-medium',
-                                                medication.stock_quantity < 10
+                                                medication.stock < 10
                                                     ? 'text-red-600'
-                                                    : medication.stock_quantity <
-                                                      20
+                                                    : medication.stock < 20
                                                     ? 'text-yellow-600'
                                                     : 'text-green-600',
                                             ]"
                                         >
-                                            {{ medication.stock_quantity }}
+                                            {{ medication.stock }}
                                         </span>
                                         <span class="text-xs text-gray-500 ml-1"
                                             >units</span
@@ -270,17 +269,17 @@
                                     <span
                                         :class="[
                                             'px-2 py-1 text-xs font-medium rounded-full',
-                                            medication.stock_quantity > 20
+                                            medication.stock > 20
                                                 ? 'bg-green-100 text-green-800'
-                                                : medication.stock_quantity > 0
+                                                : medication.stock > 0
                                                 ? 'bg-yellow-100 text-yellow-800'
                                                 : 'bg-red-100 text-red-800',
                                         ]"
                                     >
                                         {{
-                                            medication.stock_quantity > 20
+                                            medication.stock > 20
                                                 ? "In Stock"
-                                                : medication.stock_quantity > 0
+                                                : medication.stock > 0
                                                 ? "Low Stock"
                                                 : "Out of Stock"
                                         }}

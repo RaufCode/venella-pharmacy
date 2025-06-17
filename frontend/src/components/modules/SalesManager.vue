@@ -15,6 +15,7 @@
     import BaseCard from "@/components/shared/BaseCard.vue";
     import BaseButton from "@/components/shared/BaseButton.vue";
     import BaseInput from "@/components/shared/BaseInput.vue";
+    import Spinner from "@/components/ui/Spinner.vue";
 
     import { useOrderStore } from "@/stores/orderStore";
 
@@ -145,6 +146,7 @@
         salesData.value.forEach((order) => {
             order.order_items?.forEach((item) => {
                 const productName = item.product?.name || "Unknown Product";
+
                 if (!productSales[productName]) {
                     productSales[productName] = {
                         id: item.product?.id || Math.random(),
@@ -217,6 +219,7 @@
 </script>
 <template>
     <div class="space-y-6">
+        <Spinner v-if="isLoading" />
         <!-- Header -->
         <div
             class="flex flex-col lg:flex-row lg:items-center justify-between gap-4"
@@ -252,25 +255,9 @@
                         <p class="text-sm font-medium text-gray-600">
                             {{ metric.label }}
                         </p>
-                        <p class="text-2xl font-bold text-gray-900 mt-1">
+                        <p class="text-2xl font-semibold text-gray-900 mt-1">
                             {{ metric.value }}
                         </p>
-                        <div
-                            v-if="metric.change"
-                            :class="[
-                                'text-xs font-medium mt-1 flex items-center gap-1',
-                                metric.changeType === 'increase'
-                                    ? 'text-green-600'
-                                    : 'text-red-600',
-                            ]"
-                        >
-                            <TrendingUp
-                                v-if="metric.changeType === 'increase'"
-                                class="w-3 h-3"
-                            />
-                            <TrendingDown v-else class="w-3 h-3" />
-                            {{ metric.change }}% from last period
-                        </div>
                     </div>
                     <div
                         :class="[
@@ -316,13 +303,6 @@
                             <p class="text-xs text-gray-500">
                                 {{ product.sales_count }} units sold
                             </p>
-                        </div>
-                        <div class="text-sm font-semibold text-gray-900">
-                            ₵{{
-                                parseFloat(product.total_revenue || 0).toFixed(
-                                    2
-                                )
-                            }}
                         </div>
                     </div>
 
