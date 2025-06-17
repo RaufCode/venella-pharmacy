@@ -96,7 +96,7 @@
                 <div class="flex items-center justify-between h-16">
                     <div class="flex items-center gap-3">
                         <div
-                            class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center"
+                            class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center"
                         >
                             <svg
                                 class="w-6 h-6 text-white"

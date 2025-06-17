@@ -73,16 +73,16 @@
 
 <template>
     <main
-        class="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-40 pb-10 md:pt-24"
+        class="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-40 pb-10 md:pt-32"
     >
         <section class="container mx-auto px-4 md:px-10">
             <!-- Header Section -->
             <div class="text-center mb-12">
-                <h1 class="text-lg md:text-2xl font-semibold text-orange-600">
+                <h1 class="text-2xl font-styleScript text-orange-600">
                     Available Medications
                 </h1>
                 <p
-                    class="text-gray-600 max-w-2xl mx-auto mt-2 text-justify text-sm md:text-base md:text-center"
+                    class="text-gray-600 max-w-2xl mx-auto mt-2 text-justify text-base md:text-lg md:text-center"
                 >
                     Browse through our carefully curated selection of quality
                     medications and health products

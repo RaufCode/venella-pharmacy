@@ -363,7 +363,7 @@
                                             >Qty: {{ item.quantity }}</span
                                         >
                                         <span class="text-sm text-gray-500"
-                                            >Unit Price:
+                                            >Unit:
                                             {{
                                                 formatCurrency(
                                                     parseFloat(item.amount) /
@@ -403,11 +403,7 @@
                             <MapPin class="w-6 h-6" />
                             Delivery Information
                         </h3>
-                        <p class="text-green-600 text-sm mt-1">
-                            Where to deliver your order
-                        </p>
                     </div>
-
                     <div class="p-6">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
@@ -556,14 +552,11 @@
                         class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-green-100"
                     >
                         <h3
-                            class="text-xl font-bold text-green-700 flex items-center gap-2"
+                            class="text-xl font-semibold text-green-700 flex items-center gap-2"
                         >
                             <CheckCircle class="w-6 h-6" />
                             Order Complete
                         </h3>
-                        <p class="text-green-600 text-sm mt-1">
-                            Your order has been successfully delivered
-                        </p>
                     </div>
 
                     <div class="p-6">

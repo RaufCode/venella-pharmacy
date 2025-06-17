@@ -60,14 +60,14 @@
 <template>
     <header class="relative">
         <div
-            class="w-full flex items-center justify-between p-4 gap-6 lg:px-10 lg:py-4 bg-white shadow-lg border-b border-gray-100 fixed top-0 z-50"
+            class="w-full flex items-center justify-between px-4 py-2 gap-6 lg:px-10 md:py-4 bg-white shadow-lg border-b border-gray-100 fixed top-0 z-50"
         >
             <router-link
                 to="/"
                 class="text-orange-600 flex items-center gap-2 font-bold text-lg hover:text-orange-700 transition-colors"
             >
                 <div
-                    class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+                    class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm"
                 >
                     V
                 </div>
@@ -233,7 +233,7 @@
         <!-- Mobile Search Bar -->
         <div
             v-if="!showMobileNav"
-            class="md:hidden fixed top-[80px] inset-x-0 px-4 py-3 z-40"
+            class="md:hidden fixed top-[60px] inset-x-0 px-4 py-3 z-40"
         >
             <div class="flex items-center w-full relative">
                 <div class="relative w-full">
@@ -294,7 +294,7 @@
         <transition name="fade">
             <nav
                 v-if="showMobileNav"
-                class="lg:hidden fixed top-[80px] inset-x-0 bg-white z-50 shadow-xl border-t border-gray-100"
+                class="lg:hidden fixed top-[60px] md:top-[79px] inset-x-0 bg-white z-50 shadow-xl border-t border-gray-100"
             >
                 <div class="px-4 py-6 space-y-4">
                     <router-link

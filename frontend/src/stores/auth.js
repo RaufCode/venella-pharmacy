@@ -9,6 +9,7 @@ export const useAuthStore = defineStore("auth", {
     refreshToken: null,
     user: null,
     ready: false,
+    loading: false, // <-- Add loading state
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -72,6 +73,7 @@ export const useAuthStore = defineStore("auth", {
 
     // ** Register function added here before login **
     async register(registrationData) {
+      this.loading = true; // <-- Set loading true
       try {
         const response = await axios.post("/api/core/accounts/create/", registrationData);
         console.log("Register response:", response.data);
@@ -82,10 +84,13 @@ export const useAuthStore = defineStore("auth", {
         console.error("Register error:", error);
         const message = error.response?.data?.message || error.message || "Registration failed";
         throw new Error(message);
+      } finally {
+        this.loading = false; // <-- Set loading false
       }
     },
 
     async login(credentials) {
+      this.loading = true; // <-- Set loading true
       try {
         const response = await axios.post("/api/core/auth/login/", credentials);
         console.log("Login response data:", response.data);
@@ -105,11 +110,12 @@ export const useAuthStore = defineStore("auth", {
         if (userData.role === "admin") await router.push("/dashboard");
         else if (userData.role === "customer") await router.push("/");
         else await router.push("/salesperson");
-
       } catch (error) {
         console.error("Login error:", error);
         const message = error.response?.data?.message || error.message || "Login failed";
         throw new Error(message);
+      } finally {
+        this.loading = false; // <-- Set loading false
       }
     },
 
