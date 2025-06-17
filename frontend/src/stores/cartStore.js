@@ -154,7 +154,6 @@ export const useCartStore = defineStore("cart", {
         });
 
         item.quantity = response.data.quantity || newQty;
-        toast.success("Quantity increased.");
       } catch (error) {
         this.error = "Failed to increment quantity.";
         toast.error(this.error);
@@ -177,7 +176,6 @@ export const useCartStore = defineStore("cart", {
       try {
         if (item.quantity > 1) {
           await this.updateQuantity(item.id, item.quantity - 1);
-          toast.success("Quantity decreased.");
         } else {
           await this.deleteItem(item.id);
           toast.success("Item removed from cart.");
