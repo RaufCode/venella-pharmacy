@@ -80,7 +80,10 @@
 <template>
     <div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
         <!-- Loading Spinner -->
-        <div v-if="loading" class="flex items-center justify-center min-h-screen">
+        <div
+            v-if="loading"
+            class="flex items-center justify-center min-h-screen"
+        >
             <div class="text-center">
                 <Spinner />
                 <p class="text-gray-600 mt-4">Loading product details...</p>
@@ -100,44 +103,64 @@
                 </button>
 
                 <!-- Product Content -->
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
+                <div
+                    class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100"
+                >
+                    <div
+                        class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8"
+                    >
                         <!-- Left: Product Image -->
                         <div class="space-y-4">
-                            <h2 class="text-lg font-semibold text-gray-800 lg:hidden">
+                            <h2
+                                class="text-lg font-semibold text-gray-800 lg:hidden"
+                            >
                                 Product Details
                             </h2>
-                            <div class="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden aspect-square lg:aspect-auto lg:h-96">
+                            <div
+                                class="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden aspect-square lg:aspect-auto lg:h-96"
+                            >
                                 <img
                                     v-if="product?.images?.[0]?.image"
                                     :src="`https://techrems.pythonanywhere.com${product.images[0].image}`"
                                     :alt="product.name"
                                     class="w-full h-full object-contain p-6"
-                                    @error="$event.target.src = '/placeholder-image.jpg'"
+                                    @error="
+                                        $event.target.src =
+                                            '/placeholder-image.jpg'
+                                    "
                                 />
-                                <div v-else class="flex items-center justify-center h-full">
+                                <div
+                                    v-else
+                                    class="flex items-center justify-center h-full"
+                                >
                                     <div class="text-center">
-                                        <i class="pi pi-image text-4xl text-gray-300 mb-2"></i>
-                                        <p class="text-gray-500 text-sm">No image available</p>
+                                        <i
+                                            class="pi pi-image text-4xl text-gray-300 mb-2"
+                                        ></i>
+                                        <p class="text-gray-500 text-sm">
+                                            No image available
+                                        </p>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Stock Badge -->
                                 <div class="absolute top-4 left-4">
-                                    <span 
+                                    <span
                                         :class="[
                                             'px-3 py-1 text-xs font-medium rounded-full',
-                                            product.stock > 20 
-                                                ? 'bg-green-100 text-green-700' 
-                                                : product.stock > 0 
-                                                    ? 'bg-yellow-100 text-yellow-700' 
-                                                    : 'bg-red-100 text-red-700'
+                                            product.stock > 20
+                                                ? 'bg-green-100 text-green-700'
+                                                : product.stock > 0
+                                                ? 'bg-yellow-100 text-yellow-700'
+                                                : 'bg-red-100 text-red-700',
                                         ]"
                                     >
-                                        {{ 
-                                            product.stock > 20 ? 'In Stock' :
-                                            product.stock > 0 ? `${product.stock} left` : 
-                                            'Out of Stock'
+                                        {{
+                                            product.stock > 20
+                                                ? "In Stock"
+                                                : product.stock > 0
+                                                ? `${product.stock} left`
+                                                : "Out of Stock"
                                         }}
                                     </span>
                                 </div>
@@ -147,40 +170,62 @@
                         <!-- Right: Product Info & Actions -->
                         <div class="space-y-6">
                             <div class="hidden lg:block">
-                                <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                                <h2
+                                    class="text-lg font-semibold text-gray-800 mb-4"
+                                >
                                     Product Information
                                 </h2>
                             </div>
 
                             <!-- Brand & Category Tags -->
                             <div class="flex flex-wrap items-center gap-2">
-                                <span class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                <span
+                                    class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1 rounded-full text-xs font-medium"
+                                >
                                     {{ product.brand || "Generic Brand" }}
                                 </span>
-                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+                                <span
+                                    class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium"
+                                >
                                     {{ product.category?.name || "Medication" }}
                                 </span>
                             </div>
 
                             <!-- Product Name & Description -->
                             <div class="space-y-3">
-                                <h1 class="text-2xl lg:text-3xl font-bold text-gray-800 leading-tight">
+                                <h1
+                                    class="text-2xl lg:text-3xl font-bold text-gray-800 leading-tight"
+                                >
                                     {{ product.name }}
                                 </h1>
-                                <p class="text-gray-600 leading-relaxed text-base">
-                                    {{ product.description || "No description available for this medication." }}
+                                <p
+                                    class="text-gray-600 leading-relaxed text-base"
+                                >
+                                    {{
+                                        product.description ||
+                                        "No description available for this medication."
+                                    }}
                                 </p>
                             </div>
 
                             <!-- Price -->
                             <div class="py-4 border-y border-gray-200">
                                 <div class="flex items-baseline gap-2">
-                                    <span class="text-3xl font-bold text-orange-600">
+                                    <span
+                                        class="text-xl font-semibold text-orange-600"
+                                    >
                                         ₵{{ product.price }}
                                     </span>
-                                    <span class="text-gray-500 text-sm">per unit</span>
+                                    <span class="text-gray-500 text-sm"
+                                        >per unit</span
+                                    >
                                 </div>
-                                <p v-if="product.stock < 10 && product.stock > 0" class="text-amber-600 text-sm mt-1 font-medium">
+                                <p
+                                    v-if="
+                                        product.stock < 10 && product.stock > 0
+                                    "
+                                    class="text-amber-600 text-sm mt-1 font-medium"
+                                >
                                     ⚠️ Limited stock available
                                 </p>
                             </div>
@@ -194,10 +239,15 @@
                                         :disabled="cartLoading[product.id]"
                                     >
                                         <span v-if="cartLoading[product.id]">
-                                            <i class="pi pi-spinner pi-spin"></i>
+                                            <i
+                                                class="pi pi-spinner pi-spin"
+                                            ></i>
                                             <span class="ml-2">Adding...</span>
                                         </span>
-                                        <span v-else class="flex items-center gap-2">
+                                        <span
+                                            v-else
+                                            class="flex items-center gap-2"
+                                        >
                                             <i class="pi pi-shopping-cart"></i>
                                             <span>Add to Cart</span>
                                         </span>
@@ -205,19 +255,27 @@
                                 </div>
 
                                 <div v-else class="space-y-3">
-                                    <p class="text-sm text-gray-600 font-medium">
+                                    <p
+                                        class="text-sm text-gray-600 font-medium"
+                                    >
                                         Quantity in cart:
                                     </p>
                                     <div class="flex items-center gap-4">
-                                        <div class="flex items-center bg-white border-2 border-orange-200 rounded-xl shadow-sm">
+                                        <div
+                                            class="flex items-center bg-white border-2 border-orange-200 rounded-xl shadow-sm"
+                                        >
                                             <button
                                                 @click="handleDecrement"
                                                 class="p-3 text-orange-600 hover:bg-orange-50 rounded-l-xl transition-colors"
                                                 title="Decrease quantity"
                                             >
-                                                <i class="pi pi-minus text-sm font-bold"></i>
+                                                <i
+                                                    class="pi pi-minus text-sm font-bold"
+                                                ></i>
                                             </button>
-                                            <span class="px-6 py-3 font-bold text-lg text-gray-700 border-x border-orange-200">
+                                            <span
+                                                class="px-6 py-3 font-bold text-lg text-gray-700 border-x border-orange-200"
+                                            >
                                                 {{ getProductQuantity }}
                                             </span>
                                             <button
@@ -225,7 +283,9 @@
                                                 class="p-3 text-orange-600 hover:bg-orange-50 rounded-r-xl transition-colors"
                                                 title="Increase quantity"
                                             >
-                                                <i class="pi pi-plus text-sm font-bold"></i>
+                                                <i
+                                                    class="pi pi-plus text-sm font-bold"
+                                                ></i>
                                             </button>
                                         </div>
                                         <button
@@ -240,34 +300,58 @@
 
                             <!-- Out of Stock -->
                             <div v-else class="py-4">
-                                <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
-                                    <i class="pi pi-exclamation-triangle text-red-500 text-xl mb-2"></i>
-                                    <p class="text-red-700 font-medium">This item is currently out of stock</p>
-                                    <p class="text-red-600 text-sm mt-1">Check back later for availability</p>
+                                <div
+                                    class="bg-red-50 border border-red-200 rounded-xl p-4 text-center"
+                                >
+                                    <i
+                                        class="pi pi-exclamation-triangle text-red-500 text-xl mb-2"
+                                    ></i>
+                                    <p class="text-red-700 font-medium">
+                                        This item is currently out of stock
+                                    </p>
+                                    <p class="text-red-600 text-sm mt-1">
+                                        Check back later for availability
+                                    </p>
                                 </div>
                             </div>
 
                             <!-- Additional Info -->
-                            <div class="space-y-4 pt-4 border-t border-gray-200">
+                            <div
+                                class="space-y-4 pt-4 border-t border-gray-200"
+                            >
                                 <!-- Delivery Info -->
-                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div
+                                    class="bg-blue-50 border border-blue-200 rounded-lg p-4"
+                                >
                                     <div class="flex items-center gap-2 mb-2">
-                                        <i class="pi pi-truck text-blue-600"></i>
-                                        <span class="font-medium text-blue-900">Delivery Information</span>
+                                        <i
+                                            class="pi pi-truck text-blue-600"
+                                        ></i>
+                                        <span class="font-medium text-blue-900"
+                                            >Delivery Information</span
+                                        >
                                     </div>
                                     <p class="text-blue-700 text-sm">
-                                        Delivery charges apply. Contact us for delivery estimates to your location.
+                                        Delivery charges apply. Contact us for
+                                        delivery estimates to your location.
                                     </p>
                                 </div>
 
                                 <!-- Ratings (placeholder) -->
                                 <div class="flex items-center gap-2">
-                                    <div class="flex items-center text-yellow-500">
-                                        <i class="pi pi-star-fill" v-for="n in 4" :key="n"></i>
+                                    <div
+                                        class="flex items-center text-yellow-500"
+                                    >
+                                        <i
+                                            class="pi pi-star-fill"
+                                            v-for="n in 4"
+                                            :key="n"
+                                        ></i>
                                         <i class="pi pi-star text-gray-300"></i>
                                     </div>
                                     <span class="text-gray-600 text-sm">
-                                        ({{ product.ratings || 12 }} verified ratings)
+                                        ({{ product.ratings || 12 }} verified
+                                        ratings)
                                     </span>
                                 </div>
                             </div>
@@ -280,14 +364,21 @@
         <!-- Error State -->
         <div v-else class="flex items-center justify-center min-h-screen">
             <div class="text-center max-w-md mx-auto px-4">
-                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="pi pi-exclamation-triangle text-3xl text-gray-400"></i>
+                <div
+                    class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6"
+                >
+                    <i
+                        class="pi pi-exclamation-triangle text-3xl text-gray-400"
+                    ></i>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-700 mb-3">Product Not Found</h3>
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">
+                    Product Not Found
+                </h3>
                 <p class="text-gray-500 mb-6">
-                    The product you're looking for doesn't exist or has been removed.
+                    The product you're looking for doesn't exist or has been
+                    removed.
                 </p>
-                <button 
+                <button
                     @click="$router.push('/')"
                     class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md"
                 >
