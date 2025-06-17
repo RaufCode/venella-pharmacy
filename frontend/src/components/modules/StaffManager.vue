@@ -8,12 +8,15 @@
         Edit,
         Trash2,
     } from "lucide-vue-next";
+    import { useToast } from "vue-toastification";
 
     import BaseCard from "@/components/shared/BaseCard.vue";
     import BaseButton from "@/components/shared/BaseButton.vue";
     import StaffModal from "@/components/modals/StaffModal.vue";
 
     import axios from "axios";
+
+    const toast = useToast();
 
     const staffList = ref([]);
     const isLoading = ref(false);
@@ -43,7 +46,7 @@
             );
             staffList.value = response.data;
         } catch (error) {
-            console.error("Failed to fetch staff:", error);
+            toast.error("Failed to fetch staff.");
         } finally {
             isLoading.value = false;
         }
@@ -57,12 +60,12 @@
         if (!confirm("Are you sure you want to delete this staff member?")) {
             return;
         }
-
         try {
             await axios.delete(`/api/core/accounts/${id}/delete/`);
             await fetchStaff();
+            toast.success("Staff deleted successfully.");
         } catch (error) {
-            console.error("Failed to delete staff:", error);
+            toast.error("Failed to delete staff.");
         }
     };
 

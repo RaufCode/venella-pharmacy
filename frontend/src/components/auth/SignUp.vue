@@ -2,9 +2,11 @@
     import { ref, reactive } from "vue";
     import { useAuthStore } from "@/stores/auth"; // Import Pinia store
     import { useRouter } from "vue-router"; // Import router
+    import { useToast } from "vue-toastification";
 
     const authStore = useAuthStore(); // Initialize auth store
     const router = useRouter(); // Initialize router// Initialize auth store
+    const toast = useToast();
 
     const form = reactive({
         first_name: "",
@@ -17,7 +19,14 @@
         role: "",
     });
 
+    const btnDisabled = ref(false);
+
     const validation = async () => {
+        btnDisabled.value = true;
+        setTimeout(() => {
+            btnDisabled.value = false;
+        }, 5000);
+
         form.first_name =
             form.first_name.charAt(0).toUpperCase() +
             form.first_name.slice(1).toLowerCase();
@@ -35,8 +44,9 @@
 
         try {
             await authStore.register(form); // Call the store's register action
+            toast.success("Account created successfully! Please sign in.");
         } catch (error) {
-            console.error("Registration failed:", error.message);
+            toast.error(error.message || "Registration failed");
         }
     };
 </script>
@@ -396,6 +406,7 @@
                             type="submit"
                             :disabled="
                                 authStore.loading ||
+                                btnDisabled ||
                                 !form.first_name ||
                                 !form.last_name ||
                                 !form.email ||

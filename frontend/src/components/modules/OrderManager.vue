@@ -12,6 +12,7 @@
         Package,
         AlertCircle,
     } from "lucide-vue-next";
+    import { useToast } from "vue-toastification";
 
     import BaseCard from "@/components/shared/BaseCard.vue";
     import BaseButton from "@/components/shared/BaseButton.vue";
@@ -28,6 +29,7 @@
 
     const router = useRouter();
     const orderStore = useOrderStore();
+    const toast = useToast();
 
     const searchTerm = ref("");
     const selectedDate = ref("");
@@ -174,8 +176,9 @@
         try {
             await orderStore.updateOrderStatus(orderId, status);
             await orderStore.fetchAllOrders();
+            toast.success("Order status updated.");
         } catch (error) {
-            console.error("Failed to update order status:", error);
+            toast.error("Failed to update order status.");
         }
     };
 

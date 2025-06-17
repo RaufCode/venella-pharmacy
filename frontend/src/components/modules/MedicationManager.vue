@@ -15,6 +15,7 @@
     import BaseButton from "@/components/shared/BaseButton.vue";
     import BaseInput from "@/components/shared/BaseInput.vue";
     import MedicationModal from "@/components/modals/MedicationModal.vue";
+    import Spinner from "@/components/ui/Spinner.vue";
 
     import { useMedStore } from "@/stores/medStore";
 
@@ -87,6 +88,7 @@
 </script>
 <template>
     <div class="space-y-6">
+        <Spinner v-if="medStore.isSubmitting || medStore.isLoading" />
         <!-- Header Actions -->
         <div
             class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"

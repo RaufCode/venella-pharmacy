@@ -2,6 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "@/router";
+import { useToast } from "vue-toastification";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -144,9 +145,11 @@ export const useAuthStore = defineStore("auth", {
     },
 
     logout() {
+      const toast = useToast();
       this.setToken(null, null);
       this.setUser(null);
       router.push("/login");
+      toast.success("Logged out successfully.");
     },
   },
 });

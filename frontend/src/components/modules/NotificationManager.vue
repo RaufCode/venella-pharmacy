@@ -269,7 +269,7 @@
         <!-- Notification Filters -->
         <BaseCard>
             <template #header>
-                <div class="flex overflow-x-scroll gap-2">
+                <div class="flex gap-2 overflow-x-auto">
                     <button
                         v-for="filter in notificationFilters"
                         :key="filter.key"
@@ -367,22 +367,8 @@
                 </div>
 
                 <!-- Pagination -->
-                <div
-                    v-if="totalPages > 1"
-                    class="flex items-center justify-between mt-6"
-                >
-                    <div class="text-sm text-gray-500">
-                        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
-                        {{
-                            Math.min(
-                                currentPage * itemsPerPage,
-                                filteredNotifications.length
-                            )
-                        }}
-                        of {{ filteredNotifications.length }} notifications
-                    </div>
-
-                    <div class="flex items-center gap-2">
+                <div v-if="totalPages > 1" class="mt-6">
+                    <div class="flex items-center gap-2 w-max mx-auto">
                         <BaseButton
                             variant="outline"
                             size="sm"

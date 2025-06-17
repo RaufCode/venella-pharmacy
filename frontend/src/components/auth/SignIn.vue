@@ -1,23 +1,32 @@
 <script setup>
-    import { reactive } from "vue";
+    import { ref, reactive } from "vue";
     import { useAuthStore } from "@/stores/auth"; // Import auth store
-    import { useRouter } from "vue-router"; // Import Vue Router
+import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
 
     const authStore = useAuthStore(); // Initialize auth store
     const router = useRouter(); // Initialize router
+    const toast = useToast();
 
     const form = reactive({
         email: "",
         password: "",
     });
 
+    const btnDisabled = ref(false);
+
     const login = async () => {
+        btnDisabled.value = true;
+        setTimeout(() => {
+            btnDisabled.value = false;
+        }, 5000);
         form.email = form.email.toLowerCase();
-        console.log(form); // Log form data
         try {
-            await authStore.login(form); // Call the store's login action
+            await authStore.login(form);
+            toast.success("Sign in successful!");
         } catch (error) {
-            console.error("Login failed:", error.message);
+            toast.error(error.message || "Sign in failed");
+            console.error("Invalid credentials:", error);
         }
     };
 </script>
@@ -163,6 +172,7 @@
                             type="submit"
                             :disabled="
                                 authStore.loading ||
+                                btnDisabled ||
                                 !form.email ||
                                 !form.password
                             "

@@ -2,6 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "@/router";
+import { useToast } from "vue-toastification";
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
@@ -26,6 +27,7 @@ export const useCartStore = defineStore("cart", {
 
   actions: {
     async fetchCartItems() {
+      const toast = useToast();
       this.isLoading = true;
       this.error = null;
       try {
@@ -34,15 +36,16 @@ export const useCartStore = defineStore("cart", {
         this.carts = cartItems;
         await this.validateAndAdjustCartQuantities(cartItems);
       } catch (err) {
-        console.error("Fetch error:", err);
         this.error = "Failed to load cart items.";
         this.carts = [];
+        toast.error(this.error);
       } finally {
         this.isLoading = false;
       }
     },
 
     async validateAndAdjustCartQuantities(cartItems) {
+      const toast = useToast();
       const adjustedItems = [];
       let hasAdjustments = false;
 
@@ -64,28 +67,30 @@ export const useCartStore = defineStore("cart", {
             adjustedItems.push(item);
           }
         } catch (error) {
-          console.error(`Stock check failed for product ${item.product.id}:`, error);
+          toast.error(`Stock check failed for product ${item.product.id}`);
           adjustedItems.push(item);
         }
       }
 
       this.carts = adjustedItems;
       if (hasAdjustments) {
-        this.showStockAdjustmentAlert();
+        toast.info("Some items in your cart were adjusted due to stock changes.");
       }
     },
 
     async checkProductStock(productId) {
+      const toast = useToast();
       try {
         const response = await axios.get(`/api/products/${productId}/retrieve/`);
         return response.data.stock || 0;
       } catch (error) {
-        console.error(`Error fetching stock for product ${productId}:`, error);
+        toast.error(`Error fetching stock for product ${productId}`);
         return 0;
       }
     },
 
     async addToCart(productId) {
+      const toast = useToast();
       if (this.cartLoading[productId]) return;
 
       this.cartLoading = { ...this.cartLoading, [productId]: true };
@@ -96,6 +101,7 @@ export const useCartStore = defineStore("cart", {
         const stock = await this.checkProductStock(productId);
         if (stock <= 0) {
           this.showStockAlert(productId, "This item is out of stock.");
+          toast.error("This item is out of stock.");
           return;
         }
 
@@ -104,6 +110,7 @@ export const useCartStore = defineStore("cart", {
 
         if (currentQty >= stock) {
           this.showStockAlert(productId, `Cannot add more. Only ${stock} in stock.`);
+          toast.error(`Cannot add more. Only ${stock} in stock.`);
           return;
         }
 
@@ -113,15 +120,17 @@ export const useCartStore = defineStore("cart", {
         });
 
         await this.fetchCartItems();
+        toast.success("Added to cart.");
       } catch (error) {
-        console.error("Add to cart error:", error);
         this.error = "Failed to add to cart.";
+        toast.error(this.error);
       } finally {
         this.cartLoading = { ...this.cartLoading, [productId]: false };
       }
     },
 
     async incrementQuantity(productId) {
+      const toast = useToast();
       if (this.cartLoading[productId]) return;
 
       const item = this.carts.find(c => c.product.id === productId);
@@ -135,6 +144,7 @@ export const useCartStore = defineStore("cart", {
         const stock = await this.checkProductStock(productId);
         if (item.quantity >= stock) {
           this.showStockAlert(productId, `Cannot add more. Only ${stock} in stock.`);
+          toast.error(`Cannot add more. Only ${stock} in stock.`);
           return;
         }
 
@@ -144,15 +154,17 @@ export const useCartStore = defineStore("cart", {
         });
 
         item.quantity = response.data.quantity || newQty;
+        toast.success("Quantity increased.");
       } catch (error) {
-        console.error("Increment error:", error);
         this.error = "Failed to increment quantity.";
+        toast.error(this.error);
       } finally {
         this.cartLoading = { ...this.cartLoading, [productId]: false };
       }
     },
 
     async decrementQuantity(productId) {
+      const toast = useToast();
       if (this.cartLoading[productId]) return;
 
       const item = this.carts.find(c => c.product.id === productId);
@@ -165,61 +177,49 @@ export const useCartStore = defineStore("cart", {
       try {
         if (item.quantity > 1) {
           await this.updateQuantity(item.id, item.quantity - 1);
+          toast.success("Quantity decreased.");
         } else {
           await this.deleteItem(item.id);
+          toast.success("Item removed from cart.");
         }
       } catch (error) {
-        console.error("Decrement error:", error);
         this.error = "Failed to decrement quantity.";
+        toast.error(this.error);
       } finally {
         this.cartLoading = { ...this.cartLoading, [productId]: false };
       }
     },
 
     async updateQuantity(itemId, quantity) {
+      const toast = useToast();
       try {
         const response = await axios.put(`/api/carts/cart-item/${itemId}/update/`, { quantity });
         const index = this.carts.findIndex(c => c.id === itemId);
         if (index !== -1) {
           this.carts[index].quantity = response.data.quantity || quantity;
         }
+        toast.success("Cart updated.");
       } catch (error) {
-        console.error("Update quantity error:", error);
         this.error = "Failed to update quantity.";
+        toast.error(this.error);
       }
     },
 
     async deleteItem(itemId) {
+      const toast = useToast();
       try {
         await axios.delete(`/api/carts/cart-item/${itemId}/delete/`);
         this.carts = this.carts.filter(c => c.id !== itemId);
+        toast.success("Item removed from cart.");
       } catch (error) {
-        console.error("Delete item error:", error);
         this.error = "Failed to remove item.";
+        toast.error(this.error);
       }
-    },
-
-    getImage(product) {
-      if (
-        !product?.images ||
-        !Array.isArray(product.images) ||
-        product.images.length === 0
-      ) {
-        return "/placeholder-image.jpg";
-      }
-      return `https://techrems.pythonanywhere.com${product.images[0].image}`;
-    },
-
-    showStockAlert(productId, message) {
-      this.stockAlerts[productId] = message;
-    },
-
-    clearStockAlert(productId) {
-      delete this.stockAlerts[productId];
     },
 
     showStockAdjustmentAlert() {
-      alert("Some items in your cart were adjusted due to stock changes.");
+      const toast = useToast();
+      toast.info("Some items in your cart were adjusted due to stock changes.");
     },
   },
 });

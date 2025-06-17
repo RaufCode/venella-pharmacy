@@ -1,6 +1,7 @@
 // src/stores/orderStore.js
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useToast } from "vue-toastification";
 
 export const useOrderStore = defineStore('orderStore', {
   state: () => ({
@@ -74,6 +75,7 @@ export const useOrderStore = defineStore('orderStore', {
 
   actions: {
     async fetchAllOrders() {
+      const toast = useToast();
       this.loading = true
       this.error = null
       try {
@@ -81,12 +83,14 @@ export const useOrderStore = defineStore('orderStore', {
         this.orders.splice(0, this.orders.length, ...(res.data || []))
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to load orders.'
+        toast.error(this.error);
       } finally {
         this.loading = false
       }
     },
 
     async fetchPendingOrders() {
+      const toast = useToast();
       this.loading = true
       this.error = null
       try {
@@ -94,12 +98,14 @@ export const useOrderStore = defineStore('orderStore', {
         this.orders.splice(0, this.orders.length, ...(res.data || []))
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to load pending orders.'
+        toast.error(this.error);
       } finally {
         this.loading = false
       }
     },
 
     async fetchProcessingOrders() {
+      const toast = useToast();
       this.loading = true
       this.error = null
       try {
@@ -107,12 +113,14 @@ export const useOrderStore = defineStore('orderStore', {
         this.orders.splice(0, this.orders.length, ...(res.data || []))
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to load processing orders.'
+        toast.error(this.error);
       } finally {
         this.loading = false
       }
     },
 
     async fetchCustomerOrders() {
+      const toast = useToast();
       this.loading = true
       this.error = null
       try {
@@ -120,12 +128,14 @@ export const useOrderStore = defineStore('orderStore', {
         this.customerOrders = res.data || []
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to fetch your orders.'
+        toast.error(this.error);
       } finally {
         this.loading = false
       }
     },
 
     async fetchOrderDetails(orderId) {
+      const toast = useToast();
       this.loading = true
       this.error = null
       try {
@@ -133,50 +143,60 @@ export const useOrderStore = defineStore('orderStore', {
         this.orderDetails = res.data
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to retrieve order details.'
+        toast.error(this.error);
       } finally {
         this.loading = false
       }
     },
 
     async createOrder(payload) {
+      const toast = useToast();
       this.loading = true
       this.error = null
       try {
         await axios.post('/api/orders/create/', payload)
         this.successMessage = 'Order created successfully.'
+        toast.success(this.successMessage);
         await this.fetchCustomerOrders()
       } catch (err) {
         this.error = err.response?.data?.message || 'Order creation failed.'
+        toast.error(this.error);
       } finally {
         this.loading = false
       }
     },
 
     async deleteOrder(orderId) {
+      const toast = useToast();
       this.loading = true
       this.error = null
       try {
         await axios.delete(`/api/orders/${orderId}/delete/`)
         this.successMessage = 'Order deleted successfully.'
+        toast.success(this.successMessage);
         await this.fetchAllOrders()
         await this.fetchCustomerOrders()
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to delete order.'
+        toast.error(this.error);
       } finally {
         this.loading = false
       }
     },
 
     async updateOrderStatus(orderId, newStatus) {
+      const toast = useToast();
       this.loading = true
       this.error = null
       try {
         await axios.put(`/api/orders/${orderId}/update-status/`, { status: newStatus })
         this.successMessage = 'Order status updated.'
+        toast.success(this.successMessage);
         await this.fetchAllOrders()
         await this.fetchCustomerOrders()
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to update order status.'
+        toast.error(this.error);
       } finally {
         this.loading = false
       }
