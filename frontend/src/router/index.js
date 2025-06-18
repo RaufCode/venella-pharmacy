@@ -40,19 +40,19 @@ const router = createRouter({
       path: '/carts',
       name: 'carts',
       component: CartsView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresRole: 'customer' },
     },
     {
       path: '/checkout',
       name: 'checkout',
       component: CheckoutView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresRole: 'customer' },
     },
     {
       path: '/orders',
       name: 'orders',
       component: OrdersView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresRole: 'customer' },
     },
     {
       path: '/product/:id',
@@ -101,6 +101,10 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (requiredRole && userRole !== requiredRole) {
+    // Prevent infinite redirect loop on home page
+    if (to.path === '/') {
+      return next('/login')
+    }
     return next('/') // or show a 403 page if desired
   }
 

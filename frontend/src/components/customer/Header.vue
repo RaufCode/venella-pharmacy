@@ -60,13 +60,15 @@
 <template>
     <header class="relative">
         <div
-            class="w-full flex items-center justify-between p-4 gap-6 lg:px-10 lg:py-4 bg-white shadow-lg border-b border-gray-100 fixed top-0 z-50"
+            class="w-full flex items-center justify-between px-4 py-2 gap-6 lg:px-10 md:py-4 bg-white shadow-lg border-b border-gray-100 fixed top-0 z-50"
         >
             <router-link
                 to="/"
                 class="text-orange-600 flex items-center gap-2 font-bold text-lg hover:text-orange-700 transition-colors"
             >
-                <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                <div
+                    class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm"
+                >
                     V
                 </div>
                 VPharm
@@ -84,7 +86,9 @@
                         placeholder="Search for medications..."
                         class="w-full pl-10 pr-4 py-2.5 text-gray-700 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white rounded-l-lg placeholder-gray-400"
                     />
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div
+                        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                    >
                         <i class="pi pi-search text-gray-400"></i>
                     </div>
                 </div>
@@ -107,8 +111,12 @@
                             class="px-4 py-3 hover:bg-orange-50 cursor-pointer text-sm text-gray-800 border-b border-gray-100 last:border-b-0 transition-colors"
                         >
                             <div class="flex items-center gap-3">
-                                <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-                                <span class="font-medium">{{ result.name }}</span>
+                                <div
+                                    class="w-2 h-2 bg-orange-500 rounded-full"
+                                ></div>
+                                <span class="font-medium">{{
+                                    result.name
+                                }}</span>
                             </div>
                         </li>
                         <li
@@ -127,7 +135,7 @@
             <!-- Desktop Nav -->
             <nav class="hidden lg:flex items-center gap-6">
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     to="/notification"
                     class="relative text-gray-600 hover:text-orange-600 transition-colors p-2 rounded-lg hover:bg-orange-50"
                 >
@@ -136,12 +144,12 @@
                         v-if="unreadCount > 0"
                         class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium"
                     >
-                        {{ unreadCount > 9 ? '9+' : unreadCount }}
+                        {{ unreadCount > 9 ? "9+" : unreadCount }}
                     </span>
                 </router-link>
 
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     to="/"
                     :class="[
                         'px-3 py-2 rounded-lg font-medium transition-all duration-200',
@@ -154,7 +162,7 @@
                 </router-link>
 
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     to="/carts"
                     class="px-3 py-2 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                 >
@@ -162,7 +170,7 @@
                 </router-link>
 
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     to="/orders"
                     class="px-3 py-2 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                 >
@@ -170,21 +178,23 @@
                 </router-link>
 
                 <button
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'customer'"
                     @click="handleLogout"
                     class="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium transition-all duration-200 border border-gray-200"
                 >
                     Logout
                 </button>
 
-                <div v-if="!isAuthenticated" class="flex items-center gap-3">
+                <div
+                    v-if="!isAuthenticated || auth.user?.role !== 'customer'"
+                    class="flex items-center gap-3"
+                >
                     <router-link
                         to="/login"
                         class="px-4 py-2 text-gray-600 hover:text-orange-600 font-medium transition-colors"
                     >
                         Login
                     </router-link>
-
                     <router-link
                         to="/register"
                         class="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 rounded-lg font-medium transition-all duration-200 shadow-md"
@@ -197,7 +207,7 @@
             <!-- Mobile Right: Notification + Hamburger -->
             <div class="flex items-center gap-4 lg:hidden">
                 <router-link
-                    v-if="isAuthenticated"
+                    v-if="isAuthenticated && auth.user?.role === 'admin'"
                     to="/notification"
                     class="relative p-2 text-gray-600 hover:text-orange-600 transition-colors"
                 >
@@ -206,7 +216,7 @@
                         v-if="unreadCount > 0"
                         class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium"
                     >
-                        {{ unreadCount > 9 ? '9+' : unreadCount }}
+                        {{ unreadCount > 9 ? "9+" : unreadCount }}
                     </span>
                 </router-link>
 
@@ -226,7 +236,7 @@
         <!-- Mobile Search Bar -->
         <div
             v-if="!showMobileNav"
-            class="md:hidden fixed top-[80px] inset-x-0 px-4 py-3 z-40 bg-white border-b border-gray-100"
+            class="md:hidden fixed top-[60px] inset-x-0 px-4 py-3 z-40"
         >
             <div class="flex items-center w-full relative">
                 <div class="relative w-full">
@@ -234,10 +244,12 @@
                         v-model="searchTerm"
                         @input="performSearch"
                         type="search"
-                        placeholder="Search for medications..."
-                        class="w-full pl-10 pr-4 py-2.5 text-gray-700 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white rounded-l-lg placeholder-gray-400"
+                        placeholder="Search..."
+                        class="w-full pl-10 pr-4 py-2.5 text-gray-700 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white bg-opacity-80 rounded-l-lg placeholder-gray-400"
                     />
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div
+                        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                    >
                         <i class="pi pi-search text-gray-400"></i>
                     </div>
                 </div>
@@ -262,7 +274,9 @@
                         class="px-4 py-3 hover:bg-orange-50 cursor-pointer text-sm text-gray-800 border-b border-gray-100 last:border-b-0 transition-colors"
                     >
                         <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                            <div
+                                class="w-2 h-2 bg-orange-500 rounded-full"
+                            ></div>
                             <span class="font-medium">{{ result.name }}</span>
                         </div>
                     </li>
@@ -283,11 +297,11 @@
         <transition name="fade">
             <nav
                 v-if="showMobileNav"
-                class="lg:hidden fixed top-[80px] inset-x-0 bg-white z-50 shadow-xl border-t border-gray-100"
+                class="lg:hidden fixed top-[60px] md:top-[79px] inset-x-0 bg-white z-50 shadow-xl border-t border-gray-100"
             >
                 <div class="px-4 py-6 space-y-4">
                     <router-link
-                        v-if="isAuthenticated"
+                        v-if="isAuthenticated && auth.user?.role === 'customer'"
                         to="/"
                         :class="[
                             'flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200',
@@ -302,7 +316,7 @@
                     </router-link>
 
                     <router-link
-                        v-if="isAuthenticated"
+                        v-if="isAuthenticated && auth.user?.role === 'customer'"
                         to="/carts"
                         class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                         @click="toggleMobileNav"
@@ -312,17 +326,17 @@
                     </router-link>
 
                     <router-link
-                        v-if="isAuthenticated"
+                        v-if="isAuthenticated && auth.user?.role === 'customer'"
                         to="/orders"
                         class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                         @click="toggleMobileNav"
                     >
-                        <i class="pi pi-package text-lg"></i>
+                        <i class="pi pi-shopping-cart text-lg"></i>
                         <span>Orders</span>
                     </router-link>
 
                     <button
-                        v-if="isAuthenticated"
+                        v-if="isAuthenticated && auth.user?.role === 'customer'"
                         @click="
                             () => {
                                 handleLogout();
@@ -335,7 +349,12 @@
                         <span>Logout</span>
                     </button>
 
-                    <div v-if="!isAuthenticated" class="space-y-3 pt-4 border-t border-gray-200">
+                    <div
+                        v-if="
+                            !isAuthenticated || auth.user?.role !== 'customer'
+                        "
+                        class="space-y-3 pt-4 border-t border-gray-200"
+                    >
                         <router-link
                             to="/login"
                             class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"

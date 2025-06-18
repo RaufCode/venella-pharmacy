@@ -2,6 +2,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "@/router";
+import { useToast } from "vue-toastification";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -9,6 +10,7 @@ export const useAuthStore = defineStore("auth", {
     refreshToken: null,
     user: null,
     ready: false,
+    loading: false, // <-- Add loading state
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -72,6 +74,7 @@ export const useAuthStore = defineStore("auth", {
 
     // ** Register function added here before login **
     async register(registrationData) {
+      this.loading = true; // <-- Set loading true
       try {
         const response = await axios.post("/api/core/accounts/create/", registrationData);
         console.log("Register response:", response.data);
@@ -82,13 +85,15 @@ export const useAuthStore = defineStore("auth", {
         console.error("Register error:", error);
         const message = error.response?.data?.message || error.message || "Registration failed";
         throw new Error(message);
+      } finally {
+        this.loading = false; // <-- Set loading false
       }
     },
 
     async login(credentials) {
+      this.loading = true; // <-- Set loading true
       try {
         const response = await axios.post("/api/core/auth/login/", credentials);
-        console.log("Login response data:", response.data);
 
         const accessToken = response.data.token?.access;
         const refreshToken = response.data.token?.refresh;
@@ -105,11 +110,12 @@ export const useAuthStore = defineStore("auth", {
         if (userData.role === "admin") await router.push("/dashboard");
         else if (userData.role === "customer") await router.push("/");
         else await router.push("/salesperson");
-
       } catch (error) {
         console.error("Login error:", error);
         const message = error.response?.data?.message || error.message || "Login failed";
         throw new Error(message);
+      } finally {
+        this.loading = false; // <-- Set loading false
       }
     },
 
@@ -120,27 +126,29 @@ export const useAuthStore = defineStore("auth", {
       }
 
       try {
-        const res = await axios.post("/api/core/auth/refresh/", {
+        const res = await axios.post("/api/core/auth/token/refresh/", {
           refresh: this.refreshToken,
         });
 
         const newAccessToken = res.data.access;
         if (!newAccessToken) {
-          throw new Error("Refresh failed");
+          toast.error("Please log in again.");
         }
 
         this.setToken(newAccessToken, this.refreshToken);
         return newAccessToken;
       } catch (e) {
         this.logout();
-        throw new Error("Session expired. Please log in again.");
+        toast.error("Please log in again.");
       }
     },
 
     logout() {
+      const toast = useToast();
       this.setToken(null, null);
       this.setUser(null);
-      router.push("/login");
+      router.push("/");
+      toast.success("Logged out successfully.");
     },
   },
 });

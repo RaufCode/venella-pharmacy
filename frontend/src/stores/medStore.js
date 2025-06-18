@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useToast } from "vue-toastification";
 
 export const useMedStore = defineStore('medStore', {
   state: () => ({
@@ -9,6 +10,7 @@ export const useMedStore = defineStore('medStore', {
     isSubmitting: false,
     editingProductId: null,
     searchResults: [],
+    isLoading: false,
     form: {
       name: '',
       brand: '',
@@ -48,42 +50,51 @@ export const useMedStore = defineStore('medStore', {
     },
 
     async fetchCategories() {
+      const toast = useToast();
       try {
         const res = await axios.get('/api/products/categories/')
         this.categories = res.data
       } catch (error) {
-        console.error('Error fetching categories:', error)
+        toast.error('Error fetching categories.');
       }
     },
 
     async fetchProducts() {
+      const toast = useToast();
+      this.isLoading = true;
       try {
         const res = await axios.get('/api/products/')
         this.products = res.data.filter(product => product.stock > 0)
       } catch (error) {
-        console.error('Error fetching products:', error)
+        toast.error('Error fetching products.');
+      } finally {
+        this.isLoading = false;
       }
     },
 
     async searchProducts(query) {
+      const toast = useToast();
+      this.isLoading = true;
       if (!query.trim()) {
         this.searchResults = []
+        this.isLoading = false;
         return
       }
-
       try {
         const res = await axios.get(`/api/products/search/?query=${encodeURIComponent(query)}`)
         this.searchResults = res.data.filter(product => product.stock > 0)
       } catch (error) {
-        console.error('Error searching products:', error)
-        this.searchResults = []
+        toast.error('Error searching products.');
+        this.searchResults = [];
+      } finally {
+        this.isLoading = false;
       }
     },
 
     async addProduct(formData) {
+      const toast = useToast();
       if (this.isSubmitting) return
       this.isSubmitting = true
-
       try {
         if (this.editingProductId) {
           const response = await axios.put(
@@ -91,7 +102,6 @@ export const useMedStore = defineStore('medStore', {
             formData,
             { headers: { 'Content-Type': 'multipart/form-data' } }
           )
-
           const updatedProduct = response.data
           const index = this.products.findIndex(p => p.id === updatedProduct.id)
           if (index !== -1) {
@@ -101,32 +111,22 @@ export const useMedStore = defineStore('medStore', {
               this.products.splice(index, 1)
             }
           }
-
-          alert('Medication updated successfully!')
+          toast.success('Medication updated successfully!')
         } else {
           const response = await axios.post('/api/products/add/', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
-
           const newProduct = response.data
           if (newProduct.stock > 0) {
             this.products.unshift(newProduct)
           }
-
-          alert('Medication added successfully!')
+          toast.success('Medication added successfully!')
         }
-
         this.resetForm()
         this.showModal = false
-        
-        // Refresh products list to ensure latest data
         await this.fetchProducts()
       } catch (error) {
-        console.error('Error submitting form:', error.response?.data || error)
-        alert(
-          error.response?.data?.detail ||
-          'An error occurred while submitting the form.'
-        )
+        toast.error(error.response?.data?.detail || 'An error occurred while submitting the form.')
       } finally {
         this.isSubmitting = false
       }
@@ -156,10 +156,10 @@ export const useMedStore = defineStore('medStore', {
     },
 
     async editProduct(id) {
+      const toast = useToast();
       try {
         const res = await axios.get(`/api/products/${id}/retrieve/`)
         const product = res.data
-
         this.form.name = product.name
         this.form.brand = product.brand || ''
         this.form.stock = product.stock
@@ -167,27 +167,22 @@ export const useMedStore = defineStore('medStore', {
         this.form.category = product.category.id
         this.form.description = product.description
         this.form.product_images = []
-
         this.editingProductId = id
         this.showModal = true
       } catch (error) {
-        console.error('Error loading product data:', error.response?.data || error)
-        alert('Failed to load product details for editing.')
+        toast.error('Failed to load product details for editing.')
       }
     },
 
     async deleteProduct(id) {
+      const toast = useToast();
       if (!confirm('Are you sure you want to delete this product?')) return
-
       try {
         await axios.delete(`/api/products/${id}/delete/`)
         this.products = this.products.filter(p => p.id !== id)
-        alert('Product deleted successfully.')
+        toast.success('Product deleted successfully.')
       } catch (error) {
-        console.error('Error deleting product:', error.response?.data || error)
-        alert(
-          error.response?.data?.detail || 'An error occurred while deleting the product.'
-        )
+        toast.error(error.response?.data?.detail || 'An error occurred while deleting the product.')
       }
     }
   }
