@@ -94,7 +94,6 @@ export const useAuthStore = defineStore("auth", {
       this.loading = true; // <-- Set loading true
       try {
         const response = await axios.post("/api/core/auth/login/", credentials);
-        console.log("Login response data:", response.data);
 
         const accessToken = response.data.token?.access;
         const refreshToken = response.data.token?.refresh;
@@ -127,20 +126,20 @@ export const useAuthStore = defineStore("auth", {
       }
 
       try {
-        const res = await axios.post("/api/core/auth/refresh/", {
+        const res = await axios.post("/api/core/auth/token/refresh/", {
           refresh: this.refreshToken,
         });
 
         const newAccessToken = res.data.access;
         if (!newAccessToken) {
-          throw new Error("Refresh failed");
+          toast.error("Please log in again.");
         }
 
         this.setToken(newAccessToken, this.refreshToken);
         return newAccessToken;
       } catch (e) {
         this.logout();
-        throw new Error("Session expired. Please log in again.");
+        toast.error("Please log in again.");
       }
     },
 
