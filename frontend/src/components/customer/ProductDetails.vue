@@ -244,10 +244,7 @@
                                             ></i>
                                             <span class="ml-2">Adding...</span>
                                         </span>
-                                        <span
-                                            v-else
-                                            class="flex items-center gap-2"
-                                        >
+                                        <span v-else class="flex gap-2">
                                             <i class="pi pi-shopping-cart"></i>
                                             <span>Add to Cart</span>
                                         </span>

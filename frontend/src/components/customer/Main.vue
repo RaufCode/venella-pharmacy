@@ -22,11 +22,17 @@
     // State
     const isLoadingProducts = ref(false);
     const isCartLoaded = ref(false);
+    const error = ref(null);
 
     // Lifecycle
     onMounted(async () => {
         isLoadingProducts.value = true;
-        await medStore.fetchProducts();
+        error.value = null;
+        try {
+            await medStore.fetchProducts();
+        } catch (e) {
+            error.value = "Failed to load products. Please try again later.";
+        }
         isLoadingProducts.value = false;
 
         if (isAuthenticated.value) {
@@ -72,6 +78,10 @@
     const navigateToProduct = (productId) => {
         router.push(`/product/${productId}`);
     };
+
+    const reloadPage = () => {
+        window.location.reload();
+    };
 </script>
 
 <template>
@@ -93,6 +103,29 @@
             </div>
 
             <Spinner v-if="isLoadingProducts" />
+
+            <!-- Error State -->
+            <div v-else-if="error" class="text-center py-20">
+                <div class="max-w-md mx-auto">
+                    <div
+                        class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6"
+                    >
+                        <i
+                            class="pi pi-exclamation-triangle text-3xl text-red-500"
+                        ></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-red-700 mb-3">
+                        Error Loading Medications
+                    </h3>
+                    <p class="text-gray-500 mb-6">{{ error }}</p>
+                    <button
+                        @click="reloadPage"
+                        class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
 
             <!-- Products Grid -->
             <div
@@ -280,7 +313,7 @@
                         back soon for available medications.
                     </p>
                     <button
-                        @click="() => window.location.reload()"
+                        @click="reloadPage"
                         class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-md"
                     >
                         Refresh Page

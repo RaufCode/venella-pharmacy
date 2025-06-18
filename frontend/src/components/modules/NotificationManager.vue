@@ -386,8 +386,7 @@
                             class="px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded-lg"
                         >
                             {{ currentPage }} of {{ totalPages }}
-                        </BaseButton>
-
+                        </span>
                         <BaseButton
                             variant="outline"
                             size="sm"
