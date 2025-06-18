@@ -160,8 +160,10 @@
         // Fetch initial data
         orderStore.fetchAllOrders();
         medStore.fetchProducts();
-        notificationStore.fetchNotifications();
-        notificationStore.startPolling();
+        if (authStore.isAuthenticated) {
+            notificationStore.fetchNotifications();
+            notificationStore.startPolling();
+        }
     });
 
     onUnmounted(() => {

@@ -18,8 +18,10 @@
     import BaseButton from "@/components/shared/BaseButton.vue";
 
     import { useNotificationStore } from "@/stores/notification";
+    import { useAuthStore } from "@/stores/auth";
 
     const notificationStore = useNotificationStore();
+    const authStore = useAuthStore();
 
     const activeFilter = ref("all");
     const currentPage = ref(1);
@@ -178,7 +180,9 @@
     };
 
     onMounted(() => {
-        notificationStore.fetchNotifications();
+        if (authStore.isAuthenticated) {
+            notificationStore.fetchNotifications();
+        }
     });
 </script>
 <template>
@@ -382,7 +386,7 @@
                             class="px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded-lg"
                         >
                             {{ currentPage }} of {{ totalPages }}
-                        </span>
+                        </BaseButton>
 
                         <BaseButton
                             variant="outline"
