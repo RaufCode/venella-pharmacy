@@ -207,7 +207,7 @@
             <!-- Mobile Right: Notification + Hamburger -->
             <div class="flex items-center gap-4 lg:hidden">
                 <router-link
-                    v-if="isAuthenticated && requiredRole === 'admin'"
+                    v-if="isAuthenticated && auth.user?.role === 'admin'"
                     to="/notification"
                     class="relative p-2 text-gray-600 hover:text-orange-600 transition-colors"
                 >

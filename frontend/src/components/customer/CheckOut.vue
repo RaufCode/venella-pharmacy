@@ -4,6 +4,7 @@
     import { useCartStore } from "@/stores/cartStore";
     import { useOrderStore } from "@/stores/orderStore";
     import { ArrowLeft } from "lucide-vue-next";
+    import Spinner from "../ui/Spinner.vue";
 
     const cartStore = useCartStore();
     const orderStore = useOrderStore();
@@ -71,10 +72,6 @@
 
             cartStore.carts = [];
             form.value = { name: "", phone: "", address: "" };
-
-            alert(
-                "Order placed successfully! You will be redirected to the home page."
-            );
             router.push("/");
         } catch (error) {
             console.error("Order failed:", error);
@@ -122,13 +119,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Loading State -->
             <div v-if="cartStore.isLoading" class="text-center py-16">
-                <div
-                    class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-full mb-4"
-                >
-                    <div
-                        class="w-8 h-8 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin"
-                    ></div>
-                </div>
+                <Spinner class="mx-auto mb-4" />
                 <p class="text-gray-600 font-medium">Loading your cart...</p>
             </div>
 

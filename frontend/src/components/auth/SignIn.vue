@@ -26,7 +26,6 @@ import { useToast } from "vue-toastification";
             toast.success("Sign in successful!");
         } catch (error) {
             toast.error(error.message || "Sign in failed");
-            console.error("Invalid credentials:", error);
         }
     };
 </script>

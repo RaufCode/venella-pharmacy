@@ -1,7 +1,6 @@
 // stores/cart.js
 import { defineStore } from "pinia";
 import axios from "axios";
-import router from "@/router";
 import { useToast } from "vue-toastification";
 
 export const useCartStore = defineStore("cart", {
@@ -178,7 +177,6 @@ export const useCartStore = defineStore("cart", {
           await this.updateQuantity(item.id, item.quantity - 1);
         } else {
           await this.deleteItem(item.id);
-          toast.success("Item removed from cart.");
         }
       } catch (error) {
         this.error = "Failed to decrement quantity.";

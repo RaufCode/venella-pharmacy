@@ -18,7 +18,6 @@
         clearStockAlert,
         checkProductStock,
         showStockAlert,
-        getImage,
     } = cartStore;
 
     onMounted(fetchCartItems);
@@ -53,6 +52,13 @@
     };
 
     const clearError = () => (cartStore.error = null);
+
+    // Utility to get product image
+    const getImage = (product) => {
+        return product?.images?.[0]?.image
+            ? `https://techrems.pythonanywhere.com${product.images[0].image}`
+            : "/placeholder-image.jpg";
+    };
 </script>
 
 <template>

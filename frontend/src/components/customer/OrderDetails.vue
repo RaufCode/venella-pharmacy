@@ -19,11 +19,14 @@
         Truck,
         Star,
     } from "lucide-vue-next";
+    import { useToast } from "vue-toastification";
+    import Spinner from "../ui/Spinner.vue";
 
     const route = useRoute();
     const router = useRouter();
     const orderStore = useOrderStore();
     const authStore = useAuthStore();
+    const toast = useToast();
 
     const orderId = route.params.id;
     const isLoading = ref(true);
@@ -117,9 +120,10 @@
 
         try {
             await orderStore.deleteOrder(orderId);
-            router.push("/orders");
+            toast.success("Order cancelled successfully.");
+            goBack();
         } catch (error) {
-            console.error("Failed to cancel order:", error);
+            toast.error("Failed to cancel order.");
         }
     };
 
@@ -127,9 +131,7 @@
         try {
             await orderStore.updateOrderStatus(orderId, newStatus);
             await orderStore.fetchOrderDetails(orderId);
-        } catch (error) {
-            console.error("Failed to update order status:", error);
-        }
+        } catch (error) {}
     };
 
     const getItemSubtotal = (item) => {
@@ -170,13 +172,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Loading State -->
             <div v-if="isLoading" class="text-center py-16">
-                <div
-                    class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-full mb-4"
-                >
-                    <div
-                        class="w-8 h-8 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin"
-                    ></div>
-                </div>
+                <Spinner class="mx-auto mb-4" />
                 <p class="text-gray-600 font-medium">
                     Loading order details...
                 </p>
