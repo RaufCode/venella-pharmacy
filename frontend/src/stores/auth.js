@@ -148,7 +148,7 @@ export const useAuthStore = defineStore("auth", {
       const toast = useToast();
       this.setToken(null, null);
       this.setUser(null);
-      router.push("/login");
+      router.push("/");
       toast.success("Logged out successfully.");
     },
   },
