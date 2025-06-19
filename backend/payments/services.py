@@ -9,11 +9,11 @@ from orders.selectors import get_order_by_id
 from orders.models import Order
 
 
-def initiate_payment(order_id, request):
+def initiate_payment(order_id, request, data):
     """
     Initialize a payment for an order.
     """
-    data = request.data
+
     if not data:
         return {"error": "No data provided"}, status.HTTP_400_BAD_REQUEST
 
@@ -92,7 +92,7 @@ def initiate_payment(order_id, request):
         payment.status = "pending"
         payment.save()
         return {
-            "message": "Payment initialized successfully",
+            "detail": "Payment initialized successfully",
             "payment": payment_representation(payment, many=False, request=request),
             "authorization_url": response_data["data"]["authorization_url"],
         }, status.HTTP_200_OK

@@ -4,6 +4,7 @@ from orders.selectors import get_order_by_id
 from products.models import Product
 from products.selectors import get_product_by_id
 from django.contrib.auth import get_user_model
+from products.services import check_and_send_low_stock_notification
 
 
 def create_order(data: dict):

@@ -12,7 +12,7 @@ class PaymentViewSet(viewsets.ViewSet):
         """
         Initialize a payment for an order.
         """
-        response, status_code = initiate_payment(order_id, request)
+        response, status_code = initiate_payment(order_id, request, request.data)
 
         return Response(response, status=status_code)
 
