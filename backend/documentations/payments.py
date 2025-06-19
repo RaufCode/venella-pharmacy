@@ -32,7 +32,13 @@ verify_payment_schema = extend_schema(
     description="Verify a payment using Paystack",
     request=None,
     responses={
-        200: PaymentSerializer(many=False),
+        200: inline_serializer(
+            name="VerifyPaymentResponse",
+            fields={
+                "detail": serializers.CharField(),
+                "payment": PaymentSerializer(many=False),
+            },
+        ),
     },
     tags=["Payments"],
 )

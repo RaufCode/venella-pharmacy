@@ -17,10 +17,10 @@ class PaymentViewSet(viewsets.ViewSet):
         return Response(response, status=status_code)
 
     @verify_payment_schema
-    def verify_payment(self, request, payment_id):
+    def verify_payment(self, request, reference):
         """
         Verify a payment by its ID.
         """
-        response, status_code = verify_payment(payment_id, request)
+        response, status_code = verify_payment(reference, request)
 
         return Response(response, status=status_code)

@@ -44,6 +44,15 @@ class Order(models.Model):
     def deleted(self):
         return hasattr(self, "deletedorder")
 
+    @property
+    def payment_status(self):
+        if hasattr(self, "payments"):
+            payments = self.payments.all().order_by("-created_at")
+            if payments.exists():
+                return payments.first().status
+            # return "UNPAID"
+        return "UNPAID"
+
     class Meta:
         ordering = ["-created_at"]
         verbose_name = "Order"

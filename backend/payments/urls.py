@@ -6,7 +6,5 @@ urlpatterns = [
         "initiate/<str:order_id>/",
         PaymentViewSet.as_view({"post": "initialize_payment"}),
     ),
-    path(
-        "verify/<str:payment_id>/", PaymentViewSet.as_view({"post": "verify_payment"})
-    ),
+    path("verify/<str:reference>/", PaymentViewSet.as_view({"post": "verify_payment"})),
 ]

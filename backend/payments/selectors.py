@@ -23,12 +23,21 @@ def get_payment_by_id(payment_id):
     except Payment.DoesNotExist:
         return None
     else:
-        return PaymentSerializer(payment).data
+        return payment
 
 
 def get_payments_by_order_id(order_id):
     payments = Payment.objects.filter(order__id=order_id)
     return payments
+
+
+def get_payment_by_transaction_id(transaction_id):
+    try:
+        payment = Payment.objects.get(transaction_id=transaction_id)
+    except Payment.DoesNotExist:
+        return None
+    else:
+        return payment
 
 
 def get_payments_by_customer_id(customer_id):

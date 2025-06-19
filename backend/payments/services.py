@@ -54,12 +54,17 @@ def initiate_payment(order_id, request, data):
     payment = payment_serializer.save()
 
     # paystack integration
+    # get the address of the client that made the request to the server
+    client_addr = request.headers.get("Referer")
+    if not client_addr:
+        client_addr = f"{request.scheme}://{request.get_host()}/"
+
     paystack_data = {
         "amount": int(payment.amount * 100),  # Paystack expects amount in kobo
         "currency": payment.currency,
         "email": order.customer.email,
         "ref": str(payment.id),
-        "callback_url": f"{request.build_absolute_uri('/payments/callback/')}",
+        "callback_url": f"{client_addr}payments/verify/{payment.id}/",
         "metadata": {
             "payment_id": str(payment.id),
             "order_id": str(order.id),
@@ -101,12 +106,12 @@ def initiate_payment(order_id, request, data):
         return {"error": str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
-def verify_payment(payment_id, request):
+def verify_payment(reference, request):
     """
     Verify a payment using Paystack.
     """
     try:
-        payment = get_payment_by_id(payment_id)
+        payment = get_payment_by_transaction_id(reference)
     except Payment.DoesNotExist:
         return {"error": "Payment not found"}, status.HTTP_404_NOT_FOUND
 
@@ -117,7 +122,7 @@ def verify_payment(payment_id, request):
 
     try:
         response = requests.get(
-            f"https://api.paystack.co/transaction/verify/{payment.transaction_id}",
+            f"https://api.paystack.co/transaction/verify/{reference}",
             headers=headers,
         )
         response_data = response.json()
@@ -134,7 +139,7 @@ def verify_payment(payment_id, request):
 
         payment.save()
         return {
-            "message": "Payment verified successfully",
+            "detail": "Payment verified successfully",
             "payment": payment_representation(payment, many=False, request=request),
         }, status.HTTP_200_OK
 
