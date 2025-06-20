@@ -202,6 +202,16 @@
 
             <!-- Order Details -->
             <div v-else-if="order" class="space-y-8">
+                <div
+                    class="flex items-center justify-between p-4 -my-4 shadow rounded-xl bg-white"
+                >
+                    <h1 class="text-gray-600 font-medium">Payment Status</h1>
+                    <p
+                        class="capitalize font-medium text-white py-1 px-3 rounded-full bg-blue-500 w-max"
+                    >
+                        {{ order.payment_status }}
+                    </p>
+                </div>
                 <!-- Order Header -->
                 <div
                     class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
@@ -259,7 +269,12 @@
                                     <p
                                         class="text-xl font-semibold text-green-600"
                                     >
-                                        {{ formatCurrency(order.total_amount) }}
+                                        {{
+                                            formatCurrency(
+                                                parseFloat(order.total_amount) +
+                                                    15
+                                            )
+                                        }}
                                     </p>
                                 </div>
                             </div>
@@ -379,7 +394,9 @@
                                     >Order Total</span
                                 >
                                 <span class="font-semibold text-green-600">{{
-                                    formatCurrency(order.total_amount)
+                                    formatCurrency(
+                                        parseFloat(order.total_amount) + 15
+                                    )
                                 }}</span>
                             </div>
                         </div>
@@ -471,23 +488,36 @@
 
                     <div class="p-6">
                         <div class="flex flex-wrap gap-4">
+                            <!-- Show Cancel button if unpaid -->
                             <button
-                                v-if="order.status === 'PENDING'"
-                                @click="handleStatusUpdate('PROCESSING')"
-                                class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+                                v-if="order.payment_status === 'UNPAID'"
+                                @click="handleCancelOrder"
+                                class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
                             >
-                                <Clock class="w-5 h-5" />
-                                Mark as Processing
+                                <XCircle class="w-5 h-5" />
+                                Cancel Order
                             </button>
 
-                            <button
-                                v-if="order.status === 'PROCESSING'"
-                                @click="handleStatusUpdate('DELIVERED')"
-                                class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
-                            >
-                                <CheckCircle class="w-5 h-5" />
-                                Mark as Delivered
-                            </button>
+                            <!-- Show normal status buttons if paid -->
+                            <template v-else>
+                                <button
+                                    v-if="order.status === 'PENDING'"
+                                    @click="handleStatusUpdate('PROCESSING')"
+                                    class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+                                >
+                                    <Clock class="w-5 h-5" />
+                                    Mark as Processing
+                                </button>
+
+                                <button
+                                    v-if="order.status === 'PROCESSING'"
+                                    @click="handleStatusUpdate('DELIVERED')"
+                                    class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+                                >
+                                    <CheckCircle class="w-5 h-5" />
+                                    Mark as Delivered
+                                </button>
+                            </template>
                         </div>
                     </div>
                 </div>

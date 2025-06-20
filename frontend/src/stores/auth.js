@@ -1,6 +1,7 @@
 // stores/auth.js
 import { defineStore } from "pinia";
 import axios from "axios";
+import axiosInstance from "@/services/api"; 
 import router from "@/router";
 import { useToast } from "vue-toastification";
 
@@ -24,10 +25,10 @@ export const useAuthStore = defineStore("auth", {
 
       if (accessToken) {
         localStorage.setItem("token", accessToken);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
       } else {
         localStorage.removeItem("token");
-        delete axios.defaults.headers.common["Authorization"];
+        delete axiosInstance.defaults.headers.common["Authorization"];
       }
 
       if (refreshToken) {
@@ -53,7 +54,7 @@ export const useAuthStore = defineStore("auth", {
 
       if (savedToken) {
         this.token = savedToken;
-        axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
+        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
       }
 
       if (savedRefresh) {
@@ -76,14 +77,11 @@ export const useAuthStore = defineStore("auth", {
     async register(registrationData) {
       this.loading = true; // <-- Set loading true
       try {
-        const response = await axios.post("/api/core/accounts/create/", registrationData);
-        console.log("Register response:", response.data);
-        // Optionally redirect to login or automatically login here
+        const response = await axiosInstance.post("/api/core/accounts/create/", registrationData);
         await router.push("/login");
         return response.data;
       } catch (error) {
-        console.error("Register error:", error);
-        const message = error.response?.data?.message || error.message || "Registration failed";
+        const message = "Registration failed. Please try again.";
         throw new Error(message);
       } finally {
         this.loading = false; // <-- Set loading false
@@ -93,7 +91,7 @@ export const useAuthStore = defineStore("auth", {
     async login(credentials) {
       this.loading = true; // <-- Set loading true
       try {
-        const response = await axios.post("/api/core/auth/login/", credentials);
+        const response = await axiosInstance.post("/api/core/auth/login/", credentials);
 
         const accessToken = response.data.token?.access;
         const refreshToken = response.data.token?.refresh;
@@ -111,8 +109,7 @@ export const useAuthStore = defineStore("auth", {
         else if (userData.role === "customer") await router.push("/");
         else await router.push("/salesperson");
       } catch (error) {
-        console.error("Login error:", error);
-        const message = error.response?.data?.message || error.message || "Login failed";
+        const message = "Check your network or credentials";
         throw new Error(message);
       } finally {
         this.loading = false; // <-- Set loading false
@@ -126,7 +123,7 @@ export const useAuthStore = defineStore("auth", {
       }
 
       try {
-        const res = await axios.post("/api/core/auth/token/refresh/", {
+        const res = await axiosInstance.post("/api/core/auth/token/refresh/", {
           refresh: this.refreshToken,
         });
 

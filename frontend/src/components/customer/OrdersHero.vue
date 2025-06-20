@@ -14,7 +14,7 @@
     const router = useRouter();
 
     function goBack() {
-        router.back();
+        router.push("/");
     }
 
     function formatDate(dateStr) {

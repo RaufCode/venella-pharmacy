@@ -1,6 +1,7 @@
 // stores/cart.js
 import { defineStore } from "pinia";
 import axios from "axios";
+import axiosInstance from '@/services/api';
 import { useToast } from "vue-toastification";
 
 export const useCartStore = defineStore("cart", {
@@ -26,18 +27,20 @@ export const useCartStore = defineStore("cart", {
 
   actions: {
     async fetchCartItems() {
-      const toast = useToast();
       this.isLoading = true;
       this.error = null;
       try {
-        const response = await axios.get("/api/carts/customer/cart-items/");
+        const response = await axiosInstance.get("/api/carts/customer/cart-items/");
         const cartItems = response.data || [];
         this.carts = cartItems;
         await this.validateAndAdjustCartQuantities(cartItems);
-      } catch (err) {
-        this.error = "Failed to load cart items.";
-        this.carts = [];
-        toast.error(this.error);
+      }
+        catch (err) {
+      const toast = useToast(); // ✅ add this
+      this.carts = [];
+      this.error = err.response?.data?.message || "Failed to fetch cart   items.";
+      toast.error(this.error);
+
       } finally {
         this.isLoading = false;
       }
@@ -50,7 +53,7 @@ export const useCartStore = defineStore("cart", {
 
       for (const item of cartItems) {
         try {
-          const stockResponse = await axios.get(`/api/products/${item.product.id}/retrieve/`);
+          const stockResponse = await axiosInstance.get(`/api/products/${item.product.id}/retrieve/`);
           const currentStock = stockResponse.data.stock || 0;
 
           if (item.quantity > currentStock) {
@@ -80,7 +83,7 @@ export const useCartStore = defineStore("cart", {
     async checkProductStock(productId) {
       const toast = useToast();
       try {
-        const response = await axios.get(`/api/products/${productId}/retrieve/`);
+        const response = await axiosInstance.get(`/api/products/${productId}/retrieve/`);
         return response.data.stock || 0;
       } catch (error) {
         toast.error(`Error fetching stock for product ${productId}`);
@@ -113,7 +116,7 @@ export const useCartStore = defineStore("cart", {
           return;
         }
 
-        await axios.post("/api/carts/cart-items/add/", {
+        await axiosInstance.post("/api/carts/cart-items/add/", {
           product: productId,
           quantity: 1,
         });
@@ -148,13 +151,13 @@ export const useCartStore = defineStore("cart", {
         }
 
         const newQty = item.quantity + 1;
-        const response = await axios.put(`/api/carts/cart-item/${item.id}/update/`, {
+        const response = await axiosInstance.put(`/api/carts/cart-item/${item.id}/update/`, {
           quantity: newQty,
         });
 
         item.quantity = response.data.quantity || newQty;
       } catch (error) {
-        this.error = "Failed to increment quantity.";
+        this.error = `Only ${item.quantity} left in stock.`;
         toast.error(this.error);
       } finally {
         this.cartLoading = { ...this.cartLoading, [productId]: false };
@@ -189,7 +192,7 @@ export const useCartStore = defineStore("cart", {
     async updateQuantity(itemId, quantity) {
       const toast = useToast();
       try {
-        const response = await axios.put(`/api/carts/cart-item/${itemId}/update/`, { quantity });
+        const response = await axiosInstance.put(`/api/carts/cart-item/${itemId}/update/`, { quantity });
         const index = this.carts.findIndex(c => c.id === itemId);
         if (index !== -1) {
           this.carts[index].quantity = response.data.quantity || quantity;
@@ -203,7 +206,7 @@ export const useCartStore = defineStore("cart", {
     async deleteItem(itemId) {
       const toast = useToast();
       try {
-        await axios.delete(`/api/carts/cart-item/${itemId}/delete/`);
+        await axiosInstance.delete(`/api/carts/cart-item/${itemId}/delete/`);
         this.carts = this.carts.filter(c => c.id !== itemId);
         toast.success("Item removed from cart.");
       } catch (error) {

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import axiosInstance from '@/services/api'
 import { useToast } from "vue-toastification";
 
 export const useMedStore = defineStore('medStore', {
@@ -52,7 +53,7 @@ export const useMedStore = defineStore('medStore', {
     async fetchCategories() {
       const toast = useToast();
       try {
-        const res = await axios.get('/api/products/categories/')
+        const res = await axiosInstance.get('/api/products/categories/')
         this.categories = res.data
       } catch (error) {
         toast.error('Error fetching categories.');
@@ -63,7 +64,7 @@ export const useMedStore = defineStore('medStore', {
       const toast = useToast();
       this.isLoading = true;
       try {
-        const res = await axios.get('/api/products/')
+        const res = await axiosInstance.get('/api/products/')
         this.products = res.data.filter(product => product.stock > 0)
       } catch (error) {
         toast.error('Error fetching products.');
@@ -81,7 +82,7 @@ export const useMedStore = defineStore('medStore', {
         return
       }
       try {
-        const res = await axios.get(`/api/products/search/?query=${encodeURIComponent(query)}`)
+        const res = await axiosInstance.get(`/api/products/search/?query=${encodeURIComponent(query)}`)
         this.searchResults = res.data.filter(product => product.stock > 0)
       } catch (error) {
         toast.error('Error searching products.');
@@ -97,7 +98,7 @@ export const useMedStore = defineStore('medStore', {
       this.isSubmitting = true
       try {
         if (this.editingProductId) {
-          const response = await axios.put(
+          const response = await axiosInstance.put(
             `/api/products/${this.editingProductId}/update/`,
             formData,
             { headers: { 'Content-Type': 'multipart/form-data' } }
@@ -113,7 +114,7 @@ export const useMedStore = defineStore('medStore', {
           }
           toast.success('Medication updated successfully!')
         } else {
-          const response = await axios.post('/api/products/add/', formData, {
+          const response = await axiosInstance.post('/api/products/add/', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
           const newProduct = response.data
@@ -158,7 +159,7 @@ export const useMedStore = defineStore('medStore', {
     async editProduct(id) {
       const toast = useToast();
       try {
-        const res = await axios.get(`/api/products/${id}/retrieve/`)
+        const res = await axiosInstance.get(`/api/products/${id}/retrieve/`)
         const product = res.data
         this.form.name = product.name
         this.form.brand = product.brand || ''
@@ -178,7 +179,7 @@ export const useMedStore = defineStore('medStore', {
       const toast = useToast();
       if (!confirm('Are you sure you want to delete this product?')) return
       try {
-        await axios.delete(`/api/products/${id}/delete/`)
+        await axiosInstance.delete(`/api/products/${id}/delete/`)
         this.products = this.products.filter(p => p.id !== id)
         toast.success('Product deleted successfully.')
       } catch (error) {
