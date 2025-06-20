@@ -1,5 +1,6 @@
 from ._base import *
 from orders.serializers import OrderSerializer
+from payments.serializers import PaymentSerializer
 
 
 list_orders_schema = extend_schema(
@@ -37,11 +38,28 @@ create_order_schema = extend_schema(
         fields={
             "cart": serializers.UUIDField(),
             "shipping_address": serializers.CharField(max_length=255),
+            "payment_details": inline_serializer(
+                name="PaymentDetails",
+                fields={
+                    "payment_method": serializers.CharField(),
+                    "amount": serializers.DecimalField(max_digits=10, decimal_places=2),
+                    "currency": serializers.CharField(max_length=3, default="GHS"),
+                    "phone_number": serializers.CharField(max_length=15),
+                    "provider": serializers.CharField(max_length=20),
+                },
+            ),
         },
         required=["cart", "shipping_address"],
     ),
     responses={
-        201: OrderSerializer(many=False),
+        201: inline_serializer(
+            name="CreateOrderResponse",
+            fields={
+                "detail": serializers.CharField(),
+                "payment": PaymentSerializer(),
+                "authorization_url": serializers.URLField(),
+            },
+        ),
     },
     tags=["Orders"],
 )

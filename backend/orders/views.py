@@ -1,3 +1,5 @@
+import requests
+from django.shortcuts import redirect
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from core.utils.general import get_user_from_jwttoken, validate_posted_data
@@ -9,6 +11,7 @@ from notifications.services import (
     create_customer_notification,
     create_salesperson_notification,
 )
+from payments.services import initiate_payment
 from documentations.orders import *
 
 
@@ -52,7 +55,9 @@ class OrderViewSet(viewsets.ViewSet):
             )
 
         data = request.data
-        err, errors = validate_posted_data(data, ["cart", "shipping_address"])
+        err, errors = validate_posted_data(
+            data, ["cart", "shipping_address", "payment_details"]
+        )
         if err:
             return Response({"detail": errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -77,7 +82,7 @@ class OrderViewSet(viewsets.ViewSet):
                 {"detail": "Cart is empty."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        print("Cart items:", cart_items)
+
         order_items = [
             {
                 "product": item.product.id,
@@ -90,7 +95,7 @@ class OrderViewSet(viewsets.ViewSet):
         data["total_amount"] = sum(
             item["quantity"] * item["amount"] for item in order_items
         )
-        print("order data:", data)
+
         order_data, errors = create_order(data)
         if not order_data:
             return Response(
@@ -142,8 +147,17 @@ class OrderViewSet(viewsets.ViewSet):
             }
         )
 
-        context = order_representation(request, order, many=False)
-        return Response(context, status=status.HTTP_201_CREATED)
+        # Redirect to payment page if payment details are provided
+        payment_details = data.get("payment_details")
+
+        payment, status_code = initiate_payment(order.id, request, payment_details)
+        if "error" in payment:
+            return Response(
+                {"detail": payment},
+                status=status_code,
+            )
+
+        return Response(payment, status=status.HTTP_201_CREATED)
 
     @sell_product_schema
     def sell_in_store(self, request):

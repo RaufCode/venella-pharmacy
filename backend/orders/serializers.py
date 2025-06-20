@@ -38,4 +38,6 @@ class OrderSerializer(serializers.ModelSerializer):
             ).data
         else:
             data["sales_person"] = None
+
+        data["payment_status"] = instance.payment_status
         return data

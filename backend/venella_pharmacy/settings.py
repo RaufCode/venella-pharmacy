@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "orders.apps.OrdersConfig",
     "carts.apps.CartsConfig",
     "notifications.apps.NotificationsConfig",
+    "payments.apps.PaymentsConfig",
 ]
 
 REST_FRAMEWORK = {
@@ -179,3 +180,7 @@ SPECTACULAR_SETTINGS = {
         "persistAuthorization": True,
     },
 }
+
+
+PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY", default="")
+PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY", default="")
