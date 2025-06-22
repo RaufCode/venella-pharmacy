@@ -377,13 +377,13 @@
                         </div>
 
                         <!-- Terms and Conditions -->
-                        <div class="flex items-start gap-3">
+                        <div class="flex items-center gap-3">
                             <input
                                 type="checkbox"
                                 id="terms"
                                 required
                                 :disabled="authStore.loading"
-                                class="mt-1 w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
+                                class="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
                             />
                             <label for="terms" class="text-sm text-gray-600">
                                 I agree to the
