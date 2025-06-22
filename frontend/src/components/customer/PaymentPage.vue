@@ -71,11 +71,10 @@
                 "/api/orders/create/",
                 Payload
             );
-
             const url = orderRes.data.authorization_url;
+
             if (url && typeof url === "string" && url.startsWith("http")) {
                 orderStore.clearPendingOrder();
-                // Keep button disabled and redirect
                 window.location.href = url;
             } else {
                 toast.error("Payment URL not provided or invalid.");
@@ -92,16 +91,15 @@
 
 <template>
     <div
-        class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-gray-100"
+        class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-gray-100 text-gray-700 font-medium"
     >
         <div
             class="w-full max-w-lg bg-white rounded-3xl shadow overflow-hidden relative border border-gray-300"
         >
-            <!-- Decorative Circle (optional, now gray) -->
             <div
                 class="absolute -top-10 -right-10 w-32 h-32 bg-gray-200 rounded-full opacity-20 blur-2xl z-0"
             ></div>
-            <!-- Secure Payment Gradient Header -->
+
             <div
                 class="bg-gradient-to-r from-orange-500 to-orange-700 px-6 py-4 text-center relative z-10"
             >
@@ -119,26 +117,27 @@
                             stroke-linejoin="round"
                             stroke-width="2"
                             d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                        ></path>
+                        />
                     </svg>
                 </div>
-                <h1 class="font-semibold text-white mb-1">Secure Payment</h1>
-                <p class="text-blue-100 text-xs">
+                <h1 class="font-medium text-white mb-1">Secure Payment</h1>
+                <p class="text-white/70 text-xs">
                     Fast, safe, and reliable transactions
                 </p>
             </div>
+
             <form
                 @submit.prevent="submitPayment"
                 class="p-6 space-y-4 relative z-10"
             >
                 <!-- Amount -->
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-400"
+                    <label class="block text-sm text-gray-700"
                         >Amount (GHS)</label
                     >
                     <div class="relative">
                         <span
-                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium"
+                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                             >₵</span
                         >
                         <input
@@ -148,16 +147,15 @@
                             min="1"
                             required
                             placeholder="0.00"
-                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-lg font-semibold bg-white hover:bg-gray-50 focus:bg-white shadow-sm placeholder:text-sm"
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-lg bg-white hover:bg-gray-50 focus:bg-white shadow-sm placeholder:text-sm text-gray-700"
                             :readonly="true"
                         />
                     </div>
                 </div>
-                <!-- Phone Number -->
+
+                <!-- Phone -->
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-400"
-                        >Phone</label
-                    >
+                    <label class="block text-sm text-gray-700">Phone</label>
                     <input
                         :value="form.phone"
                         @input="handlePhoneInput"
@@ -165,25 +163,20 @@
                         required
                         placeholder="024 123"
                         maxlength="12"
-                        class="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-lg font-semibold bg-white hover:bg-gray-50 focus:bg-white shadow-sm placeholder:text-sm"
+                        class="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-lg bg-white hover:bg-gray-50 focus:bg-white shadow-sm placeholder:text-sm text-gray-700"
                     />
                 </div>
-                <!-- Network Provider -->
+
+                <!-- Network -->
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-400"
-                        >Network</label
-                    >
+                    <label class="block text-sm text-gray-700">Network</label>
                     <div class="relative">
                         <select
                             v-model="form.network"
                             required
-                            class="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-sm font-semibold text-gray-400 bg-white hover:bg-gray-50 focus:bg-white appearance-none cursor-pointer shadow-sm"
+                            class="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-sm text-gray-700 bg-white hover:bg-gray-50 focus:bg-white appearance-none cursor-pointer shadow-sm"
                         >
-                            <option
-                                value=""
-                                disabled
-                                class="text-gray-400 font-normal"
-                            >
+                            <option value="" disabled class="text-gray-400">
                                 Select network
                             </option>
                             <option
@@ -214,29 +207,24 @@
                         </div>
                     </div>
                 </div>
-                <!-- Payment Type -->
+
+                <!-- Payment -->
                 <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-400"
-                        >Payment</label
-                    >
+                    <label class="block text-sm text-gray-700">Payment</label>
                     <div class="relative">
                         <select
                             v-model="form.paymentType"
                             required
-                            class="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-sm font-semibold text-gray-400 bg-white hover:bg-gray-50 focus:bg-white appearance-none cursor-pointer shadow-sm"
+                            class="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-sm text-gray-700 bg-white hover:bg-gray-50 focus:bg-white appearance-none cursor-pointer shadow-sm"
                         >
-                            <option
-                                value=""
-                                disabled
-                                class="text-gray-400 font-semibold"
-                            >
+                            <option value="" disabled class="text-gray-400">
                                 Choose method
                             </option>
                             <option
                                 v-for="type in paymentTypes"
                                 :key="type.value"
                                 :value="type.value"
-                                class="font-medium text-gray-600"
+                                class="text-gray-700"
                             >
                                 {{ type.label }}
                             </option>
@@ -260,11 +248,12 @@
                         </div>
                     </div>
                 </div>
-                <!-- Submit Button -->
+
+                <!-- Submit -->
                 <button
                     :disabled="!isFormValid || isSubmitting"
                     type="submit"
-                    class="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-orange-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-extrabold text-sm rounded-full shadow-xl hover:shadow-2xl disabled:shadow-none transition-all duration-200 disabled:cursor-not-allowed flex items-center justify-center gap-3 group"
+                    class="w-full py-3 px-6 bg-gradient-to-r from-orange-500 to-orange-700 disabled:from-gray-400 disabled:to-gray-500 text-white text-sm rounded-full shadow-xl hover:shadow-2xl disabled:shadow-none transition-all duration-200 disabled:cursor-not-allowed flex items-center justify-center gap-3 group"
                 >
                     <div v-if="isSubmitting" class="flex items-center gap-2">
                         <svg

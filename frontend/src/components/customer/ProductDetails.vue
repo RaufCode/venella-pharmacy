@@ -287,7 +287,7 @@
                                         </div>
                                         <button
                                             @click="() => router.push('/carts')"
-                                            class="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-medium transition-all duration-200 shadow-md"
+                                            class="px-6 py-3 md:py-4 text-xs md:text-base bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-medium transition-all duration-200 shadow-md"
                                         >
                                             View Cart
                                         </button>
@@ -329,8 +329,7 @@
                                         >
                                     </div>
                                     <p class="text-blue-700 text-sm">
-                                        Delivery charges apply. Contact us for
-                                        delivery estimates to your location.
+                                        Standard delivery within Kumasi is ₵15.
                                     </p>
                                 </div>
 

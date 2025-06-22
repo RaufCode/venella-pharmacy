@@ -12,6 +12,7 @@ import OrderDetailsView from '../views/OrderDetailsView.vue'
 import CusNotificationView from '../views/CusNotificationView.vue'
 import PaymentPageView from '../views/PaymentPageView.vue'
 import PaymentCallbackView from '../views/PaymentCallbackView.vue'
+import ErrorPage from '../views/ErrorPage.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -92,6 +93,11 @@ const router = createRouter({
       name: 'payments/verify/:paymentId',
       component: PaymentCallbackView,
       meta: { requiresAuth: true, requiresRole: 'customer' },
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: ErrorPage,
     },
     
   ],
