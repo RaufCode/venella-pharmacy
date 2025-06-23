@@ -161,7 +161,7 @@
                         @input="handlePhoneInput"
                         type="tel"
                         required
-                        placeholder="024 123 6785"
+                        placeholder="024 123 "
                         maxlength="12"
                         class="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-xl focus:border-orange-500 focus:outline-none focus:ring-0 transition-all text-lg bg-white hover:bg-gray-50 focus:bg-white shadow-sm placeholder:text-sm text-gray-700"
                     />
