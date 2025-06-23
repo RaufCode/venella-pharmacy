@@ -109,7 +109,7 @@ export const useAuthStore = defineStore("auth", {
         else if (userData.role === "customer") await router.push("/");
         else await router.push("/salesperson");
       } catch (error) {
-        const message = "Check your network or credentials";
+        const message = "Invalid Credentials";
         throw new Error(message);
       } finally {
         this.loading = false; // <-- Set loading false
