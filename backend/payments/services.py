@@ -73,8 +73,10 @@ def initiate_payment(order_id, request, data):
 
     if data.get("payment_method") == "mobile_money":
         paystack_data["mobile_money"] = {
-            "phone_number": data.get("phone_number"),
-            "provider": data.get("providder"),
+            "phone": data.get("phone_number"),
+            "provider": (
+                data.get("provider").strip().lower() if data.get("provider") else "mtn"
+            ),
         }
 
     headers = {
