@@ -1,6 +1,6 @@
 <script setup>
     import { ref, computed, onMounted } from "vue";
-    import router from "@/router";
+    import { useRouter } from "vue-router";
     import { useCartStore } from "@/stores/cartStore";
     import { useOrderStore } from "@/stores/orderStore";
     import { ArrowLeft } from "lucide-vue-next";
@@ -8,6 +8,7 @@
 
     const cartStore = useCartStore();
     const orderStore = useOrderStore();
+    const router = useRouter();
 
     const isLoading = ref(false);
 
@@ -60,22 +61,26 @@
             const payload = {
                 cart: cartId,
                 shipping_address: form.value.address.trim(),
-                customer_name: form.value.name.trim(),
-                customer_phone: form.value.phone.trim(),
+                // customer_name: form.value.name.trim(),
+                // customer_phone: form.value.phone.trim(),
             };
 
-            await orderStore.createOrder(payload);
+            // Save order payload and amount to orderStore, then go to payment page
+            orderStore.setPendingOrder({
+                order: {
+                    cart: cartId,
+                    shipping_address: form.value.address.trim(),
+                },
+                amount: totalWithDelivery.value,
+            });
 
-            if (orderStore.error) {
-                throw new Error(orderStore.error);
-            }
-
-            cartStore.carts = [];
-            form.value = { name: "", phone: "", address: "" };
-            router.push("/");
+            router.push("/payment");
         } catch (error) {
             console.error("Order failed:", error);
-            alert(error.message || "Failed to place order. Please try again.");
+            alert(
+                error.message ||
+                    "Failed to proceed to payment. Please try again."
+            );
         } finally {
             isLoading.value = false;
         }

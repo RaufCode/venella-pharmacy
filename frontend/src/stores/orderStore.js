@@ -1,6 +1,7 @@
 // src/stores/orderStore.js
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import axiosInstance from '@/services/api' // adjust path as needed
 import { useToast } from "vue-toastification";
 
 export const useOrderStore = defineStore('orderStore', {
@@ -12,6 +13,9 @@ export const useOrderStore = defineStore('orderStore', {
     error: null,
     successMessage: null,
     searchDate: null,
+    // Add pendingOrder to store order payload before payment
+    pendingOrder: null,
+    pendingAmount: null,
   }),
 
   getters: {
@@ -79,7 +83,7 @@ export const useOrderStore = defineStore('orderStore', {
       this.loading = true
       this.error = null
       try {
-        const res = await axios.get('/api/orders/')
+        const res = await axiosInstance.get('/api/orders/')
         this.orders.splice(0, this.orders.length, ...(res.data || []))
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to load orders.'
@@ -94,7 +98,7 @@ export const useOrderStore = defineStore('orderStore', {
       this.loading = true
       this.error = null
       try {
-        const res = await axios.get('/api/orders/pending/')
+        const res = await axiosInstance.get('/api/orders/pending/')
         this.orders.splice(0, this.orders.length, ...(res.data || []))
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to load pending orders.'
@@ -109,7 +113,7 @@ export const useOrderStore = defineStore('orderStore', {
       this.loading = true
       this.error = null
       try {
-        const res = await axios.get('/api/orders/processing/')
+        const res = await axiosInstance.get('/api/orders/processing/')
         this.orders.splice(0, this.orders.length, ...(res.data || []))
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to load processing orders.'
@@ -124,7 +128,7 @@ export const useOrderStore = defineStore('orderStore', {
       this.loading = true
       this.error = null
       try {
-        const res = await axios.get('/api/orders/customer/orders/')
+        const res = await axiosInstance.get('/api/orders/customer/orders/')
         this.customerOrders = res.data || []
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to fetch your orders.'
@@ -139,7 +143,7 @@ export const useOrderStore = defineStore('orderStore', {
       this.loading = true
       this.error = null
       try {
-        const res = await axios.get(`/api/orders/${orderId}/retrieve/`)
+        const res = await axiosInstance.get(`/api/orders/${orderId}/retrieve/`)
         this.orderDetails = res.data
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to retrieve order details.'
@@ -149,29 +153,29 @@ export const useOrderStore = defineStore('orderStore', {
       }
     },
 
-    async createOrder(payload) {
-      const toast = useToast();
-      this.loading = true
-      this.error = null
-      try {
-        await axios.post('/api/orders/create/', payload)
-        this.successMessage = 'Order created successfully.'
-        toast.success(this.successMessage);
-        await this.fetchCustomerOrders()
-      } catch (err) {
-        this.error = err.response?.data?.message || 'Order creation failed.'
-        toast.error(this.error);
-      } finally {
-        this.loading = false
-      }
-    },
+    // async createOrder(payload) {
+    //   const toast = useToast();
+    //   this.loading = true
+    //   this.error = null
+    //   try {
+    //     await axiosInstance.post('/api/orders/create/', payload)
+    //     this.successMessage = 'Order created successfully.'
+    //     toast.success(this.successMessage);
+    //     await this.fetchCustomerOrders()
+    //   } catch (err) {
+    //     this.error = err.response?.data?.message || 'Order creation failed.'
+    //     toast.error(this.error);
+    //   } finally {
+    //     this.loading = false
+    //   }
+    // },
 
     async deleteOrder(orderId) {
       const toast = useToast();
       this.loading = true
       this.error = null
       try {
-        await axios.delete(`/api/orders/${orderId}/delete/`)
+        await axiosInstance.delete(`/api/orders/${orderId}/delete/`)
         this.successMessage = 'Order deleted successfully.'
         toast.success(this.successMessage);
         await this.fetchAllOrders()
@@ -189,7 +193,7 @@ export const useOrderStore = defineStore('orderStore', {
       this.loading = true
       this.error = null
       try {
-        await axios.put(`/api/orders/${orderId}/update-status/`, { status: newStatus })
+        await axiosInstance.put(`/api/orders/${orderId}/update-status/`, { status: newStatus })
         this.successMessage = 'Order status updated.'
         toast.success(this.successMessage);
         await this.fetchAllOrders()
@@ -204,6 +208,15 @@ export const useOrderStore = defineStore('orderStore', {
 
     setSearchDate(date) {
       this.searchDate = date
+    },
+
+    setPendingOrder({ order, amount }) {
+      this.pendingOrder = order;
+      this.pendingAmount = amount;
+    },
+    clearPendingOrder() {
+      this.pendingOrder = null;
+      this.pendingAmount = null;
     },
 
     clearMessages() {

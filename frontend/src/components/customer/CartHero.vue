@@ -4,9 +4,11 @@
     import { storeToRefs } from "pinia";
     import { useRouter } from "vue-router";
     import Spinner from "../ui/Spinner.vue";
+    import { useToast } from "vue-toastification";
     import { Trash2, Plus, Minus, ArrowLeft } from "lucide-vue-next";
 
     const router = useRouter();
+    const toast = useToast();
     const cartStore = useCartStore();
     const { carts, isLoading, error, subtotal, stockAlerts } =
         storeToRefs(cartStore);
@@ -20,10 +22,9 @@
         showStockAlert,
     } = cartStore;
 
-    onMounted(fetchCartItems);
+    const goBack = () => router.back();
 
-    const goBack = () =>
-        window.history.length > 1 ? router.back() : router.push("/");
+    onMounted(fetchCartItems);
 
     const truncate = (text, len = 60) =>
         text?.length > len ? text.slice(0, len) + "..." : text || "";
@@ -39,12 +40,11 @@
 
     const onIncreaseQty = async (item) => {
         const stock = await checkProductStock(item.product.id);
-        item.quantity >= stock
-            ? showStockAlert(
-                  item.product.id,
-                  `Cannot add more. Only ${stock} items available.`
-              )
-            : updateQuantity(item.id, item.quantity + 1);
+        if (item.quantity >= stock) {
+            toast.error(`Only ${stock} items available.`);
+        } else {
+            updateQuantity(item.id, item.quantity + 1);
+        }
     };
 
     const proceedCheckout = () => {
@@ -95,18 +95,6 @@
                 <span class="hidden sm:inline">Back</span>
             </button>
         </header>
-
-        <!-- Error Message -->
-        <div
-            v-if="error"
-            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mx-4 mt-4 rounded"
-        >
-            {{ error }}
-            <button @click="clearError" class="float-right font-bold">
-                &times;
-            </button>
-        </div>
-
         <!-- Loading Spinner -->
         <div v-if="isLoading" class="flex justify-center items-center py-20">
             <Spinner />

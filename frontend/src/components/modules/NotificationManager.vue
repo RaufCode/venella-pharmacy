@@ -123,21 +123,6 @@
         }
     };
 
-    const getNotificationTypeClasses = (type) => {
-        switch (type) {
-            case "order":
-                return "bg-blue-100 text-blue-800";
-            case "stock":
-                return "bg-red-100 text-red-800";
-            case "user":
-                return "bg-green-100 text-green-800";
-            case "system":
-                return "bg-purple-100 text-purple-800";
-            default:
-                return "bg-gray-100 text-gray-800";
-        }
-    };
-
     const formatTime = (dateString) => {
         const date = new Date(dateString);
         const now = new Date();
@@ -164,8 +149,13 @@
     };
 
     const markAllAsRead = async () => {
+        const unreadNotifications = notifications.value.filter((n) => !n.read);
         try {
-            await notificationStore.markAllAsRead();
+            await Promise.all(
+                unreadNotifications.map((n) =>
+                    notificationStore.markAsRead(n.id)
+                )
+            );
         } catch (error) {
             console.error("Failed to mark all notifications as read:", error);
         }
@@ -195,26 +185,14 @@
                 <h2 class="text-xl text-gray-600">Notifications</h2>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div>
                 <BaseButton
                     variant="outline"
                     size="sm"
                     @click="markAllAsRead"
                     :disabled="unreadCount === 0"
                 >
-                    Mark All Read
-                </BaseButton>
-
-                <BaseButton
-                    variant="outline"
-                    size="sm"
-                    @click="refreshNotifications"
-                    :loading="isLoading"
-                >
-                    <template #icon>
-                        <RefreshCw class="w-4 h-4" />
-                    </template>
-                    Refresh
+                    Mark All
                 </BaseButton>
             </div>
         </div>

@@ -331,7 +331,7 @@
                         class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                         @click="toggleMobileNav"
                     >
-                        <i class="pi pi-shopping-cart text-lg"></i>
+                        <i class="pi pi-briefcase text-lg"></i>
                         <span>Orders</span>
                     </router-link>
 

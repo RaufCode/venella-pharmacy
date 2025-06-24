@@ -330,6 +330,11 @@
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                 >
+                                    payment
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
                                     Total
                                 </th>
                                 <th
@@ -379,6 +384,11 @@
                                     >
                                         {{ order.status }}
                                     </span>
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap uppercase text-sm"
+                                >
+                                    {{ order.payment_status }}
                                 </td>
                                 <td
                                     class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"

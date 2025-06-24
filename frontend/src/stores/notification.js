@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import axiosInstance from "@/services/api"; // adjust path as needed
 import { useAuthStore } from "./auth"; // adjust path as needed
 import { useToast } from "vue-toastification";
 
@@ -29,11 +30,7 @@ export const useNotificationStore = defineStore("notification", {
       const userId = authStore.user?.id;
       const role = authStore.user?.role;
 
-      if (!userId || !role) {
-        console.warn("User ID or role missing");
-        return;
-      }
-
+    
       this.isLoading = true;
       this.error = null;
 
@@ -46,11 +43,9 @@ export const useNotificationStore = defineStore("notification", {
         } else {
           throw new Error("Invalid user role");
         }
-        const response = await axios.get(url);
+        const response = await axiosInstance.get(url);
         this.notifications = response.data || [];
       } catch (err) {
-        toast.error("Failed to fetch notifications.");
-        this.error = "Failed to fetch notifications.";
         this.notifications = [];
       } finally {
         this.isLoading = false;
@@ -60,7 +55,7 @@ export const useNotificationStore = defineStore("notification", {
     async markAsRead(notificationId) {
       const toast = useToast();
       try {
-        await axios.put(`/api/notifications/${notificationId}/mark-as-read/`);
+        await axiosInstance.put(`/api/notifications/${notificationId}/mark-as-read/`);
         const index = this.notifications.findIndex((n) => n.id === notificationId);
         if (index !== -1) {
           this.notifications[index].read = true;
@@ -73,7 +68,7 @@ export const useNotificationStore = defineStore("notification", {
     async deleteNotification(notificationId) {
       const toast = useToast();
       try {
-        await axios.delete(`/api/notifications/${notificationId}/delete/`);
+        await axiosInstance.delete(`/api/notifications/${notificationId}/delete/`);
         this.notifications = this.notifications.filter(
           (n) => n.id !== notificationId
         );
