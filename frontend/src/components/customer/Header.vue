@@ -4,6 +4,12 @@
     import { useAuthStore } from "@/stores/auth";
     import { useMedStore } from "@/stores/medStore";
     import { useNotificationStore } from "@/stores/notification"; // ✅ Import
+    import { useCartStore } from "@/stores/cartStore";
+    import { storeToRefs } from "pinia";
+
+    const cartStore = useCartStore();
+    const { carts } = storeToRefs(cartStore);
+    const cartCount = computed(() => carts.value.length);
 
     const route = useRoute();
     const router = useRouter();
@@ -164,9 +170,15 @@
                 <router-link
                     v-if="isAuthenticated && auth.user?.role === 'customer'"
                     to="/carts"
-                    class="px-3 py-2 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
+                    class="relative px-3 py-2 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                 >
                     Cart
+                    <span
+                        v-if="cartCount > 0"
+                        class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+                    >
+                        {{ cartCount > 9 ? "9+" : cartCount }}
+                    </span>
                 </router-link>
 
                 <router-link
@@ -318,11 +330,17 @@
                     <router-link
                         v-if="isAuthenticated && auth.user?.role === 'customer'"
                         to="/carts"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
+                        class="relative flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-600 hover:text-orange-600 hover:bg-orange-50 transition-all duration-200"
                         @click="toggleMobileNav"
                     >
                         <i class="pi pi-shopping-cart text-lg"></i>
                         <span>Cart</span>
+                        <span
+                            v-if="cartCount > 0"
+                            class="absolute left-7 top-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+                        >
+                            {{ cartCount > 9 ? "9+" : cartCount }}
+                        </span>
                     </router-link>
 
                     <router-link
