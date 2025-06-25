@@ -291,7 +291,7 @@
                                             @click="() => router.push('/carts')"
                                             class="px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-medium transition-all duration-200 shadow-md"
                                         >
-                                            View Cart
+                                            Cart
                                         </button>
                                     </div>
                                 </div>
