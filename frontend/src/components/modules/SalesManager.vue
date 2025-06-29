@@ -487,21 +487,7 @@
                 </div>
 
                 <!-- Pagination -->
-                <div
-                    v-if="totalPages > 1"
-                    class="flex items-center justify-between mt-6"
-                >
-                    <div class="text-sm text-gray-500">
-                        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
-                        {{
-                            Math.min(
-                                currentPage * itemsPerPage,
-                                salesData.length
-                            )
-                        }}
-                        of {{ salesData.length }} sales
-                    </div>
-
+                <div v-if="totalPages > 1" class="mx-auto w-max mt-6">
                     <div class="flex items-center gap-2">
                         <BaseButton
                             variant="outline"

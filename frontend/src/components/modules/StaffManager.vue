@@ -22,7 +22,6 @@
     const isLoading = ref(false);
     const showAddModal = ref(false);
     const editingStaff = ref(null);
-
     const activeStaffCount = computed(() => staffList.value.length); // Assuming all are active for now
 
     const newStaffThisMonth = computed(() => {
