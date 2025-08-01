@@ -1,3 +1,121 @@
+<script setup>
+    import { ref, reactive, watch } from "vue";
+    import { X, Info } from "lucide-vue-next";
+    import { useToast } from "vue-toastification";
+
+    import BaseInput from "@/components/shared/BaseInput.vue";
+    import BaseButton from "@/components/shared/BaseButton.vue";
+
+    import axios from "axios";
+
+    const props = defineProps({
+        staff: {
+            type: Object,
+            default: null,
+        },
+    });
+
+    const emit = defineEmits(["close", "saved"]);
+
+    const form = reactive({
+        first_name: "",
+        last_name: "",
+        other_names: "",
+        email: "",
+        phone: "",
+        address: "",
+    });
+
+    const errors = ref({});
+    const isSubmitting = ref(false);
+    const toast = useToast();
+
+    // Populate form when editing
+    watch(
+        () => props.staff,
+        (staff) => {
+            if (staff) {
+                form.first_name = staff.profile.first_name || "";
+                form.last_name = staff.profile.last_name || "";
+                form.other_names = staff.profile.other_names || "";
+                form.email = staff.email || "";
+                form.phone = staff.profile.phone || "";
+                form.address = staff.profile.address || "";
+                // Don't populate password for existing staff
+            }
+        },
+        { immediate: true }
+    );
+
+    const validateForm = () => {
+        errors.value = {};
+
+        if (!form.first_name.trim()) {
+            errors.value.first_name = "First name is required";
+        }
+
+        if (!form.last_name.trim()) {
+            errors.value.last_name = "Last name is required";
+        }
+
+        if (!form.email.trim()) {
+            errors.value.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+            errors.value.email = "Email format is invalid";
+        }
+
+        if (!form.phone.trim()) {
+            errors.value.phone = "Phone number is required";
+        }
+
+        if (!form.address.trim()) {
+            errors.value.address = "Address is required";
+        }
+
+        return Object.keys(errors.value).length === 0;
+    };
+
+    const handleSubmit = async () => {
+        if (!validateForm()) return;
+        try {
+            isSubmitting.value = true;
+            const data = {
+                first_name: form.first_name.trim(),
+                last_name: form.last_name.trim(),
+                other_names: form.other_names.trim(),
+                email: form.email.trim().toLowerCase(),
+                phone: form.phone.trim(),
+                address: form.address.trim(),
+                role: "salesperson",
+            };
+            if (!props.staff) {
+                data.password = form.password;
+            }
+            if (props.staff) {
+                await axios.put(
+                    `/api/core/accounts/${props.staff.id}/update/`,
+                    data
+                );
+                toast.success("Staff updated successfully.");
+            } else {
+                await axios.post(
+                    "/api/core/accounts/salesperson/create/",
+                    data
+                );
+                toast.success("Staff created successfully.");
+            }
+            emit("saved");
+        } catch (error) {
+            toast.error("Failed to save staff.");
+            if (error.response?.data) {
+                errors.value = error.response.data;
+            }
+        } finally {
+            isSubmitting.value = false;
+        }
+    };
+</script>
+
 <template>
     <div class="fixed inset-0 z-50 overflow-y-auto">
         <!-- Backdrop -->
@@ -134,121 +252,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-    import { ref, reactive, watch } from "vue";
-    import { X, Info } from "lucide-vue-next";
-    import { useToast } from "vue-toastification";
-
-    import BaseInput from "@/components/shared/BaseInput.vue";
-    import BaseButton from "@/components/shared/BaseButton.vue";
-
-    import axios from "axios";
-
-    const props = defineProps({
-        staff: {
-            type: Object,
-            default: null,
-        },
-    });
-
-    const emit = defineEmits(["close", "saved"]);
-
-    const form = reactive({
-        first_name: "",
-        last_name: "",
-        other_names: "",
-        email: "",
-        phone: "",
-        address: "",
-    });
-
-    const errors = ref({});
-    const isSubmitting = ref(false);
-    const toast = useToast();
-
-    // Populate form when editing
-    watch(
-        () => props.staff,
-        (staff) => {
-            if (staff) {
-                form.first_name = staff.profile.first_name || "";
-                form.last_name = staff.profile.last_name || "";
-                form.other_names = staff.profile.other_names || "";
-                form.email = staff.email || "";
-                form.phone = staff.profile.phone || "";
-                form.address = staff.profile.address || "";
-                // Don't populate password for existing staff
-            }
-        },
-        { immediate: true }
-    );
-
-    const validateForm = () => {
-        errors.value = {};
-
-        if (!form.first_name.trim()) {
-            errors.value.first_name = "First name is required";
-        }
-
-        if (!form.last_name.trim()) {
-            errors.value.last_name = "Last name is required";
-        }
-
-        if (!form.email.trim()) {
-            errors.value.email = "Email is required";
-        } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-            errors.value.email = "Email format is invalid";
-        }
-
-        if (!form.phone.trim()) {
-            errors.value.phone = "Phone number is required";
-        }
-
-        if (!form.address.trim()) {
-            errors.value.address = "Address is required";
-        }
-
-        return Object.keys(errors.value).length === 0;
-    };
-
-    const handleSubmit = async () => {
-        if (!validateForm()) return;
-        try {
-            isSubmitting.value = true;
-            const data = {
-                first_name: form.first_name.trim(),
-                last_name: form.last_name.trim(),
-                other_names: form.other_names.trim(),
-                email: form.email.trim().toLowerCase(),
-                phone: form.phone.trim(),
-                address: form.address.trim(),
-                role: "salesperson",
-            };
-            if (!props.staff) {
-                data.password = form.password;
-            }
-            if (props.staff) {
-                await axios.put(
-                    `/api/core/accounts/salespersons/${props.staff.id}/`,
-                    data
-                );
-                toast.success("Staff updated successfully.");
-            } else {
-                await axios.post(
-                    "/api/core/accounts/salesperson/create/",
-                    data
-                );
-                toast.success("Staff created successfully.");
-            }
-            emit("saved");
-        } catch (error) {
-            toast.error("Failed to save staff.");
-            if (error.response?.data) {
-                errors.value = error.response.data;
-            }
-        } finally {
-            isSubmitting.value = false;
-        }
-    };
-</script>

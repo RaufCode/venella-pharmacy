@@ -126,7 +126,7 @@
                             {{ cart.product.name }}
                         </h2>
                         <p
-                            class="text-xs md:text-sm text-gray-500 mt-1 max-w-24 md:w-auto truncate"
+                            class="text-xs md:text-sm text-gray-500 mt-1 w-24 truncate"
                         >
                             {{ cart.product.description }}
                         </p>
