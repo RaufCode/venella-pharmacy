@@ -62,38 +62,40 @@
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col bg-gray-50">
+    <div class="min-h-screen bg-gray-50">
         <!-- Header -->
-        <header
-            class="bg-white border-b border-gray-200 p-4 flex shadow-sm items-center justify-between gap-4 sticky top-0 z-50"
-        >
-            <div class="flex items-center gap-3">
-                <div
-                    class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center"
-                >
-                    <i class="pi pi-shopping-cart text-white text-sm"></i>
-                </div>
-                <h1
-                    class="text-gray-700 text-2xl font-styleScript flex items-center"
-                >
-                    Carts
-                    <span
-                        v-if="carts.length > 0"
-                        class="text-orange-600 font-normal text-sm ml-2"
-                    >
-                        ({{ carts.length }} item{{
-                            carts.length !== 1 ? "s" : ""
-                        }})
-                    </span>
-                </h1>
-            </div>
-            <button
-                @click="goBack"
-                class="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-lg flex items-center gap-2 font-medium transition-all duration-200 shadow-md"
+        <header class="bg-white border-b border-gray-200 p-4 hadow-sm">
+            <div
+                class="flex sitems-center justify-between gap-4 sticky top-0 z-50 m-auto max-w-[1500px]"
             >
-                <ArrowLeft class="w-4 h-4" />
-                <span class="hidden sm:inline">Back</span>
-            </button>
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center"
+                    >
+                        <i class="pi pi-shopping-cart text-white text-sm"></i>
+                    </div>
+                    <h1
+                        class="text-gray-700 text-2xl font-styleScript flex items-center"
+                    >
+                        Carts
+                        <span
+                            v-if="carts.length > 0"
+                            class="text-orange-600 font-normal text-sm ml-2"
+                        >
+                            ({{ carts.length }} item{{
+                                carts.length !== 1 ? "s" : ""
+                            }})
+                        </span>
+                    </h1>
+                </div>
+                <button
+                    @click="goBack"
+                    class="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-lg flex items-center gap-2 font-medium transition-all duration-200 shadow-md"
+                >
+                    <ArrowLeft class="w-4 h-4" />
+                    <span class="hidden sm:inline">Back</span>
+                </button>
+            </div>
         </header>
         <!-- Loading Spinner -->
         <div v-if="isLoading" class="flex justify-center items-center py-20">
